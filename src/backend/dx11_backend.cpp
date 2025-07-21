@@ -77,12 +77,6 @@ LRESULT CALLBACK DX11Backend::hookedWndProc(HWND hWnd, UINT uMsg, WPARAM wParam,
             case VK_INSERT:
                 gui.setVisible(!gui.isVisible());
             return true;
-			
-            case VK_F1:
-                if (gui.isVisible())
-                    gui.toggleUnityExplorer();
-            return true;
-			
             default:
                 break;
         }

@@ -1,5 +1,5 @@
 ﻿#include "pch.h"
-#include "helpers.h"
+#include "logger.h"
 
 std::string logFilePath;
 LogType logType = Console;

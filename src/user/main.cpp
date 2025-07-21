@@ -1,13 +1,16 @@
 ﻿#include "pch.h"
 #include "main.h"
 
+#include "cheat/cheat.h"
+
+
 void Main::run()
 {
     Utils::attachConsole();
 
-    LOG_INFO("[ImGui] Starting initialization...");
-
+    LOG_INFO("Starting initialization...");
     Sleep(1000);
+
     if (!initializeUnity())
         LOG_ERROR("Unable to initialize Unity! Maybe assemblies are not found?");
 
@@ -15,14 +18,16 @@ void Main::run()
     Renderer& renderer = Renderer::getInstance();
     if (renderer.initialize())
     {
-        LOG_INFO("[ImGui] Renderer initialized successfully!");
-        LOG_INFO("[ImGui] Using backend: %s", renderer.getBackend()->getName());
-        LOG_INFO("[ImGui] Press INSERT to toggle GUI visibility");
+        LOG_INFO("Renderer initialized successfully!");
+        LOG_INFO("Using backend: %s", renderer.getBackend()->getName());
+        LOG_INFO("Press INSERT to toggle GUI visibility");
     }
     else
     {
-        LOG_INFO("[ImGui] Failed to initialize renderer!");
+        LOG_INFO("Failed to initialize renderer!");
     }
+
+    Cheat::init();
 }
 
 UnityModuleBackendInfo Main::getUnityBackend()
@@ -50,7 +55,7 @@ UnityModuleBackendInfo Main::getUnityBackend()
         return info;
     }
     LOG_WARNING("GameAssembly.dll not found, trying fallback to Mono...");
-    assembly = GetModuleHandleA("mono-2.0-bdwgc.dll"); // Newer versions of Unity
+    assembly = GetModuleHandleA("mono-2.0-bdwgc.dll"); // Newer versions of Unity I think
     if (assembly)
     {
         info.module = assembly;

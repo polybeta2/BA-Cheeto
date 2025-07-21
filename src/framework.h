@@ -8,14 +8,12 @@
 #include <mutex>
 #include <filesystem>
 
-#include <dxgi1_4.h>
 #include <d3d9.h>
 #include <d3d11.h>
 #include <d3d12.h>
 #include <dxgi.h>
 
-#include "UnityResolve.hpp"
-#include "methods/UnityEngine.CoreModule.hpp"
+#include <UnityResolve.hpp>
 
 // Include ImGui
 #include <imgui.h>
@@ -24,11 +22,10 @@
 #include <imgui_impl_dx12.h>
 #include <imgui_impl_win32.h>
 
-using namespace std::chrono_literals;
-
 // Project includes
 #include "core/renderer.h"
 #include "ui/gui.h"
 #include "memory/hook_manager.h"
 #include "utils/dx_utils.h"
-#include "utils/helpers.h"
+#include "utils/logger.h"
+#include "appdata/helpers.h"

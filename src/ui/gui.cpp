@@ -1,8 +1,6 @@
 ﻿#include "pch.h"
 #include "gui.h"
 
-#include "inspector/unity_explorer.h"
-
 GUI::GUI()
 {
     setupImGuiStyle();
@@ -10,7 +8,6 @@ GUI::GUI()
 
 GUI::~GUI()
 {
-    shutdownUnityExplorer();
 }
 
 GUI& GUI::getInstance()
@@ -26,12 +23,6 @@ void GUI::render()
         return;
     }
 
-    // Initialize Unity Explorer on first render if needed
-    if (!m_unityExplorerInitialized && m_showUnityExplorer)
-    {
-        initializeUnityExplorer();
-    }
-
     // Render main menu bar
     renderMainMenuBar();
 
@@ -41,12 +32,6 @@ void GUI::render()
         renderExampleWindow();
     }
 
-    // Render Unity Explorer if enabled and initialized
-    if (m_showUnityExplorer && m_unityExplorer && m_unityExplorerInitialized)
-    {
-        m_unityExplorer->update();
-    }
-
     // Render about modal
     renderAboutModal();
 }
@@ -54,15 +39,6 @@ void GUI::render()
 void GUI::showExampleWindow()
 {
     m_showExample = true;
-}
-
-void GUI::showUnityExplorer()
-{
-    m_showUnityExplorer = true;
-    if (!m_unityExplorerInitialized)
-    {
-        initializeUnityExplorer();
-    }
 }
 
 void GUI::renderMainMenuBar()
@@ -85,30 +61,12 @@ void GUI::renderMainMenuBar()
             ImGui::MenuItem("Example Window", nullptr, &m_showExample);
             ImGui::Separator();
 
-            if (ImGui::MenuItem("Unity Explorer", "F1", &m_showUnityExplorer))
-            {
-                if (m_showUnityExplorer && !m_unityExplorerInitialized)
-                {
-                    initializeUnityExplorer();
-                }
-            }
-
             ImGui::EndMenu();
         }
 
         // Tools menu
         if (ImGui::BeginMenu("Tools"))
         {
-            if (ImGui::MenuItem("Refresh Unity Explorer", "F5"))
-            {
-                if (m_unityExplorer && m_unityExplorerInitialized)
-                {
-                    // Force refresh by reinitializing
-                    shutdownUnityExplorer();
-                    initializeUnityExplorer();
-                }
-            }
-
             ImGui::Separator();
 
             if (ImGui::BeginMenu("Theme"))
@@ -151,23 +109,6 @@ void GUI::renderMainMenuBar()
 
         // Status section with better visual indicators
         ImGui::Separator();
-        
-        // Unity Explorer status with colored indicators
-        ImGui::Text("Unity Explorer:");
-        ImGui::SameLine();
-        
-        if (m_unityExplorer && m_unityExplorerInitialized && m_showUnityExplorer)
-        {
-            ImGui::TextColored(ImVec4(0.2f, 0.8f, 0.2f, 1.0f), "● Active");
-        }
-        else if (m_showUnityExplorer)
-        {
-            ImGui::TextColored(ImVec4(0.8f, 0.8f, 0.2f, 1.0f), "● Initializing...");
-        }
-        else
-        {
-            ImGui::TextDisabled("● Inactive");
-        }
 
         // Unity backend status
         ImGui::SameLine();
@@ -221,7 +162,7 @@ void GUI::renderMainMenuBar()
         ImGui::SameLine();
         ImGui::Separator();
         ImGui::SameLine();
-        ImGui::TextDisabled("INSERT: Toggle GUI | F1: Unity Explorer | F5: Refresh");
+        ImGui::TextDisabled("INSERT: Toggle GUI");
 
         ImGui::EndMainMenuBar();
     }
@@ -321,22 +262,6 @@ void GUI::renderExampleWindow()
     ImGui::Text("Unity Explorer Status");
     ImGui::SameLine();
     helpMarker("Scene hierarchy and object inspector status");
-    
-    ImGui::BeginChild("ExplorerStatus", ImVec2(0, 80), true);
-    
-    if (m_unityExplorerInitialized)
-    {
-        ImGui::TextColored(ImVec4(0.2f, 0.8f, 0.2f, 1.0f), "✓ Unity Explorer ready");
-        ImGui::Text("Status: Initialized and functional");
-        ImGui::Text("Features: Scene hierarchy, Object inspector, Component analysis");
-    }
-    else
-    {
-        ImGui::TextColored(ImVec4(0.8f, 0.8f, 0.2f, 1.0f), "○ Unity Explorer not initialized");
-        ImGui::Text("Status: Waiting for initialization");
-        ImGui::Text("Click 'Open Unity Explorer' to start");
-    }
-    ImGui::EndChild();
 
     ImGui::Spacing();
 
@@ -346,21 +271,7 @@ void GUI::renderExampleWindow()
     helpMarker("Common actions and shortcuts");
     
     ImGui::BeginChild("QuickActions", ImVec2(0, 120), true);
-    
-    // Action buttons in a grid layout
-    if (ImGui::Button("Open Unity Explorer", ImVec2(150, 30)))
-    {
-        showUnityExplorer();
-    }
     ImGui::SameLine();
-    if (ImGui::Button("Refresh Scene", ImVec2(150, 30)))
-    {
-        if (m_unityExplorer && m_unityExplorerInitialized)
-        {
-            shutdownUnityExplorer();
-            initializeUnityExplorer();
-        }
-    }
     
     ImGui::SameLine();
     if (ImGui::Button("Test Unity API", ImVec2(150, 30)))
@@ -517,55 +428,6 @@ void GUI::renderAboutModal()
 
         ImGui::EndPopup();
     }
-}
-
-bool GUI::initializeUnityExplorer()
-{
-    if (m_unityExplorerInitialized)
-    {
-        LOG_WARNING("[GUI] Unity Explorer already initialized");
-        return true;
-    }
-
-    LOG_INFO("[GUI] Initializing Unity Explorer...");
-
-    try
-    {
-        m_unityExplorer = std::make_unique<UnityExplorer>();
-
-        if (m_unityExplorer->initialize())
-        {
-            m_unityExplorerInitialized = true;
-            LOG_INFO("[GUI] Unity Explorer initialized successfully!");
-            return true;
-        }
-        LOG_ERROR("[GUI] Failed to initialize Unity Explorer");
-        m_unityExplorer.reset();
-        return false;
-    }
-    catch (const std::exception& e)
-    {
-        LOG_ERROR("[GUI] Exception initializing Unity Explorer: %s", e.what());
-        m_unityExplorer.reset();
-        return false;
-    }
-    catch (...)
-    {
-        LOG_ERROR("[GUI] Unknown exception initializing Unity Explorer");
-        m_unityExplorer.reset();
-        return false;
-    }
-}
-
-void GUI::shutdownUnityExplorer()
-{
-    if (m_unityExplorer)
-    {
-        LOG_INFO("[GUI] Shutting down Unity Explorer...");
-        m_unityExplorer->shutdown();
-        m_unityExplorer.reset();
-    }
-    m_unityExplorerInitialized = false;
 }
 
 void GUI::setupImGuiStyle()

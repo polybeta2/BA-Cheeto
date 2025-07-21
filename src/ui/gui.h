@@ -1,8 +1,5 @@
 ﻿#pragma once
 
-// Forward declaration
-class UnityExplorer;
-
 class GUI
 {
 public:
@@ -18,11 +15,6 @@ public:
     // Demo functions
     void showExampleWindow();
 
-    // Unity Explorer functions
-    void showUnityExplorer();
-    void toggleUnityExplorer() { m_showUnityExplorer = !m_showUnityExplorer; }
-    bool isUnityExplorerVisible() const { return m_showUnityExplorer; }
-
 private:
     GUI();
     ~GUI();
@@ -33,20 +25,11 @@ private:
     // Visibility flags
     bool m_visible = true;
     bool m_showExample = true;
-    bool m_showUnityExplorer = false;
-
-    // Unity Explorer
-    std::unique_ptr<UnityExplorer> m_unityExplorer;
-    bool m_unityExplorerInitialized = false;
 
     // Rendering methods
     void renderMainMenuBar();
     void renderExampleWindow();
     void renderAboutModal();
-
-    // Unity Explorer management
-    bool initializeUnityExplorer();
-    void shutdownUnityExplorer();
 
     // Utility
     void setupImGuiStyle();
