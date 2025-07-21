@@ -15,8 +15,7 @@ void Main::run()
         LOG_ERROR("Unable to initialize Unity! Maybe assemblies are not found?");
 
     // Initialize renderer
-    Renderer& renderer = Renderer::getInstance();
-    if (renderer.initialize())
+    if (Renderer& renderer = Renderer::getInstance(); renderer.initialize())
     {
         LOG_INFO("Renderer initialized successfully!");
         LOG_INFO("Using backend: %s", renderer.getBackend()->getName());
@@ -39,8 +38,7 @@ UnityModuleBackendInfo Main::getUnityBackend()
     info.mode = UnityResolve::Mode::Mono;
 
     // Check if Unity is loaded
-    auto unityModule = GetModuleHandleA("UnityPlayer.dll");
-    if (unityModule == nullptr)
+    if (const auto unityModule = GetModuleHandleA("UnityPlayer.dll"); unityModule == nullptr)
     {
         LOG_ERROR("UnityPlayer.dll not found! Is this a Unity game?");
         return info;
@@ -78,14 +76,14 @@ UnityModuleBackendInfo Main::getUnityBackend()
 
 bool Main::initializeUnity()
 {
-    auto backend = getUnityBackend();
-    if (backend.module == nullptr)
+    auto [module, mode] = getUnityBackend();
+    if (module == nullptr)
     {
         LOG_ERROR("Unity backend not found!");
         return false;
     }
 
-    UnityResolve::Init(backend.module, backend.mode);
+    UnityResolve::Init(module, mode);
 
     return true;
 }

@@ -12,6 +12,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\appdata\functions.h" />
+    <ClInclude Include="src\appdata\types-helper.h" />
     <ClInclude Include="src\appdata\types.h" />
     <ClInclude Include="src\backend\dx11_backend.h" />
     <ClInclude Include="src\backend\NotoSans.hpp" />

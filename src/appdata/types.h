@@ -1,33 +1,29 @@
 ﻿#pragma once
 
-#pragma pack(8)
+#include "types-helper.h"
 
 class SkillCardManager
 {
 public:
-    char _pad1[0x38];
 };
 
 class CostSkillCardManager : public SkillCardManager
 {
 public:
-    float _MaxCost_k__BackingField;
-    float _CurCost_k__BackingField;
-    float _FeverChargeScale_k__BackingField;
-    float _CostPerFrame_k__BackingField;
-    bool _IsShuffle_k__BackingField; // 0x48
-    char _pad1[0x3]; // _FeverInfo_k__BackingField // 0x4c
-    char _pad2[0x14]; // _FeverInfo_k__BackingField // 0x4c
-    long _RegenStartDelayFrame_k__BackingField; // 0x60
-    bool _IsMainPlayerSkillCard_k__BackingField; // 0x68
-    float _RegenCostBefore_k__BackingField; // 0x6c
-    
+    UNITY_CLASS_DECL("BlueArchive.dll", "CostSkillCardManager")
+
+    UNITY_FIELD(float, MaxCost, 0x38)
+    UNITY_FIELD(float, CurCost, 0x3c)
+    UNITY_FIELD(float, FeverChargeScale, 0x40)
+    UNITY_FIELD(float, CostPerFrame, 0x44)
+    UNITY_FIELD(bool, IsShuffle, 0x48)
+    UNITY_FIELD(int64_t, RegenStartDelayFrame, 0x60)
+    UNITY_FIELD(bool, IsMainPlayerSkillCard, 0x68)
+    UNITY_FIELD(float, RegenCostBefore, 0x6c)
 };
 
 class PlayerSkillCardManager : public CostSkillCardManager {
 public:
-    char _pad1[0xb0];
-    inline static UnityResolve::MethodPointer<void, PlayerSkillCardManager*> ProcessSkillCard{};
+    UNITY_METHOD_FROM("BlueArchive.dll", "PlayerSkillCardManager", void, ProcessSkillCard, PlayerSkillCardManager*)
 };
 
-#pragma pack()

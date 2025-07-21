@@ -31,9 +31,6 @@ void GUI::render()
     {
         renderExampleWindow();
     }
-
-    // Render about modal
-    renderAboutModal();
 }
 
 void GUI::showExampleWindow()
@@ -299,8 +296,6 @@ void GUI::renderExampleWindow()
     // Shortcuts info
     ImGui::Text("Keyboard Shortcuts:");
     ImGui::BulletText("INSERT - Toggle GUI visibility");
-    ImGui::BulletText("F1 - Toggle Unity Explorer");
-    ImGui::BulletText("F5 - Refresh scene (in Unity Explorer)");
     ImGui::BulletText("Alt+F4 - Exit application");
     
     ImGui::EndChild();
@@ -337,96 +332,6 @@ void GUI::renderExampleWindow()
     if (!p_open)
     {
         m_showExample = false;
-    }
-}
-
-void GUI::renderAboutModal()
-{
-    if (ImGui::BeginPopupModal("About Unity Runtime Inspector", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
-    {
-        // Header
-        ImGui::PushFont(ImGui::GetIO().Fonts->Fonts[0]);
-        ImGui::TextColored(ImVec4(0.8f, 0.8f, 1.0f, 1.0f), "Unity Runtime Inspector");
-        ImGui::PopFont();
-        ImGui::TextDisabled("Version 1.0.0");
-        ImGui::Separator();
-
-        ImGui::TextWrapped("A powerful runtime inspection and debugging tool for Unity games. "
-                          "Built with Dear ImGui and UnityResolve for seamless integration with Unity's runtime environment.");
-
-        ImGui::Spacing();
-        ImGui::Text("Key Features:");
-        ImGui::BulletText("Real-time scene hierarchy explorer");
-        ImGui::BulletText("GameObject and component inspector");
-        ImGui::BulletText("Live value monitoring and modification");
-        ImGui::BulletText("Cross-platform Unity support (IL2CPP/Mono)");
-        ImGui::BulletText("Performance monitoring and analysis");
-        ImGui::BulletText("Memory inspection and debugging");
-
-        ImGui::Spacing();
-        ImGui::Text("Supported Unity Versions:");
-        ImGui::BulletText("Unity 2019.4 LTS and later");
-        ImGui::BulletText("IL2CPP and Mono scripting backends");
-        ImGui::BulletText("Windows x86 and x64 platforms");
-
-        ImGui::Spacing();
-        ImGui::Text("Technologies:");
-        ImGui::BulletText("Dear ImGui - Immediate mode GUI");
-        ImGui::BulletText("UnityResolve - Unity runtime access");
-        ImGui::BulletText("MinHook - API hooking library");
-
-        ImGui::Spacing();
-        ImGui::Separator();
-
-        if (ImGui::Button("Close", ImVec2(120, 0)))
-        {
-            ImGui::CloseCurrentPopup();
-        }
-
-        ImGui::EndPopup();
-    }
-
-    // Controls Reference Modal
-    if (ImGui::BeginPopupModal("Controls Reference", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
-    {
-        ImGui::PushFont(ImGui::GetIO().Fonts->Fonts[0]);
-        ImGui::TextColored(ImVec4(0.8f, 0.8f, 1.0f, 1.0f), "Controls Reference");
-        ImGui::PopFont();
-        ImGui::Separator();
-
-        ImGui::Text("Global Controls:");
-        ImGui::BulletText("INSERT - Toggle GUI visibility");
-        ImGui::BulletText("Alt+F4 - Exit application");
-
-        ImGui::Spacing();
-        ImGui::Text("Unity Explorer Controls:");
-        ImGui::BulletText("F1 - Toggle Unity Explorer window");
-        ImGui::BulletText("F5 - Refresh scene hierarchy");
-        ImGui::BulletText("Mouse Click - Select objects in hierarchy");
-        ImGui::BulletText("Double Click - Expand/collapse tree nodes");
-        ImGui::BulletText("Right Click - Context menu for objects");
-
-        ImGui::Spacing();
-        ImGui::Text("Object Inspector Controls:");
-        ImGui::BulletText("Click headers - Expand/collapse components");
-        ImGui::BulletText("Hover over (?) - Show help tooltips");
-        ImGui::BulletText("Search box - Filter objects by name");
-
-        ImGui::Spacing();
-        ImGui::Text("Navigation:");
-        ImGui::BulletText("Mouse wheel - Scroll through lists");
-        ImGui::BulletText("Ctrl+Mouse wheel - Zoom in/out");
-        ImGui::BulletText("Tab - Navigate between input fields");
-
-        ImGui::Spacing();
-        ImGui::Separator();
-
-        if (ImGui::Button("Close", ImVec2(120, 0)))
-        {
-            ImGui::CloseCurrentPopup();
-        }
-
-        ImGui::EndPopup();
     }
 }
 

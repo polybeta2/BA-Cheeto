@@ -29,7 +29,6 @@ private:
     // Rendering methods
     void renderMainMenuBar();
     void renderExampleWindow();
-    void renderAboutModal();
 
     // Utility
     void setupImGuiStyle();

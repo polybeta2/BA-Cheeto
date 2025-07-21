@@ -9,10 +9,7 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD   ul_reason_for_call, LPVOID  lpRes
 
     DisableThreadLibraryCalls(hModule);
 
-    std::thread([]() {
-		Main main;
-		main.run();
-	}).detach();
+    std::thread(Main::run).detach();
 
     return TRUE;
 

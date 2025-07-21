@@ -9,9 +9,9 @@ struct UnityModuleBackendInfo
 class Main
 {
 public:
-    void run();
+    static void run();
 
 private:
-    UnityModuleBackendInfo getUnityBackend();
-    bool initializeUnity();
+    static UnityModuleBackendInfo getUnityBackend();
+    static bool initializeUnity();
 };
