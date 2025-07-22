@@ -1,5 +1,10 @@
-# 😭 Cunny Game Cheeto 😭
-Cute and Funny game cheat
+<div align="center">
+    <img src="assets/cunny-game.png" alt="LogoText">
+    <br>
+    <a href="https://github.com/nulla2011/bluearchive-logo"><small>logo generator</small></a>
+</div>
+
+---
 
 ## 📝 Usage 
 1. Set steam lunch option to `-force-d3d11` (Do this until dx12 backend is implemented)
