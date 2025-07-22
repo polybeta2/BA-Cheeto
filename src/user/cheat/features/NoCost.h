@@ -3,5 +3,8 @@
 class NoCost
 {
 public:
-    static void Init();
+    static void init();
+
+private:
+    static void hProcessSkillCard(PlayerSkillCardManager* _this);
 };

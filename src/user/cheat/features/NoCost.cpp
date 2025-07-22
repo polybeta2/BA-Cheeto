@@ -1,9 +1,7 @@
 ﻿#include "pch.h"
 #include "NoCost.h"
 
-#include "appdata/types.h"
-
-void hProcessSkillCard(PlayerSkillCardManager* _this)
+void NoCost::hProcessSkillCard(PlayerSkillCardManager* _this)
 {
     // TODO: Enable field, GUI, etc.
     _this->CurCost(_this->MaxCost());
@@ -12,11 +10,9 @@ void hProcessSkillCard(PlayerSkillCardManager* _this)
     CALL_ORIGINAL(hProcessSkillCard, _this);
 }
 
-
-void NoCost::Init()
+void NoCost::init()
 {
     // TODO modularize this. im just busy rn
-
     HookManager::install(PlayerSkillCardManager::ProcessSkillCard(), hProcessSkillCard);
     LOG_INFO("NoCost feature initialized successfully.");
 }

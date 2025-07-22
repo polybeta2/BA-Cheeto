@@ -8,6 +8,7 @@ Cute and Funny game cheat
 
 ## ✨ Features
 - No Skill Cost
+- Dumb Enemies (enemies ignore you)
 
 ## 🙏 Special Thanks
 - [Il2CppInspectorRedux](Il2CppInspectorRedux)

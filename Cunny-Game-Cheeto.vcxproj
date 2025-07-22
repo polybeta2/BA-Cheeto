@@ -23,6 +23,7 @@
     <ClInclude Include="src\pch.h" />
     <ClInclude Include="src\ui\gui.h" />
     <ClInclude Include="src\user\cheat\cheat.h" />
+    <ClInclude Include="src\user\cheat\features\DumbEnemies.h" />
     <ClInclude Include="src\user\cheat\features\NoCost.h" />
     <ClInclude Include="src\user\main.h" />
     <ClInclude Include="src\utils\dx_utils.h" />
@@ -38,6 +39,15 @@
     <ClInclude Include="vendor\imgui\imstb_textedit.h" />
     <ClInclude Include="vendor\imgui\imstb_truetype.h" />
     <ClInclude Include="vendor\imgui\misc\cpp\imgui_stdlib.h" />
+    <ClInclude Include="vendor\magic_enum\include\magic_enum\magic_enum.hpp" />
+    <ClInclude Include="vendor\magic_enum\include\magic_enum\magic_enum_all.hpp" />
+    <ClInclude Include="vendor\magic_enum\include\magic_enum\magic_enum_containers.hpp" />
+    <ClInclude Include="vendor\magic_enum\include\magic_enum\magic_enum_flags.hpp" />
+    <ClInclude Include="vendor\magic_enum\include\magic_enum\magic_enum_format.hpp" />
+    <ClInclude Include="vendor\magic_enum\include\magic_enum\magic_enum_fuse.hpp" />
+    <ClInclude Include="vendor\magic_enum\include\magic_enum\magic_enum_iostream.hpp" />
+    <ClInclude Include="vendor\magic_enum\include\magic_enum\magic_enum_switch.hpp" />
+    <ClInclude Include="vendor\magic_enum\include\magic_enum\magic_enum_utility.hpp" />
     <ClInclude Include="vendor\minhook\include\MinHook.h" />
     <ClInclude Include="vendor\UnityResolve\UnityResolve.hpp" />
   </ItemGroup>
@@ -207,6 +217,84 @@
     </ClCompile>
     <ClCompile Include="src\ui\gui.cpp" />
     <ClCompile Include="src\user\cheat\cheat.cpp" />
+    <ClCompile Include="src\user\cheat\features\DumbEnemies.cpp">
+      <AssemblerOutput>NoListing</AssemblerOutput>
+      <AssemblerListingLocation>E:\Git\Cunny-Game-Cheeto\bin\Release-x64\obj\</AssemblerListingLocation>
+      <UndefineAllPreprocessorDefinitions>false</UndefineAllPreprocessorDefinitions>
+      <BrowseInformation>false</BrowseInformation>
+      <BrowseInformationFile>E:\Git\Cunny-Game-Cheeto\bin\Release-x64\obj\</BrowseInformationFile>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <CompileAs>Default</CompileAs>
+      <UseDynamicDebugging>false</UseDynamicDebugging>
+      <ConformanceMode>true</ConformanceMode>
+      <DiagnosticsFormat>Column</DiagnosticsFormat>
+      <DisableLanguageExtensions>false</DisableLanguageExtensions>
+      <ErrorReporting>Prompt</ErrorReporting>
+      <ExpandAttributedSource>false</ExpandAttributedSource>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <EnableASAN>false</EnableASAN>
+      <EnableFuzzer>false</EnableFuzzer>
+      <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
+      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
+      <EnableVectorLength>NotSet</EnableVectorLength>
+      <FloatingPointModel>Precise</FloatingPointModel>
+      <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
+      <GenerateModuleDependencies>false</GenerateModuleDependencies>
+      <GenerateSourceDependencies>false</GenerateSourceDependencies>
+      <GenerateXMLDocumentationFiles>false</GenerateXMLDocumentationFiles>
+      <InlineFunctionExpansion>Default</InlineFunctionExpansion>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <IgnoreStandardIncludePath>false</IgnoreStandardIncludePath>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <LanguageStandard_C>Default</LanguageStandard_C>
+      <MinimalRebuild>false</MinimalRebuild>
+      <ModuleDependenciesFile>E:\Git\Cunny-Game-Cheeto\bin\Release-x64\obj\</ModuleDependenciesFile>
+      <ModuleOutputFile>E:\Git\Cunny-Game-Cheeto\bin\Release-x64\obj\</ModuleOutputFile>
+      <OmitDefaultLibName>false</OmitDefaultLibName>
+      <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
+      <WholeProgramOptimization>true</WholeProgramOptimization>
+      <Optimization>MaxSpeed</Optimization>
+      <ObjectFileName>E:\Git\Cunny-Game-Cheeto\bin\Release-x64\obj\</ObjectFileName>
+      <CallingConvention>Cdecl</CallingConvention>
+      <ProgramDataBaseFileName>E:\Git\Cunny-Game-Cheeto\bin\Release-x64\obj\vc143.pdb</ProgramDataBaseFileName>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile>E:\Git\Cunny-Game-Cheeto\bin\Release-x64\obj\Cunny-Game-Cheeto.pch</PrecompiledHeaderOutputFile>
+      <PreprocessToFile>false</PreprocessToFile>
+      <PreprocessKeepComments>false</PreprocessKeepComments>
+      <PreprocessSuppressLineNumbers>false</PreprocessSuppressLineNumbers>
+      <RemoveUnreferencedCodeData>true</RemoveUnreferencedCodeData>
+      <RuntimeLibrary>MultiThreadedDll</RuntimeLibrary>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+      <ShowIncludes>false</ShowIncludes>
+      <SourceDependenciesFile>E:\Git\Cunny-Game-Cheeto\bin\Release-x64\obj\</SourceDependenciesFile>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <BufferSecurityCheck>true</BufferSecurityCheck>
+      <SmallerTypeCheck>false</SmallerTypeCheck>
+      <SpectreMitigation>false</SpectreMitigation>
+      <StructMemberAlignment>Default</StructMemberAlignment>
+      <SupportJustMyCode>false</SupportJustMyCode>
+      <TrackerLogDirectory>E:\Git\Cunny-Game-Cheeto\bin\Release-x64\obj\Cunny-Ga.7860a162.tlog\</TrackerLogDirectory>
+      <TranslateIncludes>false</TranslateIncludes>
+      <MinimalRebuildFromTracking>true</MinimalRebuildFromTracking>
+      <TreatWarningAsError>false</TreatWarningAsError>
+      <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+      <UseFullPaths>true</UseFullPaths>
+      <WarningLevel>Level3</WarningLevel>
+      <XMLDocumentationFileName>E:\Git\Cunny-Game-Cheeto\bin\Release-x64\obj\</XMLDocumentationFileName>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <IntelJCCErratum>false</IntelJCCErratum>
+      <BuildStlModules>false</BuildStlModules>
+      <TreatAngleIncludeAsExternal>false</TreatAngleIncludeAsExternal>
+      <ExternalWarningLevel>InheritWarningLevel</ExternalWarningLevel>
+      <TreatExternalTemplatesAsInternal>true</TreatExternalTemplatesAsInternal>
+      <DisableAnalyzeExternal>false</DisableAnalyzeExternal>
+      <PreprocessorDefinitions>_WINDOWS;_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING;_CRT_SECURE_NO_WARNINGS;NDEBUG;Cunny-Game-Cheeto_EXPORTS;_WINDOWS;_USRDLL;_WINDLL;_UNICODE;UNICODE;</PreprocessorDefinitions>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>E:\Git\Cunny-Game-Cheeto\src;E:\Git\Cunny-Game-Cheeto\vendor\UnityResolve;E:\Git\Cunny-Game-Cheeto\vendor\imgui;E:\Git\Cunny-Game-Cheeto\vendor\imgui\misc;E:\Git\Cunny-Game-Cheeto\vendor\imgui\backends;E:\Git\Cunny-Game-Cheeto\vendor\minhook\include;E:\Git\Cunny-Game-Cheeto\vendor\magic_enum\include\magic_enum;</AdditionalIncludeDirectories>
+      <LinkCompiled>true</LinkCompiled>
+    </ClCompile>
     <ClCompile Include="src\user\cheat\features\NoCost.cpp" />
     <ClCompile Include="src\user\main.cpp">
       <AssemblerOutput>NoListing</AssemblerOutput>
@@ -377,7 +465,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(ProjectDir)src;$(ProjectDir)vendor\UnityResolve;$(ProjectDir)vendor\imgui;$(ProjectDir)vendor\imgui\misc;$(ProjectDir)vendor\imgui\backends;$(ProjectDir)vendor\minhook\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)src;$(ProjectDir)vendor\UnityResolve;$(ProjectDir)vendor\imgui;$(ProjectDir)vendor\imgui\misc;$(ProjectDir)vendor\imgui\backends;$(ProjectDir)vendor\minhook\include;$(ProjectDir)vendor\magic_enum\include\magic_enum;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
@@ -398,7 +486,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(ProjectDir)src;$(ProjectDir)vendor\UnityResolve;$(ProjectDir)vendor\imgui;$(ProjectDir)vendor\imgui\misc;$(ProjectDir)vendor\imgui\backends;$(ProjectDir)vendor\minhook\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)src;$(ProjectDir)vendor\UnityResolve;$(ProjectDir)vendor\imgui;$(ProjectDir)vendor\imgui\misc;$(ProjectDir)vendor\imgui\backends;$(ProjectDir)vendor\minhook\include;$(ProjectDir)vendor\magic_enum\include\magic_enum;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>

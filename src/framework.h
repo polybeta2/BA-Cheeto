@@ -15,7 +15,8 @@
 
 #include <UnityResolve.hpp>
 
-// Include ImGui
+#include <magic_enum.hpp>
+
 #include <imgui.h>
 #include <imgui_impl_dx9.h>
 #include <imgui_impl_dx11.h>
@@ -23,9 +24,10 @@
 #include <imgui_impl_win32.h>
 
 // Project includes
-#include "core/renderer.h"
-#include "ui/gui.h"
-#include "memory/hook_manager.h"
 #include "utils/dx_utils.h"
 #include "utils/logger.h"
+#include "memory/hook_manager.h"
+#include "core/renderer.h"
+#include "ui/gui.h"
 #include "appdata/helpers.h"
+#include "appdata/types.h"
