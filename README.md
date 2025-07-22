@@ -10,8 +10,11 @@ Cute and Funny game cheat
 - No Skill Cost
 - Dumb Enemies (enemies ignore you)
 
+## 📚 Resources
+- GameAssembly db (script applied): [358071 (IDA Pro 9.0)](https://mega.nz/file/T0QVyKib#iRWgX4d3PAVcNlciOaS2zs-bm2yAMbsB24ZIdGJG9cQ)
+
 ## 🙏 Special Thanks
-- [Il2CppInspectorRedux](Il2CppInspectorRedux)
+- [Il2CppInspectorRedux](https://github.com/LukeFZ/Il2CppInspectorRedux)
 - [UnityResolve.hpp](https://github.com/issuimo/UnityResolve.hpp)
 - [imgui](https://github.com/ocornut/imgui)
 - [minhook](https://github.com/TsudaKageyu/minhook)
