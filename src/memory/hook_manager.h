@@ -44,12 +44,12 @@ public:
     void shutdown();
 
     // Install hook using direct function pointer
-    template<typename T>
+    template <typename T>
     static void install(T target, T detour);
     // Install hook using module name + offset
-    template<typename T>
+    template <typename T>
     static void install(const std::string& moduleName, intptr_t offset, T detour);
-    
+
     // Create and enable a hook
     template <typename T>
     bool createHook(void* target, T detour, T* original);
@@ -99,18 +99,16 @@ private:
     void* resolveModuleFunction(const std::string& moduleName, intptr_t offset);
 };
 
-template<typename T>
+template <typename T>
 void HookManager::install(T target, T detour)
 {
     auto& instance = getInstance();
-    if (!instance.m_initialized)
-        instance.initialize();
+    if (!instance.m_initialized) instance.initialize();
 
     void* originalPtr = nullptr;
     auto status = MH_CreateHook(reinterpret_cast<void*>(target), reinterpret_cast<void*>(detour), &originalPtr);
 
-    if (status != MH_OK)
-        return;
+    if (status != MH_OK) return;
 
     status = MH_EnableHook(reinterpret_cast<void*>(target));
     if (status != MH_OK)
@@ -119,7 +117,8 @@ void HookManager::install(T target, T detour)
         return;
     }
 
-    auto hookInfo = std::make_unique<HookInfo>(reinterpret_cast<void*>(target), reinterpret_cast<void*>(detour), originalPtr);
+    auto hookInfo = std::make_unique<HookInfo>(reinterpret_cast<void*>(target), reinterpret_cast<void*>(detour),
+                                               originalPtr);
     hookInfo->enabled = true;
     instance.m_hooks.push_back(std::move(hookInfo));
 
@@ -127,22 +126,19 @@ void HookManager::install(T target, T detour)
     instance.m_detourToOriginal[reinterpret_cast<void*>(detour)] = originalPtr;
 }
 
-template<typename T>
+template <typename T>
 void HookManager::install(const std::string& moduleName, intptr_t offset, T detour)
 {
     auto& instance = getInstance();
-    if (!instance.m_initialized)
-        instance.initialize();
+    if (!instance.m_initialized) instance.initialize();
 
     void* target = instance.resolveModuleFunction(moduleName, offset);
-    if (!target)
-        return;
+    if (!target) return;
 
     void* originalPtr = nullptr;
     auto status = MH_CreateHook(target, reinterpret_cast<void*>(detour), &originalPtr);
 
-    if (status != MH_OK)
-        return;
+    if (status != MH_OK) return;
 
     status = MH_EnableHook(target);
     if (status != MH_OK)
@@ -151,7 +147,8 @@ void HookManager::install(const std::string& moduleName, intptr_t offset, T deto
         return;
     }
 
-    auto hookInfo = std::make_unique<HookInfo>(target, reinterpret_cast<void*>(detour), originalPtr, moduleName, offset);
+    auto hookInfo = std::make_unique<
+        HookInfo>(target, reinterpret_cast<void*>(detour), originalPtr, moduleName, offset);
     hookInfo->enabled = true;
     instance.m_hooks.push_back(std::move(hookInfo));
 

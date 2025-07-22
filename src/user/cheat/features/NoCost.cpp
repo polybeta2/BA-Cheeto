@@ -6,7 +6,7 @@ void NoCost::hProcessSkillCard(PlayerSkillCardManager* _this)
     // TODO: Enable field, GUI, etc.
     _this->CurCost(_this->MaxCost());
     _this->RegenStartDelayFrame(0);
-    
+
     CALL_ORIGINAL(hProcessSkillCard, _this);
 }
 
