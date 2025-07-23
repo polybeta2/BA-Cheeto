@@ -23,11 +23,13 @@
     <ClInclude Include="src\pch.h" />
     <ClInclude Include="src\ui\gui.h" />
     <ClInclude Include="src\user\cheat\cheat.h" />
+    <ClInclude Include="src\user\cheat\FeatureManager.h" />
     <ClInclude Include="src\user\cheat\features\DumbEnemies.h" />
     <ClInclude Include="src\user\cheat\features\NoCost.h" />
     <ClInclude Include="src\user\main.h" />
     <ClInclude Include="src\utils\dx_utils.h" />
     <ClInclude Include="src\utils\logger.h" />
+    <ClInclude Include="src\utils\singleton.h" />
     <ClInclude Include="vendor\imgui\backends\imgui_impl_dx11.h" />
     <ClInclude Include="vendor\imgui\backends\imgui_impl_dx12.h" />
     <ClInclude Include="vendor\imgui\backends\imgui_impl_dx9.h" />
@@ -63,6 +65,7 @@
     </ClCompile>
     <ClCompile Include="src\ui\gui.cpp" />
     <ClCompile Include="src\user\cheat\cheat.cpp" />
+    <ClCompile Include="src\user\cheat\FeatureManager.cpp" />
     <ClCompile Include="src\user\cheat\features\DumbEnemies.cpp" />
     <ClCompile Include="src\user\cheat\features\NoCost.cpp" />
     <ClCompile Include="src\user\main.cpp" />
@@ -107,6 +110,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="src\appdata\helpers.h" />
+    <Content Include="src\user\cheat\FeatureBase.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>

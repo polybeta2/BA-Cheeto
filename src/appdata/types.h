@@ -4,7 +4,6 @@
 
 class SkillCardManager
 {
-public:
 };
 
 class CostSkillCardManager : public SkillCardManager
@@ -22,12 +21,30 @@ public:
     UNITY_FIELD(float, RegenCostBefore, 0x6c)
 };
 
-class PlayerSkillCardManager : public CostSkillCardManager {
+class PlayerSkillCardManager : public CostSkillCardManager
+{
 public:
     UNITY_METHOD_FROM("BlueArchive.dll", "PlayerSkillCardManager", void, ProcessSkillCard, PlayerSkillCardManager*)
 };
 
-enum class TacticEntityType_Enum : int32_t {
+// struct __declspec(align(8)) BattleEntityIdProvider__Fields {
+//     struct IDictionary_2_MX_Logic_BattleEntities_BattleEntityType_System_Int32_ *lastInstanceIds;
+// };
+//
+// struct EntityId {
+//     int32_t uniqueId;
+// };
+
+// struct __declspec(align(8)) Entity__Fields {
+//     struct EntityId _EntityId_k__BackingField;
+//     bool _Active_k__BackingField;
+//     struct List_1_System_String_ *ConditionIdList;
+//     struct List_1_System_String_ *CommandIdList;
+// };
+
+
+enum class TacticEntityType_Enum : int32_t
+{
     None = 0x00000000,
     Student = 0x00000001,
     Minion = 0x00000002,
@@ -42,7 +59,8 @@ enum class TacticEntityType_Enum : int32_t {
     DestructibleProjectile = 0x00000400,
 };
 
-enum class SkillSlot_Enum : int32_t {
+enum class SkillSlot_Enum : int32_t
+{
     None = 0x00000000,
     NormalAttack01 = 0x00000001,
     NormalAttack02 = 0x00000002,
@@ -171,3 +189,50 @@ public:
 
     UNITY_METHOD(bool, CanBeTargeted, BattleEntity*, BattleEntity*, SkillSlot_Enum)
 };
+
+struct __declspec(align(8)) Battle__Fields
+{
+    // BattleLogicState__Enum state;
+    struct LogicGameTime* _GameTime_k__BackingField;
+    int64_t _StartTickRealTime_k__BackingField;
+    int32_t _MaxDurationFrame_k__BackingField;
+    struct IPseudoRandomService* _PseudoRandom_k__BackingField;
+
+    struct
+    Dictionary_2_System_ValueTuple_2_List_1_MX_Logic_BattleEntities_Obe0b78bdab1e49e02c2910c914876bf18bc9c40e0502cd86f581c8ab3bdb053d_
+    * _PopulationGroups_k__BackingField;
+    struct Dictionary_2_System_String_System_Int32_* RandomNumbers;
+    struct BattleEntityIdProvider* _Provider_k__BackingField;
+
+    struct BattleEventBroker* _EventBroker_k__BackingField;
+    struct BattleSummary* _BattleSummary_k__BackingField;
+    struct BattleSetting* _Setting_k__BackingField;
+    double UnitType;
+    double ResultValue;
+    // StageTopography__Enum _StageTopography_k__BackingField;
+    struct CharacterGroupTargetSideMapping* TargetSideMapping;
+    struct PlayerGroup* playerGroup;
+    struct Ground* _Ground_k__BackingField;
+
+    int32_t _TotalEnemyCount_k__BackingField;
+    int32_t _RemainEnemyCount_k__BackingField;
+    struct HashSet_1_MX_Logic_BattleEntities_Obe0b78bdab1e49e02c2910c914876bf18bc9c40e0502cd86f581c8ab3bdb053d_*
+    enemyToKill;
+    bool _ImmuneHitBeforeTimeOutEnd_k__BackingField;
+    bool _HideNPCWhenBattleEnd_k__BackingField;
+    bool _CoverPointOff_k__BackingField;
+    struct ExpirableObjectHolder_1_MX_Logic_Skills_LogicEffects_OverrideStageTopographyEffect_*
+    stageTopographyExpirableObjectHolder;
+};
+
+// struct DamageByHitEffect__Fields {
+//     struct LogicEffect__Fields _;
+//     struct DamageByHitEffectValue *_value_k__BackingField;
+//     struct BasisPoint _DamageMultiplier_k__BackingField;
+//     struct IList_1_MX_Logic_Data_AbilityModifier_ *_DamageModifiers_k__BackingField;
+//     struct Battle *battle;
+//     struct Odf22856f604e4831468153c7b168db244fdfe41f97511ace15c9f569879dc5d4 *logicEffectProcessor;
+//     struct ExpirableObjectHolder_1_DotAbility_ *ability;
+//     struct ExtraStatDamageEffectValue *extraStatDamageEffectValue;
+//     int32_t CurrentCount;
+// };

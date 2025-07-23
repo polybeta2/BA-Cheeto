@@ -39,5 +39,5 @@ private:
     RenderAPI m_currentAPI = RenderAPI::Unknown;
     std::unique_ptr<IRendererBackend> m_backend;
 
-    std::unique_ptr<IRendererBackend> createBackend(RenderAPI api);
+    static std::unique_ptr<IRendererBackend> createBackend(RenderAPI api);
 };

@@ -18,17 +18,17 @@ enum LogType
     Console, File
 };
 
-#define LOG(fmt, ...)   Utils::log(__FILE__, __LINE__, LogLevel::None, fmt, __VA_ARGS__)
-#define LOG_INFO(fmt, ...) Utils::log(__FILE__, __LINE__, LogLevel::Info, fmt, __VA_ARGS__)
+#define LOG(fmt, ...)   utils::log(__FILE__, __LINE__, LogLevel::None, fmt, __VA_ARGS__)
+#define LOG_INFO(fmt, ...) utils::log(__FILE__, __LINE__, LogLevel::Info, fmt, __VA_ARGS__)
 // #ifdef _DEBUG
-#define LOG_DEBUG(fmt, ...)   Utils::log(__FILE__, __LINE__, LogLevel::Debug, fmt, __VA_ARGS__)
+#define LOG_DEBUG(fmt, ...)   utils::log(__FILE__, __LINE__, LogLevel::Debug, fmt, __VA_ARGS__)
 // #else
 // #define LOG_DEBUG(fmt, ...)
 // #endif
-#define LOG_ERROR(fmt, ...)   Utils::log(__FILE__, __LINE__, LogLevel::Error, fmt, __VA_ARGS__)
-#define LOG_WARNING(fmt, ...) Utils::log(__FILE__, __LINE__, LogLevel::Warning, fmt, __VA_ARGS__)
+#define LOG_ERROR(fmt, ...)   utils::log(__FILE__, __LINE__, LogLevel::Error, fmt, __VA_ARGS__)
+#define LOG_WARNING(fmt, ...) utils::log(__FILE__, __LINE__, LogLevel::Warning, fmt, __VA_ARGS__)
 
-namespace Utils
+namespace utils
 {
     void attachConsole();
     void detachConsole();
