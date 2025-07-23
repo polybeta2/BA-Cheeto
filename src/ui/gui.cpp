@@ -1,6 +1,8 @@
 ﻿#include "pch.h"
 #include "gui.h"
 
+#include "user/cheat/FeatureManager.h"
+
 GUI::GUI()
 {
     setupImGuiStyle();
@@ -167,178 +169,21 @@ void GUI::renderMainMenuBar()
 
 void GUI::renderExampleWindow()
 {
-    static bool p_open = true;
 
-    if (!ImGui::Begin("Unity Runtime Inspector - Dashboard", &p_open, ImGuiWindowFlags_None))
-    {
-        ImGui::End();
-        return;
-    }
+    ImGui::Begin("##Taiga74164", nullptr, ImGuiWindowFlags_None);
 
-    // Header section
-    ImGui::PushFont(ImGui::GetIO().Fonts->Fonts[0]); // Use default font for header
-    ImGui::TextColored(ImVec4(0.8f, 0.8f, 1.0f, 1.0f), "Unity Runtime Inspector");
-    ImGui::PopFont();
-    ImGui::TextDisabled("Real-time Unity game inspection and debugging tool");
-    ImGui::Separator();
-
-    // Performance section
-    ImGui::Text("Performance");
-    ImGui::SameLine();
-    helpMarker("Real-time performance metrics");
-
-    float fps = ImGui::GetIO().Framerate;
-    float frameTime = 1000.0f / fps;
-
-    // Performance metrics in a styled box
-    ImGui::BeginChild("Performance", ImVec2(0, 80), true);
-    ImGui::Text("Frame Rate: %.1f FPS", fps);
-    ImGui::Text("Frame Time: %.2f ms", frameTime);
-
-    // Performance indicator
-    ImGui::SameLine();
-    ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 200);
-    if (fps >= 60.0f)
-    {
-        ImGui::TextColored(ImVec4(0.2f, 0.8f, 0.2f, 1.0f), "● Excellent");
-    }
-    else if (fps >= 30.0f)
-    {
-        ImGui::TextColored(ImVec4(0.8f, 0.8f, 0.2f, 1.0f), "● Good");
-    }
-    else
-    {
-        ImGui::TextColored(ImVec4(0.8f, 0.2f, 0.2f, 1.0f), "● Poor");
-    }
-    ImGui::EndChild();
-
-    ImGui::Spacing();
-
-    // Unity Backend Status section
-    ImGui::Text("Unity Backend Status");
-    ImGui::SameLine();
-    helpMarker("Connection status to Unity runtime");
-
-    ImGui::BeginChild("BackendStatus", ImVec2(0, 100), true);
-
-    auto unityModule = GetModuleHandleA("GameAssembly.dll");
-    if (!unityModule)
-    {
-        unityModule = GetModuleHandleA("UnityPlayer.dll");
-    }
-
-    if (unityModule)
-    {
-        ImGui::TextColored(ImVec4(0.2f, 0.8f, 0.2f, 1.0f), "✓ Unity backend detected");
-
-        auto gameAssembly = GetModuleHandleA("GameAssembly.dll");
-        if (gameAssembly)
-        {
-            ImGui::Text("Backend Type: IL2CPP (GameAssembly.dll)");
-            ImGui::Text("Status: Connected and ready");
-        }
-        else
-        {
-            ImGui::Text("Backend Type: Mono (UnityPlayer.dll)");
-            ImGui::Text("Status: Connected and ready");
-        }
-
-        ImGui::Text("Module Address: 0x%p", unityModule);
-    }
-    else
-    {
-        ImGui::TextColored(ImVec4(0.8f, 0.2f, 0.2f, 1.0f), "✗ Unity backend not found");
-        ImGui::TextWrapped("Make sure this is injected into a Unity game.");
-        ImGui::TextWrapped("Supported Unity versions: 2019.4+ (IL2CPP/Mono)");
-    }
-    ImGui::EndChild();
-
-    ImGui::Spacing();
-
-    // Unity Explorer Status section
-    ImGui::Text("Unity Explorer Status");
-    ImGui::SameLine();
-    helpMarker("Scene hierarchy and object inspector status");
-
-    ImGui::Spacing();
-
-    // Quick Actions section
-    ImGui::Text("Quick Actions");
-    ImGui::SameLine();
-    helpMarker("Common actions and shortcuts");
-
-    ImGui::BeginChild("QuickActions", ImVec2(0, 120), true);
-    ImGui::SameLine();
-
-    ImGui::SameLine();
-    if (ImGui::Button("Test Unity API", ImVec2(150, 30)))
-    {
-        try
-        {
-            auto coreModule = UnityResolve::Get("UnityEngine.CoreModule.dll");
-            if (coreModule)
-            {
-                LOG_INFO("[GUI] Unity API test: SUCCESS - Found UnityEngine.CoreModule.dll");
-            }
-            else
-            {
-                LOG_ERROR("[GUI] Unity API test: FAILED - Could not find UnityEngine.CoreModule.dll");
-            }
-        }
-        catch (...)
-        {
-            LOG_ERROR("[GUI] Unity API test: EXCEPTION - Error accessing Unity API");
-        }
-    }
-
-    ImGui::Spacing();
-
-    // Shortcuts info
-    ImGui::Text("Keyboard Shortcuts:");
-    ImGui::BulletText("INSERT - Toggle GUI visibility");
-    ImGui::BulletText("Alt+F4 - Exit application");
-
-    ImGui::EndChild();
-
-    ImGui::Spacing();
-
-    // System Information section
-    ImGui::Text("System Information");
-    ImGui::SameLine();
-    helpMarker("Runtime environment details");
-
-    ImGui::BeginChild("SystemInfo", ImVec2(0, 80), true);
-
-    // Get system info
-    SYSTEM_INFO sysInfo;
-    GetSystemInfo(&sysInfo);
-
-    ImGui::Text("Architecture: %s", (sysInfo.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_AMD64) ? "x64" : "x86");
-    ImGui::Text("Processors: %d", sysInfo.dwNumberOfProcessors);
-    ImGui::Text("Page Size: %d KB", sysInfo.dwPageSize / 1024);
-
-    // Memory info
-    MEMORYSTATUSEX memInfo;
-    memInfo.dwLength = sizeof(MEMORYSTATUSEX);
-    if (GlobalMemoryStatusEx(&memInfo))
-    {
-        ImGui::Text("Total RAM: %.1f GB", static_cast<float>(memInfo.ullTotalPhys) / (1024.0f * 1024.0f * 1024.0f));
-    }
-
-    ImGui::EndChild();
+    cheat::FeatureManager::getInstance().draw();
 
     ImGui::End();
 
-    if (!p_open)
-    {
-        m_showExample = false;
-    }
 }
 
 void GUI::setupImGuiStyle()
 {
     ImGuiStyle& style = ImGui::GetStyle();
 
+    style.WindowMinSize = ImVec2(400, 300);
+    
     // Modern rounded corners
     style.WindowRounding = 8.0f;
     style.FrameRounding = 6.0f;
@@ -439,15 +284,3 @@ void GUI::setupImGuiStyle()
     colors[ImGuiCol_ModalWindowDimBg] = ImVec4(0.80f, 0.80f, 0.80f, 0.35f);
 }
 
-void GUI::helpMarker(const char* desc)
-{
-    ImGui::TextDisabled("(?)");
-    if (ImGui::IsItemHovered())
-    {
-        ImGui::BeginTooltip();
-        ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
-        ImGui::TextUnformatted(desc);
-        ImGui::PopTextWrapPos();
-        ImGui::EndTooltip();
-    }
-}

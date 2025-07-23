@@ -27,22 +27,6 @@ public:
     UNITY_METHOD_FROM("BlueArchive.dll", "PlayerSkillCardManager", void, ProcessSkillCard, PlayerSkillCardManager*)
 };
 
-// struct __declspec(align(8)) BattleEntityIdProvider__Fields {
-//     struct IDictionary_2_MX_Logic_BattleEntities_BattleEntityType_System_Int32_ *lastInstanceIds;
-// };
-//
-// struct EntityId {
-//     int32_t uniqueId;
-// };
-
-// struct __declspec(align(8)) Entity__Fields {
-//     struct EntityId _EntityId_k__BackingField;
-//     bool _Active_k__BackingField;
-//     struct List_1_System_String_ *ConditionIdList;
-//     struct List_1_System_String_ *CommandIdList;
-// };
-
-
 enum class TacticEntityType_Enum : int32_t
 {
     None = 0x00000000,

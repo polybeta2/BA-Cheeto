@@ -13,7 +13,6 @@ namespace cheat::features
 
     void DumbEnemies::draw()
     {
-        ImGui::Checkbox("No Skill Cost", &m_enabled);
     }
 
     void DumbEnemies::onEnable()
@@ -30,8 +29,10 @@ namespace cheat::features
 
     bool DumbEnemies::hCanBeTargeted(BattleEntity* _this, BattleEntity* attacker, SkillSlot_Enum skillSlot)
     {
-        // TODO: Enable field, GUI, etc.
-        if (_this->TacticEntityType() == TacticEntityType_Enum::Student) return false;
+        if (s_instance->isEnabled())
+        {
+            if (_this->TacticEntityType() == TacticEntityType_Enum::Student) return false;
+        }
 
         // LOG_INFO("hCanBeTargeted called for BattleEntity at %p with attacker at %p", _this, attacker);
         // LOG_INFO("TacticalEntityType: %s", magic_enum::enum_name(_this->TacticEntityType()).data());

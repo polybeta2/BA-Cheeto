@@ -29,7 +29,7 @@ namespace cheat
 
         void registerFeature(std::unique_ptr<FeatureBase> feature);
 
-        const char* getSectionName(FeatureSection section);
-        void helpMarker(const char* desc);
+        static const char* getSectionName(FeatureSection section);
+        static void helpMarker(const char* desc);
     };
 }

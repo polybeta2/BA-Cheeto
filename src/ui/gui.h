@@ -32,5 +32,4 @@ private:
 
     // Utility
     void setupImGuiStyle();
-    void helpMarker(const char* desc);
 };

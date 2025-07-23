@@ -59,6 +59,7 @@ namespace cheat
         }
     }
 
+    // TODO: Redesign with sidebar
     void FeatureManager::draw()
     {
         if (ImGui::BeginTabBar("FeatureTabs", ImGuiTabBarFlags_None))
@@ -67,7 +68,7 @@ namespace cheat
             {
                 auto section = static_cast<FeatureSection>(sectionIdx);
                 auto sectionFeatures = getFeaturesBySection(section);
-                if (!sectionFeatures.empty()) continue;
+                if (sectionFeatures.empty()) continue;
 
                 if (ImGui::BeginTabItem(getSectionName(section)))
                 {
@@ -76,29 +77,19 @@ namespace cheat
                     for (auto* feature : sectionFeatures)
                     {
                         bool enabled = feature->isEnabled();
-                        if (ImGui::Checkbox(("##" + feature->getName()).c_str(), &enabled))
-                        {
-                            feature->setEnabled(enabled);
-                        }
+                        if (ImGui::Checkbox(feature->getName().c_str(), &enabled))
+						{
+							feature->setEnabled(enabled);
+						}
 
-                        ImGui::SameLine();
-                        ImGui::Text("%s", feature->getName().c_str());
-
-                        // Help marker with description
                         if (!feature->getDescription().empty())
                         {
                             ImGui::SameLine();
                             helpMarker(feature->getDescription().c_str());
                         }
-
-                        // Feature-specific controls (indented)
-                        if (enabled)
-                        {
-                            ImGui::Indent(20.0f);
-                            feature->draw();
-                            ImGui::Unindent(20.0f);
-                        }
-
+                        
+                        feature->draw();
+                    
                         ImGui::Spacing();
                         ImGui::Separator();
                         ImGui::Spacing();
