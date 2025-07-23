@@ -4,7 +4,7 @@
 #include <imgui_impl_dx11.h>
 #include <imgui_impl_win32.h>
 
-#include "NotoSans.hpp"
+#include "core/rendering/fonts/NotoSans.hpp"
 #include "ui/gui.h"
 #include "utils/dx_utils.h"
 

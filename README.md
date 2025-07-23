@@ -16,7 +16,9 @@
 - Dumb Enemies (enemies ignore you)
 
 ## 📚 Resources
-- GameAssembly db (script applied): [358071 (IDA Pro 9.0)](https://mega.nz/file/T0QVyKib#iRWgX4d3PAVcNlciOaS2zs-bm2yAMbsB24ZIdGJG9cQ)
+- IDA 9.0 db (script applied)
+    - [v358071](https://mega.nz/file/T0QVyKib#iRWgX4d3PAVcNlciOaS2zs-bm2yAMbsB24ZIdGJG9cQ)
+    - [v361357 (md5: 1b1da9641a7ebea81c15114c19269a53)]()
 
 ## 🙏 Special Thanks
 - [Il2CppInspectorRedux](https://github.com/LukeFZ/Il2CppInspectorRedux)

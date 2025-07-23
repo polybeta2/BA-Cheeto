@@ -90,18 +90,6 @@
     <ClInclude Include="src\appdata\types-helper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\backend\dx11_backend.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\backend\NotoSans.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\backend\renderer_backend.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\core\renderer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\memory\hook_manager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -141,6 +129,39 @@
     <ClInclude Include="src\user\cheat\FeatureBase.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\appdata\enums.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\nano-signal-slot\nano_function.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\nano-signal-slot\nano_mutex.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\nano-signal-slot\nano_observer.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\nano-signal-slot\nano_signal_slot.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\events\event.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\events\event_manager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\rendering\backend\dx11_backend.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\rendering\backend\renderer_backend.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\rendering\fonts\NotoSans.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\rendering\renderer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="vendor\imgui\imgui.cpp">
@@ -168,15 +189,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="vendor\imgui\imgui_widgets.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\backend\dx11_backend.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\backend\renderer_backend.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\renderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\memory\hook_manager.cpp">
@@ -210,6 +222,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\user\cheat\FeatureManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\events\event_manager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\rendering\backend\dx11_backend.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\rendering\renderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

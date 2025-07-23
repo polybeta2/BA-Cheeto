@@ -11,13 +11,16 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\appdata\enums.h" />
     <ClInclude Include="src\appdata\helpers.h" />
     <ClInclude Include="src\appdata\types-helper.h" />
     <ClInclude Include="src\appdata\types.h" />
-    <ClInclude Include="src\backend\dx11_backend.h" />
-    <ClInclude Include="src\backend\NotoSans.hpp" />
-    <ClInclude Include="src\backend\renderer_backend.h" />
-    <ClInclude Include="src\core\renderer.h" />
+    <ClInclude Include="src\core\events\event.h" />
+    <ClInclude Include="src\core\events\event_manager.h" />
+    <ClInclude Include="src\core\rendering\backend\dx11_backend.h" />
+    <ClInclude Include="src\core\rendering\backend\renderer_backend.h" />
+    <ClInclude Include="src\core\rendering\fonts\NotoSans.hpp" />
+    <ClInclude Include="src\core\rendering\renderer.h" />
     <ClInclude Include="src\framework.h" />
     <ClInclude Include="src\memory\hook_manager.h" />
     <ClInclude Include="src\pch.h" />
@@ -52,12 +55,16 @@
     <ClInclude Include="vendor\magic_enum\include\magic_enum\magic_enum_switch.hpp" />
     <ClInclude Include="vendor\magic_enum\include\magic_enum\magic_enum_utility.hpp" />
     <ClInclude Include="vendor\minhook\include\MinHook.h" />
+    <ClInclude Include="vendor\nano-signal-slot\nano_function.hpp" />
+    <ClInclude Include="vendor\nano-signal-slot\nano_mutex.hpp" />
+    <ClInclude Include="vendor\nano-signal-slot\nano_observer.hpp" />
+    <ClInclude Include="vendor\nano-signal-slot\nano_signal_slot.hpp" />
     <ClInclude Include="vendor\UnityResolve\UnityResolve.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\backend\dx11_backend.cpp" />
-    <ClCompile Include="src\backend\renderer_backend.cpp" />
-    <ClCompile Include="src\core\renderer.cpp" />
+    <ClCompile Include="src\core\events\event_manager.cpp" />
+    <ClCompile Include="src\core\rendering\backend\dx11_backend.cpp" />
+    <ClCompile Include="src\core\rendering\renderer.cpp" />
     <ClCompile Include="src\dllmain.cpp" />
     <ClCompile Include="src\memory\hook_manager.cpp" />
     <ClCompile Include="src\pch.cpp">
@@ -113,6 +120,9 @@
     <Content Include="src\appdata\helpers.h" />
     <Content Include="src\user\cheat\FeatureBase.h" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="src\core\rendering\fonts\" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
@@ -164,7 +174,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(ProjectDir)src;$(ProjectDir)vendor\UnityResolve;$(ProjectDir)vendor\imgui;$(ProjectDir)vendor\imgui\misc;$(ProjectDir)vendor\imgui\backends;$(ProjectDir)vendor\minhook\include;$(ProjectDir)vendor\magic_enum\include\magic_enum;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)src;$(ProjectDir)vendor\UnityResolve;$(ProjectDir)vendor\imgui;$(ProjectDir)vendor\imgui\misc;$(ProjectDir)vendor\imgui\backends;$(ProjectDir)vendor\minhook\include;$(ProjectDir)vendor\magic_enum\include\magic_enum;$(ProjectDir)vendor\nano-signal-slot;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
@@ -186,7 +196,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(ProjectDir)src;$(ProjectDir)vendor\UnityResolve;$(ProjectDir)vendor\imgui;$(ProjectDir)vendor\imgui\misc;$(ProjectDir)vendor\imgui\backends;$(ProjectDir)vendor\minhook\include;$(ProjectDir)vendor\magic_enum\include\magic_enum;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)src;$(ProjectDir)vendor\UnityResolve;$(ProjectDir)vendor\imgui;$(ProjectDir)vendor\imgui\misc;$(ProjectDir)vendor\imgui\backends;$(ProjectDir)vendor\minhook\include;$(ProjectDir)vendor\magic_enum\include\magic_enum;$(ProjectDir)vendor\nano-signal-slot;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>

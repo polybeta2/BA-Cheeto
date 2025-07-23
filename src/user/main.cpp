@@ -1,8 +1,8 @@
 ﻿#include "pch.h"
 #include "main.h"
 
+#include "core/rendering/renderer.h"
 #include "cheat/cheat.h"
-
 
 void Main::run()
 {
