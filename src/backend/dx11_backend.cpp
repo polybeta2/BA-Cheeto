@@ -1,9 +1,10 @@
 ﻿#include "pch.h"
 #include "dx11_backend.h"
 
+#include <imgui_impl_dx11.h>
+#include <imgui_impl_win32.h>
+
 #include "NotoSans.hpp"
-#include "imgui_impl_dx11.h"
-#include "imgui_impl_win32.h"
 #include "ui/gui.h"
 #include "utils/dx_utils.h"
 
@@ -27,7 +28,7 @@ DX11Backend::DX11Backend()
 
 DX11Backend::~DX11Backend()
 {
-    shutdown();
+    DX11Backend::shutdown();
     s_instance = nullptr;
 }
 
@@ -99,16 +100,16 @@ LRESULT CALLBACK DX11Backend::hookedWndProc(HWND hWnd, UINT uMsg, WPARAM wParam,
 
 bool DX11Backend::setupHooks()
 {
-    HWND tempWindow = Utils::DXUtils::createTempWindow();
+    HWND tempWindow = utils::DXUtils::createTempWindow();
     if (!tempWindow) return false;
 
     ID3D11Device* tempDevice = nullptr;
     ID3D11DeviceContext* tempContext = nullptr;
     IDXGISwapChain* tempSwapChain = nullptr;
 
-    if (!Utils::DXUtils::createTempD3D11Device(tempWindow, &tempDevice, &tempContext, &tempSwapChain))
+    if (!utils::DXUtils::createTempD3D11Device(tempWindow, &tempDevice, &tempContext, &tempSwapChain))
     {
-        Utils::DXUtils::destroyTempWindow(tempWindow);
+        utils::DXUtils::destroyTempWindow(tempWindow);
         return false;
     }
 
@@ -120,7 +121,7 @@ bool DX11Backend::setupHooks()
     tempSwapChain->Release();
     tempContext->Release();
     tempDevice->Release();
-    Utils::DXUtils::destroyTempWindow(tempWindow);
+    utils::DXUtils::destroyTempWindow(tempWindow);
 
     // Create hooks
     auto& hookManager = HookManager::getInstance();

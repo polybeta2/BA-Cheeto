@@ -2,7 +2,7 @@
 
 #include <UnityResolve.hpp>
 
-namespace App
+namespace app
 {
     inline UnityResolve::Class* getClass(const std::string& module, const std::string& className)
     {

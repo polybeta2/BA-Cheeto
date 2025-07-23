@@ -1,6 +1,7 @@
 ﻿#pragma once
 
-namespace Cheat
+namespace cheat
 {
     void init();
+    void update();
 }

@@ -45,10 +45,10 @@ public:
 
     // Install hook using direct function pointer
     template <typename T>
-    static void install(T target, T detour);
+    static bool install(T target, T detour);
     // Install hook using module name + offset
     template <typename T>
-    static void install(const std::string& moduleName, intptr_t offset, T detour);
+    static bool install(const std::string& moduleName, intptr_t offset, T detour);
 
     // Create and enable a hook
     template <typename T>
@@ -100,21 +100,25 @@ private:
 };
 
 template <typename T>
-void HookManager::install(T target, T detour)
+bool HookManager::install(T target, T detour)
 {
     auto& instance = getInstance();
-    if (!instance.m_initialized) instance.initialize();
+    if (!instance.m_initialized && !instance.initialize()) return false;
 
     void* originalPtr = nullptr;
     auto status = MH_CreateHook(reinterpret_cast<void*>(target), reinterpret_cast<void*>(detour), &originalPtr);
-
-    if (status != MH_OK) return;
+    if (status != MH_OK)
+    {
+        LOG_ERROR("Failed to create hook %d", status);
+        return false;
+    }
 
     status = MH_EnableHook(reinterpret_cast<void*>(target));
     if (status != MH_OK)
     {
         MH_RemoveHook(reinterpret_cast<void*>(target));
-        return;
+        LOG_ERROR("Failed to enable hook: %d", status);
+        return false;
     }
 
     auto hookInfo = std::make_unique<HookInfo>(reinterpret_cast<void*>(target), reinterpret_cast<void*>(detour),
@@ -124,27 +128,32 @@ void HookManager::install(T target, T detour)
 
     // Add to fast lookup map
     instance.m_detourToOriginal[reinterpret_cast<void*>(detour)] = originalPtr;
+    return true;
 }
 
 template <typename T>
-void HookManager::install(const std::string& moduleName, intptr_t offset, T detour)
+bool HookManager::install(const std::string& moduleName, intptr_t offset, T detour)
 {
     auto& instance = getInstance();
-    if (!instance.m_initialized) instance.initialize();
+    if (!instance.m_initialized && !instance.initialize()) return false;
 
     void* target = instance.resolveModuleFunction(moduleName, offset);
-    if (!target) return;
+    if (!target) return false;
 
     void* originalPtr = nullptr;
     auto status = MH_CreateHook(target, reinterpret_cast<void*>(detour), &originalPtr);
-
-    if (status != MH_OK) return;
+    if (status != MH_OK)
+    {
+        LOG_ERROR("Failed to create hook %d", status);
+        return false;
+    }
 
     status = MH_EnableHook(target);
     if (status != MH_OK)
     {
         MH_RemoveHook(target);
-        return;
+        LOG_ERROR("Failed to enable hook: %d", status);
+        return false;
     }
 
     auto hookInfo = std::make_unique<
@@ -153,6 +162,7 @@ void HookManager::install(const std::string& moduleName, intptr_t offset, T deto
     instance.m_hooks.push_back(std::move(hookInfo));
 
     instance.m_detourToOriginal[reinterpret_cast<void*>(detour)] = originalPtr;
+    return true;
 }
 
 template <typename T>
