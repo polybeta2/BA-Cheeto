@@ -1,13 +1,13 @@
 ﻿#include "pch.h"
 #include "logger.h"
 
-std::string logFilePath;
-LogType logType = Console;
-std::mutex logMutex;
-std::unique_ptr<std::ofstream> logFile;
-
 namespace utils
 {
+    std::string logFilePath;
+    LogType logType = Console;
+    std::mutex logMutex;
+    std::unique_ptr<std::ofstream> logFile;
+    
     void attachConsole()
     {
         AllocConsole();

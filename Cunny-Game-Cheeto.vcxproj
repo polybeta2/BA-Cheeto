@@ -28,8 +28,10 @@
     <ClInclude Include="src\user\cheat\cheat.h" />
     <ClInclude Include="src\user\cheat\FeatureBase.h" />
     <ClInclude Include="src\user\cheat\FeatureManager.h" />
-    <ClInclude Include="src\user\cheat\features\DumbEnemies.h" />
-    <ClInclude Include="src\user\cheat\features\NoCost.h" />
+    <ClInclude Include="src\user\cheat\features\combat\DumbEnemies.h" />
+    <ClInclude Include="src\user\cheat\features\combat\OneHitKill.h" />
+    <ClInclude Include="src\user\cheat\features\debug\Debug.h" />
+    <ClInclude Include="src\user\cheat\features\player\NoCost.h" />
     <ClInclude Include="src\user\main.h" />
     <ClInclude Include="src\utils\dx_utils.h" />
     <ClInclude Include="src\utils\logger.h" />
@@ -74,8 +76,10 @@
     <ClCompile Include="src\ui\gui.cpp" />
     <ClCompile Include="src\user\cheat\cheat.cpp" />
     <ClCompile Include="src\user\cheat\FeatureManager.cpp" />
-    <ClCompile Include="src\user\cheat\features\DumbEnemies.cpp" />
-    <ClCompile Include="src\user\cheat\features\NoCost.cpp" />
+    <ClCompile Include="src\user\cheat\features\combat\DumbEnemies.cpp" />
+    <ClCompile Include="src\user\cheat\features\combat\OneHitKill.cpp" />
+    <ClCompile Include="src\user\cheat\features\debug\Debug.cpp" />
+    <ClCompile Include="src\user\cheat\features\player\NoCost.cpp" />
     <ClCompile Include="src\user\main.cpp" />
     <ClCompile Include="src\utils\dx_utils.cpp" />
     <ClCompile Include="src\utils\logger.cpp" />

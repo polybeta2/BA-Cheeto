@@ -2,18 +2,23 @@
 #include "cheat.h"
 
 #include "FeatureManager.h"
-#include "features/NoCost.h"
-#include "features/DumbEnemies.h"
 
-using namespace cheat::features;
+#include "features/player/NoCost.h"
+
+#include "features/combat/DumbEnemies.h"
+#include "features/combat/OneHitKill.h"
+
+#include "features/debug/Debug.h"
 
 void cheat::init()
 {
     auto& manager = FeatureManager::getInstance();
 
     manager.registerFeatures<
-        NoCost,
-        DumbEnemies
+        features::Debug,
+        features::NoCost,
+        features::DumbEnemies,
+        features::OneHitKill
     >();
 
     manager.init();

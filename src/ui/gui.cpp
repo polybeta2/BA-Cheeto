@@ -78,58 +78,15 @@ void GUI::renderMainMenuBar()
                 if (ImGui::MenuItem("Light"))
                 {
                     ImGui::StyleColorsLight();
-                    setupImGuiStyle();
                 }
                 if (ImGui::MenuItem("Classic"))
                 {
                     ImGui::StyleColorsClassic();
-                    setupImGuiStyle();
                 }
                 ImGui::EndMenu();
             }
 
             ImGui::EndMenu();
-        }
-
-        // Help menu
-        if (ImGui::BeginMenu("Help"))
-        {
-            if (ImGui::MenuItem("About Unity Runtime Inspector"))
-            {
-                ImGui::OpenPopup("About Unity Runtime Inspector");
-            }
-            ImGui::Separator();
-            if (ImGui::MenuItem("Controls Reference"))
-            {
-                ImGui::OpenPopup("Controls Reference");
-            }
-            ImGui::EndMenu();
-        }
-
-        // Status section with better visual indicators
-        ImGui::Separator();
-
-        // Unity backend status
-        ImGui::SameLine();
-        ImGui::Separator();
-        ImGui::SameLine();
-
-        auto unityModule = GetModuleHandleA("GameAssembly.dll");
-        if (!unityModule)
-        {
-            unityModule = GetModuleHandleA("UnityPlayer.dll");
-        }
-
-        ImGui::Text("Unity:");
-        ImGui::SameLine();
-
-        if (unityModule)
-        {
-            ImGui::TextColored(ImVec4(0.2f, 0.8f, 0.2f, 1.0f), "● Connected");
-        }
-        else
-        {
-            ImGui::TextColored(ImVec4(0.8f, 0.2f, 0.2f, 1.0f), "● Disconnected");
         }
 
         // Performance info

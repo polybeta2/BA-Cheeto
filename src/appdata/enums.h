@@ -138,3 +138,79 @@ enum class BattleLogicState_Enum : int32_t
     Finished = 0x00000003,
     Paused = 0x00000004,
 };
+
+enum class BattleEndType_Enum : int32_t
+{
+    None = 0x00000000,
+    AllNearlyDead = 0x00000001,
+    TimeOut = 0x00000002,
+    EscortFailed = 0x00000003,
+    Clear = 0x00000004,
+};
+
+enum class BattleTypes_Enum : int32_t
+{
+    None = 0x00000000,
+    Adventure = 0x00000001,
+    ScenarioMode = 0x00000002,
+    WeekDungeonChaserA = 0x00000004,
+    WeekDungeonBlood = 0x00000008,
+    WeekDungeonChaserB = 0x00000010,
+    WeekDungeonChaserC = 0x00000020,
+    WeekDungeonFindGift = 0x00000040,
+    EventContent = 0x00000080,
+    TutorialAdventure = 0x00000100,
+    Profiling = 0x00000200,
+    SingleRaid = 0x00000800,
+    MultiRaid = 0x00001000,
+    PracticeRaid = 0x00002000,
+    EliminateRaid = 0x00004000,
+    MultiFloorRaid = 0x00008000,
+    MinigameDefense = 0x00100000,
+    Arena = 0x00200000,
+    TimeAttack = 0x00800000,
+    SchoolDungeonA = 0x02000000,
+    SchoolDungeonB = 0x04000000,
+    SchoolDungeonC = 0x08000000,
+    WorldRaid = 0x10000000,
+    Conquest = 0x20000000,
+    FieldStory = 0x40000000,
+    FieldContent = 0x7fffffff,
+    PvE = -301988865,
+    WeekDungeon = 0x0000007c,
+    SchoolDungeon = 0x0e000000,
+    Raid = 0x00007800,
+    PvP = 0x00200000,
+    All = -1,
+};
+
+enum class GroupTag_Enum : int32_t
+{
+    None = 0x00000000,
+    Group01 = 0x00000001,
+    Group02 = 0x00000002,
+    Group03 = 0x00000004,
+    Group04 = 0x00000008,
+    Group05 = 0x00000010,
+    Group06 = 0x00000020,
+    Group07 = 0x00000040,
+    Group08 = 0x00000080,
+    Group09 = 0x00000100,
+    Group10 = 0x00000200,
+    Group11 = 0x00000400,
+    Group12 = 0x00000800,
+    Group13 = 0x00001000,
+    Group14 = 0x00002000,
+    Group15 = 0x00004000,
+    Group16 = 0x00008000,
+};
+
+enum class ArmorType_Enum : int32_t
+{
+    LightArmor = 0x00000000,
+    HeavyArmor = 0x00000001,
+    Unarmed = 0x00000002,
+    Structure = 0x00000003,
+    Normal = 0x00000004,
+    ElasticArmor = 0x00000005,
+};

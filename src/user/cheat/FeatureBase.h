@@ -9,6 +9,7 @@ namespace cheat
         Player,
         Combat,
         Settings,
+        Debug,
         COUNT
     };
 
@@ -25,8 +26,13 @@ namespace cheat
 
         virtual ~FeatureBase() = default;
 
-        virtual bool init() = 0;
-        virtual void draw() = 0;
+        virtual void init()
+        {
+        }
+
+        virtual void draw()
+        {
+        }
 
         virtual void update()
         {

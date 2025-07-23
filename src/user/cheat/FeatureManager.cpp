@@ -24,14 +24,8 @@ namespace cheat
         {
             try
             {
-                if (feature->init())
-                {
-                    LOG_INFO("Feature '%s' initialized successfully", feature->getName().c_str());
-                }
-                else
-                {
-                    LOG_ERROR("Failed to initialize feature '%s'", feature->getName().c_str());
-                }
+                feature->init();
+                LOG_INFO("Feature '%s' initialized successfully", feature->getName().c_str());
             }
             catch (const std::exception& e)
             {
@@ -48,7 +42,6 @@ namespace cheat
             {
                 try
                 {
-                    // TODO: Maybe use an event and hook feature->update() to GameMain_Update to run with the game loop
                     feature->update();
                 }
                 catch (const std::exception& e)
@@ -78,18 +71,18 @@ namespace cheat
                     {
                         bool enabled = feature->isEnabled();
                         if (ImGui::Checkbox(feature->getName().c_str(), &enabled))
-						{
-							feature->setEnabled(enabled);
-						}
+                        {
+                            feature->setEnabled(enabled);
+                        }
 
                         if (!feature->getDescription().empty())
                         {
                             ImGui::SameLine();
                             helpMarker(feature->getDescription().c_str());
                         }
-                        
+
                         feature->draw();
-                    
+
                         ImGui::Spacing();
                         ImGui::Separator();
                         ImGui::Spacing();
@@ -132,6 +125,8 @@ namespace cheat
                 return "Combat";
             case FeatureSection::Settings:
                 return "Settings";
+            case FeatureSection::Debug:
+                return "Debug";
             default:
                 return "Unknown";
         }

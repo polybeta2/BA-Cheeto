@@ -4,38 +4,40 @@
 #include <memory>
 #include <stdexcept>
 
-enum LogLevel
-{
-    None,
-    Info,
-    Debug,
-    Error,
-    Warning
-};
 
-enum LogType
-{
-    Console, File
-};
 
-#define LOG(fmt, ...)   utils::log(__FILE__, __LINE__, LogLevel::None, fmt, __VA_ARGS__)
-#define LOG_INFO(fmt, ...) utils::log(__FILE__, __LINE__, LogLevel::Info, fmt, __VA_ARGS__)
+#define LOG(fmt, ...)   utils::log(__FILE__, __LINE__, utils::LogLevel::None, fmt, __VA_ARGS__)
+#define LOG_INFO(fmt, ...) utils::log(__FILE__, __LINE__, utils::LogLevel::Info, fmt, __VA_ARGS__)
 // #ifdef _DEBUG
-#define LOG_DEBUG(fmt, ...)   utils::log(__FILE__, __LINE__, LogLevel::Debug, fmt, __VA_ARGS__)
+#define LOG_DEBUG(fmt, ...)   utils::log(__FILE__, __LINE__, utils::LogLevel::Debug, fmt, __VA_ARGS__)
 // #else
 // #define LOG_DEBUG(fmt, ...)
 // #endif
-#define LOG_ERROR(fmt, ...)   utils::log(__FILE__, __LINE__, LogLevel::Error, fmt, __VA_ARGS__)
-#define LOG_WARNING(fmt, ...) utils::log(__FILE__, __LINE__, LogLevel::Warning, fmt, __VA_ARGS__)
+#define LOG_ERROR(fmt, ...)   utils::log(__FILE__, __LINE__, utils::LogLevel::Error, fmt, __VA_ARGS__)
+#define LOG_WARNING(fmt, ...) utils::log(__FILE__, __LINE__, utils::LogLevel::Warning, fmt, __VA_ARGS__)
 
 namespace utils
 {
+    enum LogLevel
+    {
+        None,
+        Info,
+        Debug,
+        Error,
+        Warning
+    };
+
+    enum LogType
+    {
+        Console, File
+    };
+    
     void attachConsole();
     void detachConsole();
     void clearConsole();
     char consoleReadKey();
     void logToFile(const std::string& filepath, const std::string& msg);
-    void log(const char* filepath, int line, LogLevel level, const char* fmt, ...);
+    void log(const char* filepath, int line, utils::LogLevel level, const char* fmt, ...);
     bool prepareFileLogging(const std::string& directory);
     void setLogType(LogType type);
     void closeFileLogging();

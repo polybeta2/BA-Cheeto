@@ -7,25 +7,22 @@ namespace cheat::features
         : FeatureBase("No Cost", "Removes skill costs and enables instant regeneration",
                       FeatureSection::Player)
     {
-    }
-
-    void NoCost::draw()
-    {
+        HookManager::install(PlayerSkillCardManager::ProcessSkillCard(), hPlayerSkillCardManager_ProcessSkillCard);
     }
 
     void NoCost::onEnable()
     {
         // TODO: replace with imgui toast
-        LOG_INFO("%s enabled", getName());
+        LOG_INFO("%s enabled", getName().c_str());
     }
 
     void NoCost::onDisable()
     {
         // TODO: replace with imgui toast
-        LOG_INFO("%s disabled", getName());
+        LOG_INFO("%s disabled", getName().c_str());
     }
 
-    void NoCost::hProcessSkillCard(PlayerSkillCardManager* _this)
+    void NoCost::hPlayerSkillCardManager_ProcessSkillCard(PlayerSkillCardManager* _this)
     {
         if (s_instance->isEnabled())
         {
@@ -33,11 +30,6 @@ namespace cheat::features
             _this->RegenStartDelayFrame(0);
         }
 
-        CALL_ORIGINAL(hProcessSkillCard, _this);
-    }
-
-    bool NoCost::init()
-    {
-        return HookManager::install(PlayerSkillCardManager::ProcessSkillCard(), hProcessSkillCard);
+        CALL_ORIGINAL(hPlayerSkillCardManager_ProcessSkillCard, _this);
     }
 }
