@@ -4,8 +4,9 @@
 #include "features/NoCost.h"
 #include "features/DumbEnemies.h"
 
-void Cheat::init()
+void cheat::init()
 {
-    NoCost::init();
-    DumbEnemies::init();
+    // TODO: Call feature manager and register all features here
+    features::NoCost::getInstance()->init();
+    features::DumbEnemies::getInstance()->init();
 }

@@ -6,7 +6,7 @@
 
 void Main::run()
 {
-    Utils::attachConsole();
+    utils::attachConsole();
 
     LOG_INFO("Starting initialization...");
     Sleep(1000);
@@ -26,7 +26,7 @@ void Main::run()
         LOG_INFO("Failed to initialize renderer!");
     }
 
-    Cheat::init();
+    cheat::init();
 }
 
 UnityModuleBackendInfo Main::getUnityBackend()

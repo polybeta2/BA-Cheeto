@@ -1,7 +1,6 @@
 ﻿#include "pch.h"
 #include "renderer.h"
 
-// #include "backend/dx9_backend.h"
 #include "backend/dx11_backend.h"
 // #include "backend/dx12_backend.h"
 
@@ -21,7 +20,7 @@ bool Renderer::initialize()
     if (m_initialized) return true;
 
     // Auto-detect render API
-    RenderAPI detectedAPI = Utils::DXUtils::getRenderAPI();
+    RenderAPI detectedAPI = utils::DXUtils::getRenderAPI();
     if (detectedAPI == RenderAPI::Unknown) return false;
 
     return initialize(detectedAPI);
@@ -75,9 +74,6 @@ std::unique_ptr<IRendererBackend> Renderer::createBackend(RenderAPI api)
 {
     switch (api)
     {
-        case RenderAPI::DirectX9:
-            // TODO: Implement DirectX9 backend
-            return nullptr;
         case RenderAPI::DirectX11:
             return std::make_unique<DX11Backend>();
         case RenderAPI::DirectX12:

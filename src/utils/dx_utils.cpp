@@ -1,27 +1,20 @@
 ﻿#include "pch.h"
 #include "dx_utils.h"
 
-namespace Utils
+namespace utils
 {
     const wchar_t* DXUtils::TEMP_WINDOW_CLASS = L"DXUtilsTempWindow";
     bool DXUtils::s_windowClassRegistered = false;
 
     RenderAPI DXUtils::getRenderAPI()
     {
-        HMODULE d3d9 = getD3D9Module();
         HMODULE d3d11 = getD3D11Module();
         HMODULE d3d12 = getD3D12Module();
 
-        if (d3d9) return RenderAPI::DirectX9;
         if (d3d11) return RenderAPI::DirectX11;
         if (d3d12) return RenderAPI::DirectX12;
 
         return RenderAPI::Unknown;
-    }
-
-    HMODULE DXUtils::getD3D9Module()
-    {
-        return GetModuleHandleW(L"d3d9.dll");
     }
 
     HMODULE DXUtils::getD3D11Module()
@@ -37,47 +30,6 @@ namespace Utils
     HMODULE DXUtils::getDXGIModule()
     {
         return GetModuleHandleW(L"dxgi.dll");
-    }
-
-    bool DXUtils::createTempD3D9Device(HWND hwnd, IDirect3DDevice9** device)
-    {
-        HMODULE d3d9Module = getD3D9Module();
-        if (!d3d9Module) return false;
-
-        using Direct3DCreate9_t = IDirect3D9* (WINAPI*)(UINT SDKVersion);
-        auto Direct3DCreate9 = (Direct3DCreate9_t)GetProcAddress(d3d9Module, "Direct3DCreate9");
-        if (!Direct3DCreate9) return false;
-
-        IDirect3D9* d3d9 = Direct3DCreate9(D3D_SDK_VERSION);
-        if (!d3d9) return false;
-
-        D3DPRESENT_PARAMETERS params;
-        params.BackBufferWidth = 1;
-        params.BackBufferHeight = 1;
-        params.BackBufferFormat = D3DFMT_UNKNOWN;
-        params.BackBufferCount = 1;
-        params.MultiSampleType = D3DMULTISAMPLE_NONE;
-        params.MultiSampleQuality = NULL;
-        params.SwapEffect = D3DSWAPEFFECT_DISCARD;
-        params.hDeviceWindow = hwnd;
-        params.Windowed = TRUE;
-        params.EnableAutoDepthStencil = FALSE;
-        params.AutoDepthStencilFormat = D3DFMT_UNKNOWN;
-        params.Flags = NULL;
-        params.FullScreen_RefreshRateInHz = 0;
-        params.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
-
-        HRESULT hr = d3d9->CreateDevice(
-            D3DADAPTER_DEFAULT,
-            D3DDEVTYPE_NULLREF,
-            hwnd,
-            D3DCREATE_SOFTWARE_VERTEXPROCESSING | D3DCREATE_DISABLE_DRIVER_MANAGEMENT,
-            &params,
-            device);
-
-        d3d9->Release();
-
-        return SUCCEEDED(hr);
     }
 
     bool DXUtils::createTempD3D11Device(HWND hwnd, ID3D11Device** device, ID3D11DeviceContext** context,

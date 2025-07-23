@@ -6,7 +6,7 @@ LogType logType = Console;
 std::mutex logMutex;
 std::unique_ptr<std::ofstream> logFile;
 
-namespace Utils
+namespace utils
 {
     void attachConsole()
     {

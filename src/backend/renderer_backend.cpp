@@ -6,13 +6,10 @@
 
 std::unique_ptr<IRendererBackend> createBackend()
 {
-    RenderAPI api = Utils::DXUtils::getRenderAPI();
+    RenderAPI api = utils::DXUtils::getRenderAPI();
 
     switch (api)
     {
-        case RenderAPI::DirectX9:
-            // TODO: Implement DirectX9 backend
-            return nullptr;
         case RenderAPI::DirectX11:
             return std::make_unique<DX11Backend>();
         case RenderAPI::DirectX12:
