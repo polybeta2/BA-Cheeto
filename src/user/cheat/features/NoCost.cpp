@@ -37,17 +37,6 @@ namespace cheat::features
 
     bool NoCost::init()
     {
-        try
-        {
-            // TODO modularize this. im just busy rn
-            HookManager::install(PlayerSkillCardManager::ProcessSkillCard(), hProcessSkillCard);
-            LOG_INFO("%s initialized successfully", getName());
-            return true;
-        }
-        catch (const std::exception& e)
-        {
-            LOG_ERROR("Failed to initialize $s: %s", getName(), e.what());
-            return false;
-        }
+        return HookManager::install(PlayerSkillCardManager::ProcessSkillCard(), hProcessSkillCard);
     }
 }

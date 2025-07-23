@@ -6,10 +6,10 @@ namespace cheat::features
     class DumbEnemies : public FeatureBase
     {
         DECL_SINGLETON(DumbEnemies)
-        
+
     public:
         DumbEnemies();
-        
+
         bool init() override;
         void draw() override;
 

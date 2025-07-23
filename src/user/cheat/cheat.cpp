@@ -1,12 +1,25 @@
 ﻿#include "pch.h"
 #include "cheat.h"
 
+#include "FeatureManager.h"
 #include "features/NoCost.h"
 #include "features/DumbEnemies.h"
 
+using namespace cheat::features;
+
 void cheat::init()
 {
-    // TODO: Call feature manager and register all features here
-    features::NoCost::getInstance()->init();
-    features::DumbEnemies::getInstance()->init();
+    auto& manager = FeatureManager::getInstance();
+
+    manager.registerFeatures<
+        NoCost,
+        DumbEnemies
+    >();
+
+    manager.init();
+}
+
+void cheat::update()
+{
+    FeatureManager::getInstance().update();
 }

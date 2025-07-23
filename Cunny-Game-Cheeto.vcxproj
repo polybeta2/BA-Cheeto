@@ -23,6 +23,7 @@
     <ClInclude Include="src\pch.h" />
     <ClInclude Include="src\ui\gui.h" />
     <ClInclude Include="src\user\cheat\cheat.h" />
+    <ClInclude Include="src\user\cheat\FeatureBase.h" />
     <ClInclude Include="src\user\cheat\FeatureManager.h" />
     <ClInclude Include="src\user\cheat\features\DumbEnemies.h" />
     <ClInclude Include="src\user\cheat\features\NoCost.h" />

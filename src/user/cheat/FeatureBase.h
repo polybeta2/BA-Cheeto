@@ -11,25 +11,36 @@ namespace cheat
         Settings,
         COUNT
     };
-    
+
     class FeatureBase
     {
     public:
         FeatureBase(const std::string& name, const std::string& description, FeatureSection section)
-            : m_name(name), m_description(description), m_section(section), m_enabled(false)
+            : m_name(name)
+            , m_description(description)
+            , m_section(section)
+            , m_enabled(false)
         {
         }
-    
+
         virtual ~FeatureBase() = default;
 
         virtual bool init() = 0;
         virtual void draw() = 0;
 
-        virtual void update() {}
-        virtual void onEnable() {}
-        virtual void onDisable() {}
+        virtual void update()
+        {
+        }
 
-        const std::string& getName() const { return m_name;}
+        virtual void onEnable()
+        {
+        }
+
+        virtual void onDisable()
+        {
+        }
+
+        const std::string& getName() const { return m_name; }
         const std::string& getDescription() const { return m_description; }
         FeatureSection getSection() const { return m_section; }
         bool isEnabled() const { return m_enabled; }

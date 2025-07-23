@@ -18,7 +18,6 @@ void Main::run()
     if (Renderer& renderer = Renderer::getInstance(); renderer.initialize())
     {
         LOG_INFO("Renderer initialized successfully!");
-        LOG_INFO("Using backend: %s", renderer.getBackend()->getName());
         LOG_INFO("Press INSERT to toggle GUI visibility");
     }
     else

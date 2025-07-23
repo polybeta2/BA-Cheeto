@@ -7,9 +7,9 @@ namespace cheat::features
 {
     DumbEnemies::DumbEnemies()
         : FeatureBase("Dumb Enemies", "Enemies ignore targeting you",
-					  FeatureSection::Combat)
-	{
-	}
+                      FeatureSection::Combat)
+    {
+    }
 
     void DumbEnemies::draw()
     {
@@ -45,17 +45,6 @@ namespace cheat::features
 
     bool DumbEnemies::init()
     {
-        try
-        {
-            // TODO modularize this. im just busy rn
-            HookManager::install(BattleEntity::CanBeTargeted(), hCanBeTargeted);
-            LOG_INFO("%s initialized successfully", getName());
-            return true;
-        }
-        catch (const std::exception& e)
-        {
-            LOG_ERROR("Failed to initialize $s: %s", getName(), e.what());
-            return false;
-        }
+        return HookManager::install(BattleEntity::CanBeTargeted(), hCanBeTargeted);
     }
 }
