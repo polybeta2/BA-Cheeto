@@ -1,13 +1,11 @@
 <div align="center">
-    <img src="assets/cunny-game.png" alt="LogoText">
-    <br>
-    <a href="https://github.com/nulla2011/bluearchive-logo"><small>logo generator</small></a>
+    <img src="assets/ba-cheeto.png" alt="LogoText">
 </div>
 
 ---
 
 ## 📝 Usage 
-1. Set steam lunch option to `-force-d3d11` (Do this until dx12 backend is implemented)
+1. Set steam launch option to `-force-d3d11` (Do this until dx12 backend is implemented)
 2. Launch the game
 3. Use your preferred injector and inject the DLL
 
@@ -26,5 +24,3 @@
 ## 🙏 Special Thanks
 - [Il2CppInspectorRedux](https://github.com/LukeFZ/Il2CppInspectorRedux)
 - [UnityResolve.hpp](https://github.com/issuimo/UnityResolve.hpp)
-- [imgui](https://github.com/ocornut/imgui)
-- [minhook](https://github.com/TsudaKageyu/minhook)

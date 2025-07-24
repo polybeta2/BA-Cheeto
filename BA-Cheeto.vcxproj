@@ -137,7 +137,7 @@
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
     <ProjectGuid>{7860a162-9346-4360-95f8-9487aee28e2c}</ProjectGuid>
-    <RootNamespace>Cunny-Game-Cheeto</RootNamespace>
+    <RootNamespace>BA-Cheeto</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
