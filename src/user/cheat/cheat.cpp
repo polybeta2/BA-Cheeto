@@ -11,6 +11,8 @@
 #include "features/combat/DumbEnemies.h"
 #include "features/combat/OneHitKill.h"
 
+#include "features/game/InstantWin.h"
+
 #include "features/hooks/BattleEntityHook.h"
 
 void cheat::init()
@@ -18,13 +20,14 @@ void cheat::init()
     auto& manager = FeatureManager::getInstance();
 
     manager.registerFeatures<
-        features::Debug,
+        // features::Debug,
 
         // Cheat features
         features::NoCost,
         features::GodMode,
         features::DumbEnemies,
         features::OneHitKill,
+        features::InstantWin,
 
         // Hooks
         features::BattleEntityHook

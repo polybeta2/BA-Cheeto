@@ -4,9 +4,9 @@
 #include "types-helper.h"
 
 ///////////////////////////////
-// All Forward Declarations
+/// All Forward Declarations
 ///////////////////////////////
-class SkillCardManager;
+
 class CostSkillCardManager;
 class PlayerSkillCardManager;
 class BattleEntityStat;
@@ -25,14 +25,10 @@ class NewSkillAction;
 class NewNormalAttackAction;
 
 ///////////////////////////////
-// Class Definitions
+/// Class Definitions
 ///////////////////////////////
 
-class SkillCardManager
-{
-};
-
-class CostSkillCardManager : public SkillCardManager
+class CostSkillCardManager
 {
 public:
     UNITY_CLASS_DECL("BlueArchive.dll", "CostSkillCardManager")
@@ -127,16 +123,38 @@ public:
     UNITY_METHOD(void, Finalize, BattleSummary*, Battle*, GroupTag_Enum, BattleEndType_Enum, int, float)
 };
 
+struct TimeSpan
+{
+    int64_t _ticks;
+};
+
+class LogicGameTime
+{
+public:
+    UNITY_CLASS_DECL("BlueArchive.dll", "LogicGameTime")
+
+    UNITY_FIELD(float, UnitySecondPerFrame, 0x10)
+    UNITY_FIELD(TimeSpan, SecondPerFrame, 0x18)
+    UNITY_FIELD(int32_t, FramePerSecond, 0x20)
+    UNITY_FIELD(TimeSpan, TotalGameTime, 0x28)
+    UNITY_FIELD(int32_t, CurrentFrame, 0x30)
+    UNITY_FIELD(bool, Paused, 0x34)
+    UNITY_FIELD(int32_t, TimeoutFrame, 0x38)
+    UNITY_FIELD(bool, Timeout, 0x3C)
+
+    UNITY_METHOD(void, Pause, LogicGameTime*)
+    UNITY_METHOD(void, Resume, LogicGameTime*)
+};
+
 class Battle
 {
 public:
     UNITY_CLASS_DECL("BlueArchive.dll", "Battle")
 
     UNITY_FIELD(BattleLogicState_Enum, state, 0x188)
+    UNITY_FIELD(LogicGameTime*, GameTime, 0x190)
     UNITY_FIELD(int64_t, StartTickRealTime, 0x198)
     UNITY_FIELD(int, MaxDurationFrame, 0x1A0)
-    // UNITY_FIELD(UnityResolve::UnityType::List<Character>, AllActiveCharacters, 0x1B0)
-    // UNITY_FIELD(UnityResolve::UnityType::List<Character>, AllAliveCharacters, 0x1B8)
     // UNITY_FIELD(O139cb8484a6efbeade5b8c6d40e89e4aec30556aa791f82dc4247b81d8d0d42d, LogicEffectProcessor, 0x1D8)
     UNITY_FIELD(BattleSummary*, BattleSummary_, 0x1F0)
     UNITY_FIELD(double, UnitType, 0x200)
@@ -147,6 +165,9 @@ public:
 
 
     UNITY_METHOD(void, Update, Battle*)
+    UNITY_METHOD(void, Begin, Battle*)
+    // TODO CRITICAL!!: since this is obfuscated, need to implement a fallback using signatures or some sort of way
+    UNITY_METHOD(void, O41c95fd17e6626c6f1f7aa3c0ef0fd3c9d8ca5ea99daee82eee4c511efa52952, Battle*, BattleEndType_Enum)
 };
 
 class CharacterGroup

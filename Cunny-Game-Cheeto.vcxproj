@@ -31,6 +31,7 @@
     <ClInclude Include="src\user\cheat\features\combat\DumbEnemies.h" />
     <ClInclude Include="src\user\cheat\features\combat\OneHitKill.h" />
     <ClInclude Include="src\user\cheat\features\debug\Debug.h" />
+    <ClInclude Include="src\user\cheat\features\game\InstantWin.h" />
     <ClInclude Include="src\user\cheat\features\hooks\BattleEntityHook.h" />
     <ClInclude Include="src\user\cheat\features\player\GodMode.h" />
     <ClInclude Include="src\user\cheat\features\player\NoCost.h" />
@@ -81,6 +82,7 @@
     <ClCompile Include="src\user\cheat\features\combat\DumbEnemies.cpp" />
     <ClCompile Include="src\user\cheat\features\combat\OneHitKill.cpp" />
     <ClCompile Include="src\user\cheat\features\debug\Debug.cpp" />
+    <ClCompile Include="src\user\cheat\features\game\InstantWin.cpp" />
     <ClCompile Include="src\user\cheat\features\hooks\BattleEntityHook.cpp" />
     <ClCompile Include="src\user\cheat\features\player\GodMode.cpp" />
     <ClCompile Include="src\user\cheat\features\player\NoCost.cpp" />

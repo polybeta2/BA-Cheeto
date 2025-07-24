@@ -10,16 +10,4 @@ namespace cheat::features
                       FeatureSection::Combat)
     {
     }
-
-    void OneHitKill::onEnable()
-    {
-        // TODO: replace with imgui toast
-        LOG_INFO("%s enabled", getName().c_str());
-    }
-
-    void OneHitKill::onDisable()
-    {
-        // TODO: replace with imgui toast
-        LOG_INFO("%s disabled", getName().c_str());
-    }
 }

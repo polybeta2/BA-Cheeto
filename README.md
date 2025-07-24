@@ -16,6 +16,7 @@
 - God Mode
 - Dumb Enemies (enemies ignore you)
 - One Hit Kill
+- Instant Win
 
 ## 📚 Resources
 - IDA 9.0 db (script applied)

@@ -9,8 +9,5 @@ namespace cheat::features
 
     public:
         GodMode();
-
-        void onEnable() override;
-        void onDisable() override;
     };
 };

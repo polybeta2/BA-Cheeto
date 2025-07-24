@@ -17,7 +17,6 @@ public:
 
 private:
     GUI();
-    ~GUI();
 
     GUI(const GUI&) = delete;
     GUI& operator=(const GUI&) = delete;

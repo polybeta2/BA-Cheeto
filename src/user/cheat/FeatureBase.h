@@ -39,10 +39,12 @@ namespace cheat
 
         virtual void onEnable()
         {
+            LOG_INFO("%s enabled", getName().c_str());
         }
 
         virtual void onDisable()
         {
+            LOG_INFO("%s disabled", getName().c_str());
         }
 
         const std::string& getName() const { return m_name; }

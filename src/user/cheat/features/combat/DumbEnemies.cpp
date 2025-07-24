@@ -17,18 +17,6 @@ namespace cheat::features
         // ImGui::Checkbox("Dumb Player", &m_dumbPlayer);
     }
 
-    void DumbEnemies::onEnable()
-    {
-        // TODO: replace with imgui toast
-        LOG_INFO("%s enabled", getName().c_str());
-    }
-
-    void DumbEnemies::onDisable()
-    {
-        // TODO: replace with imgui toast
-        LOG_INFO("%s disabled", getName().c_str());
-    }
-
     bool DumbEnemies::hBattleEntity_CanBeTargeted(BattleEntity* _this, BattleEntity* attacker, SkillSlot_Enum skillSlot)
     {
         if (s_instance->isEnabled())

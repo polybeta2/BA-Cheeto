@@ -10,9 +10,6 @@ namespace cheat::features
     public:
         NoCost();
 
-        void onEnable() override;
-        void onDisable() override;
-
     private:
         static void hPlayerSkillCardManager_ProcessSkillCard(PlayerSkillCardManager* _this);
     };

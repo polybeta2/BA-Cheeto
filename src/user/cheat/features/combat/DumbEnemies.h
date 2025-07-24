@@ -11,11 +11,9 @@ namespace cheat::features
         DumbEnemies();
 
         void draw() override;
-        void onEnable() override;
-        void onDisable() override;
 
     private:
-        bool m_dumbPlayer = false;
+        bool m_dumbPlayer = false; // For testing
 
         static bool hBattleEntity_CanBeTargeted(BattleEntity* _this, BattleEntity* attacker, SkillSlot_Enum skillSlot);
     };

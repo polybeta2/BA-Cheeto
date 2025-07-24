@@ -9,8 +9,5 @@ namespace cheat::features
 
     public:
         OneHitKill();
-
-        void onEnable() override;
-        void onDisable() override;
     };
 }
