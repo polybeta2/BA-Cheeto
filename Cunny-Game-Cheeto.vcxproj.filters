@@ -156,6 +156,9 @@
     <ClInclude Include="src\user\cheat\features\hooks\BattleEntityHook.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\user\cheat\features\player\GodMode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="src\user\cheat\features\player\NoCost.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -237,6 +240,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\user\cheat\features\hooks\BattleEntityHook.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\user\cheat\features\player\GodMode.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\user\cheat\features\player\NoCost.cpp">
