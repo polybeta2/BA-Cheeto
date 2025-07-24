@@ -20,12 +20,7 @@ namespace cheat::features
 
         if (ohk->isEnabled())
         {
-            if (_this->TacticEntityType() == TacticEntityType_Enum::Minion ||
-                // _this->TacticEntityType() == TacticEntityType_Enum::Elite ||
-                // _this->TacticEntityType() == TacticEntityType_Enum::Champion ||
-                _this->TacticEntityType() == TacticEntityType_Enum::Boss ||
-                _this->TacticEntityType() == TacticEntityType_Enum::Obstacle ||
-                _this->TacticEntityType() == TacticEntityType_Enum::Vehicle)
+            if (_this->TacticEntityType() != TacticEntityType_Enum::Student)
             {
                 _this->HitPoint(1);
                 _this->HitPointBefore(1);
