@@ -12,11 +12,11 @@ namespace cheat::features
         // HookManager::install(BattleEntity::ApplyStat(), hBattleEntity_ApplyStat);
         // HookManager::install(BattleEntityStatProcessor::Apply(), hBattleEntityStatProcessor_Apply);
         // HookManager::install(Character::ApplyDamage(), hCharacter_ApplyDamage);
-        
+
         HookManager::install(Character::Update(), hCharacter_Update);
         HookManager::install(Character::InitAmmo(), hCharacter_InitAmmo);
         HookManager::install(Character::ReloadAmmo(), hCharacter_ReloadAmmo);
-        
+
         // HookManager::install(NewNormalAttackAction::Update(), hNewNormalAttackAction_Update);
     }
 

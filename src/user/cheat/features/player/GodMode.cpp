@@ -7,7 +7,7 @@ namespace cheat::features
 {
     GodMode::GodMode()
         : FeatureBase("God Mode", "Makes player invincible",
-					  FeatureSection::Player)
+                      FeatureSection::Player)
     {
     }
 
@@ -15,13 +15,11 @@ namespace cheat::features
     {
         // TODO: replace with imgui toast
         LOG_INFO("%s enabled", getName().c_str());
-        EventManager::onGodModeEnabled();
     }
 
     void GodMode::onDisable()
     {
         // TODO: replace with imgui toast
         LOG_INFO("%s disabled", getName().c_str());
-        EventManager::onGodModeDisabled();
     }
 }

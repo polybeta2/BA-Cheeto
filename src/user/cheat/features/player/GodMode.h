@@ -6,6 +6,7 @@ namespace cheat::features
     class GodMode : public FeatureBase
     {
         DECL_SINGLETON(GodMode)
+
     public:
         GodMode();
 

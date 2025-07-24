@@ -15,13 +15,11 @@ namespace cheat::features
     {
         // TODO: replace with imgui toast
         LOG_INFO("%s enabled", getName().c_str());
-        EventManager::onOneHitKillEnabled();
     }
 
     void OneHitKill::onDisable()
     {
         // TODO: replace with imgui toast
         LOG_INFO("%s disabled", getName().c_str());
-        EventManager::onOneHitKillDisabled();
     }
 }
