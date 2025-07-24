@@ -15,7 +15,6 @@ namespace cheat
         }
 
         void init();
-        void update();
 
         void draw();
 

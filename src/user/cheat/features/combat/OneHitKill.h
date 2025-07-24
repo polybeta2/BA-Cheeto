@@ -12,8 +12,5 @@ namespace cheat::features
 
         void onEnable() override;
         void onDisable() override;
-
-    private:
-        static int64_t hBattleEntity_AddHitPoint(BattleEntity* _this, int64_t value);
     };
 }

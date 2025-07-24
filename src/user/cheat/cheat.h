@@ -3,5 +3,4 @@
 namespace cheat
 {
     void init();
-    void update();
 }
