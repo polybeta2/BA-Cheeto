@@ -13,6 +13,7 @@
 
 ## ✨ Features
 - No Skill Cost
+- God Mode
 - Dumb Enemies (enemies ignore you)
 - One Hit Kill
 
