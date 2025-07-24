@@ -1052,3 +1052,5 @@ bin/
 
 # Include compiled libraries from vendor/minhook
 !vendor/minhook/lib/*.lib
+
+!src/user/cheat/features/debug

@@ -3,12 +3,14 @@
 
 #include "FeatureManager.h"
 
+#include "features/debug/Debug.h"
+#include "features/hooks/BattleEntityHook.h"
+
 #include "features/player/NoCost.h"
+#include "features/player/GodMode.h"
 
 #include "features/combat/DumbEnemies.h"
 #include "features/combat/OneHitKill.h"
-
-#include "features/debug/Debug.h"
 
 void cheat::init()
 {
@@ -16,15 +18,15 @@ void cheat::init()
 
     manager.registerFeatures<
         features::Debug,
+        // Hooks
+        features::BattleEntityHook,
+
+        // Cheat features
         features::NoCost,
+        features::GodMode,
         features::DumbEnemies,
         features::OneHitKill
     >();
 
     manager.init();
-}
-
-void cheat::update()
-{
-    FeatureManager::getInstance().update();
 }

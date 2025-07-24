@@ -50,3 +50,6 @@
         } \
         return cached_method; \
     }
+
+// Alternatively, you can call METHOD()(arguments) directly. But it doesn't look as nice.
+#define UNITY_CALL(METHOD_ACCESSOR, ...) METHOD_ACCESSOR()(__VA_ARGS__);

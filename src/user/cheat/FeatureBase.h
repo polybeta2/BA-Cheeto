@@ -8,9 +8,11 @@ namespace cheat
     {
         Player,
         Combat,
+        Game,
         Settings,
         Debug,
-        COUNT
+        Hooks,
+        Count
     };
 
     class FeatureBase
@@ -21,6 +23,7 @@ namespace cheat
             , m_description(description)
             , m_section(section)
             , m_enabled(false)
+            , m_allowDraw(section != FeatureSection::Hooks && section != FeatureSection::Count)
         {
         }
 
@@ -31,10 +34,6 @@ namespace cheat
         }
 
         virtual void draw()
-        {
-        }
-
-        virtual void update()
         {
         }
 
@@ -67,10 +66,13 @@ namespace cheat
             }
         }
 
+        bool isAllowDraw() const { return m_allowDraw; }
+
     protected:
         std::string m_name;
         std::string m_description;
         FeatureSection m_section;
         bool m_enabled;
+        bool m_allowDraw;
     };
 }

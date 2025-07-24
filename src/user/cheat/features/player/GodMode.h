@@ -3,14 +3,13 @@
 
 namespace cheat::features
 {
-    class OneHitKill : public FeatureBase
+    class GodMode : public FeatureBase
     {
-        DECL_SINGLETON(OneHitKill)
-
+        DECL_SINGLETON(GodMode)
     public:
-        OneHitKill();
+        GodMode();
 
         void onEnable() override;
         void onDisable() override;
     };
-}
+};

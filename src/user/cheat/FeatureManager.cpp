@@ -34,34 +34,20 @@ namespace cheat
         }
     }
 
-    void FeatureManager::update()
-    {
-        for (const auto& feature : m_features)
-        {
-            if (feature->isEnabled())
-            {
-                try
-                {
-                    feature->update();
-                }
-                catch (const std::exception& e)
-                {
-                    LOG_ERROR("Exception during update of feature '%s': %s", feature->getName().c_str(), e.what());
-                }
-            }
-        }
-    }
-
     // TODO: Redesign with sidebar
     void FeatureManager::draw()
     {
         if (ImGui::BeginTabBar("FeatureTabs", ImGuiTabBarFlags_None))
         {
-            for (auto sectionIdx = 0; sectionIdx < static_cast<int>(FeatureSection::COUNT); ++sectionIdx)
+            for (auto sectionIdx = 0; sectionIdx < static_cast<int>(FeatureSection::Count); ++sectionIdx)
             {
                 auto section = static_cast<FeatureSection>(sectionIdx);
                 auto sectionFeatures = getFeaturesBySection(section);
                 if (sectionFeatures.empty()) continue;
+
+                bool hasAllowDraw = std::any_of(sectionFeatures.begin(), sectionFeatures.end(),
+                                                [](FeatureBase* feature) { return feature->isAllowDraw(); });
+                if (!hasAllowDraw) continue;
 
                 if (ImGui::BeginTabItem(getSectionName(section)))
                 {
@@ -123,13 +109,19 @@ namespace cheat
                 return "Player";
             case FeatureSection::Combat:
                 return "Combat";
+            case FeatureSection::Game:
+                return "Game";
             case FeatureSection::Settings:
                 return "Settings";
             case FeatureSection::Debug:
                 return "Debug";
+            case FeatureSection::Hooks:
+            case FeatureSection::Count:
             default:
-                return "Unknown";
+                break;
         }
+
+        return "Unknown";
     }
 
     void FeatureManager::helpMarker(const char* desc)

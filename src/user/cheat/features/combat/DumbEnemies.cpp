@@ -12,6 +12,11 @@ namespace cheat::features
         HookManager::install(BattleEntity::CanBeTargeted(), hBattleEntity_CanBeTargeted);
     }
 
+    void DumbEnemies::draw()
+    {
+        // ImGui::Checkbox("Dumb Player", &m_dumbPlayer);
+    }
+
     void DumbEnemies::onEnable()
     {
         // TODO: replace with imgui toast
@@ -30,6 +35,12 @@ namespace cheat::features
         {
             if (_this->TacticEntityType() == TacticEntityType_Enum::Student) return false;
         }
+
+        // For testing
+        // if (s_instance->m_dumbPlayer)
+        // {
+        //     if (attacker->TacticEntityType() == TacticEntityType_Enum::Student) return false;
+        // }
 
         return CALL_ORIGINAL(hBattleEntity_CanBeTargeted, _this, attacker, skillSlot);
     }
