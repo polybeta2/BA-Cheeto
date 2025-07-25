@@ -28,7 +28,7 @@ void Main::run()
     cheat::init();
 }
 
-UnityModuleBackendInfo Main::getUnityBackend()
+Main::UnityModuleBackendInfo Main::getUnityBackend()
 {
     LOG_INFO("Finding Unity backend...");
 
@@ -52,22 +52,23 @@ UnityModuleBackendInfo Main::getUnityBackend()
         return info;
     }
     LOG_WARNING("GameAssembly.dll not found, trying fallback to Mono...");
-    assembly = GetModuleHandleA("mono-2.0-bdwgc.dll"); // Newer versions of Unity I think
-    if (assembly)
-    {
-        info.module = assembly;
-        info.mode = UnityResolve::Mode::Mono;
-        LOG_INFO("Found Mono backend!");
-        return info;
-    }
-    assembly = GetModuleHandleA("mono.dll");
-    if (assembly)
-    {
-        info.module = assembly;
-        info.mode = UnityResolve::Mode::Mono;
-        LOG_INFO("Found Mono backend!");
-        return info;
-    }
+
+    std::vector<std::string> monoModules = {
+		"mono-2.0.dll",
+		"mono-2.0-bdwgc.dll",
+		"mono.dll"
+	};
+    
+    for (const auto& monoModule : monoModules)
+	{
+		if (const auto monoHandle = GetModuleHandleA(monoModule.c_str()); monoHandle)
+		{
+			info.module = monoHandle;
+			info.mode = UnityResolve::Mode::Mono;
+			LOG_INFO("Found Mono backend: %s", monoModule.c_str());
+			return info;
+		}
+	}
 
     LOG_ERROR("Unable to find Unity backend! Neither GameAssembly.dll nor mono.dll found.");
     return info;

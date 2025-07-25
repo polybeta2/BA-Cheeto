@@ -90,7 +90,7 @@ namespace app
 
     /**
      * @brief Retrieves a method from a Unity class by name.
-     * @param klass Pointer to a UnityResolve::Class object.
+     * @param klass Pointer to UnityResolve::Class.
      * @param methodName Name of the method to find.
      * @return Pointer to UnityResolve::Method, or nullptr on failure.
      */
@@ -136,7 +136,7 @@ namespace app
 
     /**
      * @brief Gets a raw method address from a Unity class and method name.
-     * @param klass Pointer to the Unity class.
+     * @param klass Pointer to UnityResolve::Class.
      * @param methodName Name of the method.
      * @return Function pointer address, or nullptr on failure.
      */
@@ -222,7 +222,7 @@ namespace app
 
     /**
      * @brief Finds a method that appears between two known methods.
-     * @param klass Unity class to search in.
+     * @param klass Pointer to UnityResolve::Class.
      * @param afterMethodName Name of the method that comes before the target.
      * @param beforeMethodName Optional name of the method that should follow the target.
      * @return The method found between the two, or nullptr on failure.
@@ -253,6 +253,12 @@ namespace app
         return nullptr;
     }
 
+    /**
+     * @brief Retrieves a field from a Unity class by its name and returns its Field pointer and offset.
+     * @param klass Pointer to UnityResolve::Class.
+     * @param fieldName Name of the field to find.
+     * @return A pair containing the UnityResolve::Field pointer and its offset.
+     */
     inline std::pair<UnityResolve::Field*, int> getFieldFromClass(const UnityResolve::Class* klass,
                                                                   const std::string& fieldName)
     {
@@ -274,6 +280,12 @@ namespace app
         return {nullptr, -1};
     }
 
+    /**
+     * @brief Gets the offset of a field in a Unity class by its name.
+     * @param klass Pointer to UnityResolve::Class.
+     * @param fieldName Name of the field to find.
+     * @return The offset of the field in decimal, or -1 if not found.
+     */
     inline int getFieldOffset(const UnityResolve::Class* klass, const std::string& fieldName)
 	{
         if (auto [field, offset] = getFieldFromClass(klass, fieldName); field)

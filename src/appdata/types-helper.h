@@ -114,6 +114,7 @@ public: \
 	    *reinterpret_cast<FIELD_TYPE*>(reinterpret_cast<uintptr_t>(this) + FIELD_OFFSET) = value; \
 	}
 
+// Used to declare a field in a Unity class with its field offset, but resolves the offset dynamically
 #define UNITY_FIELD_FROM(FIELD_TYPE, FRIENDLY_NAME, OBFUSCATED_NAME) \
     inline FIELD_TYPE FRIENDLY_NAME() { \
         static int offset = -1; \
