@@ -18,8 +18,7 @@ namespace cheat::features
             _this->BattleSummary_()->EndFrame(0);
             _this->BattleSummary_()->ElapsedRealtime(0.f);
 
-            UNITY_CALL(Battle::O41c95fd17e6626c6f1f7aa3c0ef0fd3c9d8ca5ea99daee82eee4c511efa52952,
-                       _this, BattleEndType_Enum::Clear)
+            UNITY_CALL(Battle::Finalize, _this, BattleEndType_Enum::Clear)
         }
 
         CALL_ORIGINAL(hBattle_Update, _this);

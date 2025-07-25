@@ -30,7 +30,6 @@ class NewNormalAttackAction;
 
 class CostSkillCardManager
 {
-public:
     UNITY_CLASS_DECL("BlueArchive.dll", "CostSkillCardManager")
 
     UNITY_FIELD(float, MaxCost, 0x38)
@@ -45,13 +44,13 @@ public:
 
 class PlayerSkillCardManager : public CostSkillCardManager
 {
-public:
-    UNITY_METHOD_FROM("BlueArchive.dll", "PlayerSkillCardManager", void, ProcessSkillCard, PlayerSkillCardManager*)
+    UNITY_CLASS_DECL("BlueArchive.dll", "PlayerSkillCardManager")
+
+    UNITY_METHOD(void, ProcessSkillCard, PlayerSkillCardManager*)
 };
 
 class BattleEntityStat
 {
-public:
     UNITY_CLASS_DECL("BlueArchive.dll", "BattleEntityStat")
 
     UNITY_METHOD(int64_t, get_Item, BattleEntityStat*, StatType_Enum)
@@ -59,7 +58,6 @@ public:
 
 class BattleEntityStatProcessor
 {
-public:
     UNITY_CLASS_DECL("BlueArchive.dll", "BattleEntityStatProcessor")
 
     UNITY_FIELD(int64_t, BattlePower, 0x10)
@@ -74,7 +72,6 @@ public:
 
 class BattleEntity
 {
-public:
     UNITY_CLASS_DECL("BlueArchive.dll", "BattleEntity")
 
     UNITY_FIELD(void*, Damaged, 0x28) // EventHandler<BattleEntityDamagedEventArgs>
@@ -87,7 +84,6 @@ public:
     UNITY_FIELD(ArmorType_Enum, ArmorType, 0x98)
     UNITY_FIELD(BattleEntityStatProcessor*, statProcessor, 0xA0)
 
-
     // UNITY_METHOD(void, OnDamaged, BattleEntity*, void*)
     UNITY_METHOD(bool, CanBeTargeted, BattleEntity*, BattleEntity*, SkillSlot_Enum)
     UNITY_METHOD(int64_t, AddHitPoint, BattleEntity*, int64_t)
@@ -97,7 +93,6 @@ public:
 
 class BattleSummary
 {
-public:
     UNITY_CLASS_DECL("BlueArchive.dll", "BattleSummary")
 
     UNITY_FIELD(int64_t, HashKey, 0x10)
@@ -130,7 +125,6 @@ struct TimeSpan
 
 class LogicGameTime
 {
-public:
     UNITY_CLASS_DECL("BlueArchive.dll", "LogicGameTime")
 
     UNITY_FIELD(float, UnitySecondPerFrame, 0x10)
@@ -146,16 +140,55 @@ public:
     UNITY_METHOD(void, Resume, LogicGameTime*)
 };
 
+class LogicEffect
+{
+    UNITY_CLASS_DECL("BlueArchive.dll", "LogicEffect")
+
+    // UNITY_FIELD(SkillSpecification*, SkillSpecification, 0x10)
+    // UNITY_FIELD(LogicEffectHitSpecification*, LogicEffectHitSpecification, 0x18)
+    // UNITY_FIELD(BattleEntity*, Invoker, 0x20)
+    // UNITY_FIELD(BattleEntity*, Target, 0x28)
+    // UNITY_FIELD(BattleEntity*, OriginalTarget, 0x30)
+    // UNITY_FIELD(Func_1_Boolean_*, ExpirationCheck, 0x38)
+    // UNITY_FIELD(Entity*, ExpirationCheckOwner, 0x40)
+    // UNITY_FIELD(String*, SkillEntityName, 0x48)
+    // UNITY_FIELD(int64_t, SpawnRate, 0x50)
+    // UNITY_FIELD(String*, LogicEffectGroupId, 0x58)
+    // UNITY_FIELD(LogicEffectCategory__Enum, Category, 0x60)
+    // UNITY_FIELD(String*, templateId, 0x68)
+    // UNITY_FIELD(Hash64, TemplateIdHash, 0x70)
+    // UNITY_FIELD(int32_t, Channel, 0x78)
+    // UNITY_FIELD(BasisPoint, ApplyRate, 0x80)
+    // UNITY_FIELD(uint32_t, CommonVisualIdHash, 0x88)
+    // UNITY_FIELD(Vector2, HitPosition, 0x8C)
+    // UNITY_FIELD(Vector2, BulletPosition, 0x94)
+    // UNITY_FIELD(Vector2, BulletDirection, 0x9C)
+    // UNITY_FIELD(Entity*, BulletEntity, 0xA8)
+    // UNITY_FIELD(ResolvePriority__Enum, priority, 0xB0)
+    // UNITY_FIELD(int32_t, Priority, 0xB4)
+    // UNITY_FIELD(int32_t, ResolveIndex, 0xB8)
+    // UNITY_FIELD(int32_t, DotIndex, 0xBC)
+    // UNITY_FIELD(int32_t, ExtraCostUsed, 0xC0)
+    // UNITY_FIELD(bool, ForceFloaterHide, 0xC4)
+};
+
+// Obfuscated class
+class LogicEffectProcessor
+{
+    UNITY_CLASS_DECL_FROM_FIELD_NAME("BlueArchive.dll", "CrowdControlGaugeEffect", "logicEffectProcessor")
+
+    UNITY_FIELD(UnityResolve::UnityType::List<LogicEffect>*, logicEffects, 0x48)
+};
+
 class Battle
 {
-public:
     UNITY_CLASS_DECL("BlueArchive.dll", "Battle")
 
     UNITY_FIELD(BattleLogicState_Enum, state, 0x188)
     UNITY_FIELD(LogicGameTime*, GameTime, 0x190)
     UNITY_FIELD(int64_t, StartTickRealTime, 0x198)
     UNITY_FIELD(int, MaxDurationFrame, 0x1A0)
-    // UNITY_FIELD(O139cb8484a6efbeade5b8c6d40e89e4aec30556aa791f82dc4247b81d8d0d42d, LogicEffectProcessor, 0x1D8)
+    UNITY_FIELD(LogicEffectProcessor*, LogicEffectProcessor_, 0x1D8)
     UNITY_FIELD(BattleSummary*, BattleSummary_, 0x1F0)
     UNITY_FIELD(double, UnitType, 0x200)
     UNITY_FIELD(double, ResultValue, 0x208)
@@ -163,11 +196,9 @@ public:
     UNITY_FIELD(int, TotalEnemyCount, 0x2F8)
     UNITY_FIELD(int, RemainEnemyCount, 0x2FC)
 
-
     UNITY_METHOD(void, Update, Battle*)
     UNITY_METHOD(void, Begin, Battle*)
-    // TODO CRITICAL!!: since this is obfuscated, need to implement a fallback using signatures or some sort of way
-    UNITY_METHOD(void, O41c95fd17e6626c6f1f7aa3c0ef0fd3c9d8ca5ea99daee82eee4c511efa52952, Battle*, BattleEndType_Enum)
+    UNITY_METHOD_BETWEEN(void, Finalize, "Resume", "Push", Battle*, BattleEndType_Enum)
 };
 
 class CharacterGroup
@@ -177,14 +208,12 @@ class CharacterGroup
 
 class PlayerGroup : public CharacterGroup
 {
-public:
     UNITY_FIELD(int, EchelonNumber, 0x140)
     UNITY_FIELD(PlayerSkillCardManager*, PlayerSkillCardManager_, 0x150)
 };
 
 class ShieldEffect
 {
-public:
     UNITY_FIELD(int64_t, BaseAmount, 0xC8)
     UNITY_FIELD(StatType_Enum, TargetStatType, 0xD0)
     UNITY_FIELD(StatType_Enum, CasterStatType, 0xE0)
@@ -194,7 +223,6 @@ public:
 
 class ShieldInfo
 {
-public:
     UNITY_FIELD(int64_t, CurrentHP_k, 0x10)
     UNITY_FIELD(int64_t, MaxHP_k, 0x18)
     UNITY_FIELD(ShieldEffect, ShieldEffect_k, 0x28)
@@ -203,8 +231,7 @@ public:
 // Obfuscated class
 class Character : public BattleEntity
 {
-public:
-    UNITY_CLASS_DECL("BlueArchive.dll", "Oa5c503f80e3a6fabdca83cda0af9e61bf1cdfa15fe0a322f74c82f8f819ca6e6")
+    UNITY_CLASS_DECL_FROM_FIELD_NAME("BlueArchive.dll", "CharacterMovementComponent", "<Character>k__BackingField")
 
     UNITY_FIELD(bool, IsSearchAndMoveActivated, 0x118)
     UNITY_FIELD(int32_t, lastTargetFindFrame, 0x11C)
@@ -264,7 +291,6 @@ public:
     UNITY_FIELD(int64_t, currentActiveGauge, 0x440)
     UNITY_FIELD(int32_t, CurrentNormalAttackCount, 0x448)
 
-
     UNITY_METHOD(void, Update, Character*, Battle*)
     UNITY_METHOD(void, InitAmmo, Character*)
     UNITY_METHOD(void, ReloadAmmo, Character*)
@@ -273,7 +299,6 @@ public:
 
 class DamageResult
 {
-public:
     UNITY_FIELD(int64_t, AttackPower, 0x00)
     UNITY_FIELD(int64_t, Damage, 0x08)
     UNITY_FIELD(int32_t, Stability, 0x10)
@@ -319,7 +344,6 @@ class NewSkillAction : public HeroAction
 
 class NewNormalAttackAction : public NewSkillAction
 {
-public:
     UNITY_CLASS_DECL("BlueArchive.dll", "NewNormalAttackAction")
 
     UNITY_FIELD(Character*, ownerCharacter, 0x178)
