@@ -83,7 +83,7 @@ class BattleEntity
     UNITY_FIELD(int64_t, SummonedTime, 0x90)
     UNITY_FIELD(ArmorType_Enum, ArmorType, 0x98)
     UNITY_FIELD(BattleEntityStatProcessor*, statProcessor, 0xA0)
-    
+
     // UNITY_METHOD(void, OnDamaged, BattleEntity*, void*)
     UNITY_METHOD(bool, CanBeTargeted, BattleEntity*, BattleEntity*, SkillSlot_Enum)
     UNITY_METHOD(int64_t, AddHitPoint, BattleEntity*, int64_t)
@@ -140,6 +140,46 @@ class LogicGameTime
     UNITY_METHOD(void, Resume, LogicGameTime*)
 };
 
+class LogicEffect
+{
+    UNITY_CLASS_DECL("BlueArchive.dll", "LogicEffect")
+
+    // UNITY_FIELD(SkillSpecification*, SkillSpecification, 0x10)
+    // UNITY_FIELD(LogicEffectHitSpecification*, LogicEffectHitSpecification, 0x18)
+    // UNITY_FIELD(BattleEntity*, Invoker, 0x20)
+    // UNITY_FIELD(BattleEntity*, Target, 0x28)
+    // UNITY_FIELD(BattleEntity*, OriginalTarget, 0x30)
+    // UNITY_FIELD(Func_1_Boolean_*, ExpirationCheck, 0x38)
+    // UNITY_FIELD(Entity*, ExpirationCheckOwner, 0x40)
+    // UNITY_FIELD(String*, SkillEntityName, 0x48)
+    // UNITY_FIELD(int64_t, SpawnRate, 0x50)
+    // UNITY_FIELD(String*, LogicEffectGroupId, 0x58)
+    // UNITY_FIELD(LogicEffectCategory__Enum, Category, 0x60)
+    // UNITY_FIELD(String*, templateId, 0x68)
+    // UNITY_FIELD(Hash64, TemplateIdHash, 0x70)
+    // UNITY_FIELD(int32_t, Channel, 0x78)
+    // UNITY_FIELD(BasisPoint, ApplyRate, 0x80)
+    // UNITY_FIELD(uint32_t, CommonVisualIdHash, 0x88)
+    // UNITY_FIELD(Vector2, HitPosition, 0x8C)
+    // UNITY_FIELD(Vector2, BulletPosition, 0x94)
+    // UNITY_FIELD(Vector2, BulletDirection, 0x9C)
+    // UNITY_FIELD(Entity*, BulletEntity, 0xA8)
+    // UNITY_FIELD(ResolvePriority__Enum, priority, 0xB0)
+    // UNITY_FIELD(int32_t, Priority, 0xB4)
+    // UNITY_FIELD(int32_t, ResolveIndex, 0xB8)
+    // UNITY_FIELD(int32_t, DotIndex, 0xBC)
+    // UNITY_FIELD(int32_t, ExtraCostUsed, 0xC0)
+    // UNITY_FIELD(bool, ForceFloaterHide, 0xC4)
+};
+
+// Obfuscated class
+class LogicEffectProcessor
+{
+    UNITY_CLASS_DECL_FROM_FIELD_NAME("BlueArchive.dll", "CrowdControlGaugeEffect", "logicEffectProcessor")
+
+    UNITY_FIELD(UnityResolve::UnityType::List<LogicEffect>*, logicEffects, 0x48)
+};
+
 class Battle
 {
     UNITY_CLASS_DECL("BlueArchive.dll", "Battle")
@@ -148,7 +188,7 @@ class Battle
     UNITY_FIELD(LogicGameTime*, GameTime, 0x190)
     UNITY_FIELD(int64_t, StartTickRealTime, 0x198)
     UNITY_FIELD(int, MaxDurationFrame, 0x1A0)
-    // UNITY_FIELD(O139cb8484a6efbeade5b8c6d40e89e4aec30556aa791f82dc4247b81d8d0d42d, LogicEffectProcessor, 0x1D8)
+    UNITY_FIELD(LogicEffectProcessor*, LogicEffectProcessor_, 0x1D8)
     UNITY_FIELD(BattleSummary*, BattleSummary_, 0x1F0)
     UNITY_FIELD(double, UnitType, 0x200)
     UNITY_FIELD(double, ResultValue, 0x208)
@@ -168,14 +208,12 @@ class CharacterGroup
 
 class PlayerGroup : public CharacterGroup
 {
-public:
     UNITY_FIELD(int, EchelonNumber, 0x140)
     UNITY_FIELD(PlayerSkillCardManager*, PlayerSkillCardManager_, 0x150)
 };
 
 class ShieldEffect
 {
-public:
     UNITY_FIELD(int64_t, BaseAmount, 0xC8)
     UNITY_FIELD(StatType_Enum, TargetStatType, 0xD0)
     UNITY_FIELD(StatType_Enum, CasterStatType, 0xE0)
@@ -185,7 +223,6 @@ public:
 
 class ShieldInfo
 {
-public:
     UNITY_FIELD(int64_t, CurrentHP_k, 0x10)
     UNITY_FIELD(int64_t, MaxHP_k, 0x18)
     UNITY_FIELD(ShieldEffect, ShieldEffect_k, 0x28)
@@ -262,7 +299,6 @@ class Character : public BattleEntity
 
 class DamageResult
 {
-public:
     UNITY_FIELD(int64_t, AttackPower, 0x00)
     UNITY_FIELD(int64_t, Damage, 0x08)
     UNITY_FIELD(int32_t, Stability, 0x10)

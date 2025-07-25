@@ -252,4 +252,36 @@ namespace app
 
         return nullptr;
     }
+
+    inline std::pair<UnityResolve::Field*, int> getFieldFromClass(const UnityResolve::Class* klass,
+                                                                  const std::string& fieldName)
+    {
+        if (!klass)
+        {
+            LOG_ERROR("Unity class is null");
+            return {nullptr, -1};
+        }
+
+        for (const auto& field : klass->fields)
+        {
+            if (field && field->name == fieldName)
+            {
+                return {field, field->offset};
+            }
+        }
+
+        LOG_ERROR("Field '%s' not found in class '%s'", fieldName.c_str(), klass->name.c_str());
+        return {nullptr, -1};
+    }
+
+    inline int getFieldOffset(const UnityResolve::Class* klass, const std::string& fieldName)
+	{
+        if (auto [field, offset] = getFieldFromClass(klass, fieldName); field)
+		{
+			return offset;
+		}
+
+		LOG_ERROR("Failed to get offset for field '%s' in class '%s'", fieldName.c_str(), klass->name.c_str());
+		return -1;
+	}
 }

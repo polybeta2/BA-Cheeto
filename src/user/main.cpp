@@ -26,13 +26,6 @@ void Main::run()
     }
 
     cheat::init();
-
-    auto characterClass = app::findClassFromField("BlueArchive.dll", "CharacterMovementComponent", "<Character>k__BackingField");
-    auto update = app::getMethodAddress(characterClass, "Update");
-    if (update)
-    {
-        LOG_DEBUG("Found Update method in Character class: %p", update);
-    }
 }
 
 UnityModuleBackendInfo Main::getUnityBackend()
