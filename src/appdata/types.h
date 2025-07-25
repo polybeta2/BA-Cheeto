@@ -167,8 +167,7 @@ public:
 
     UNITY_METHOD(void, Update, Battle*)
     UNITY_METHOD(void, Begin, Battle*)
-    // TODO CRITICAL!!: since this is obfuscated, need to implement a fallback using signatures or some sort of way
-    UNITY_METHOD(void, O41c95fd17e6626c6f1f7aa3c0ef0fd3c9d8ca5ea99daee82eee4c511efa52952, Battle*, BattleEndType_Enum)
+    UNITY_METHOD_BETWEEN(void, Finalize, "Resume", "Push", Battle*, BattleEndType_Enum)
 };
 
 class CharacterGroup
