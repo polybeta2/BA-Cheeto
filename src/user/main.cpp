@@ -27,12 +27,12 @@ void Main::run()
 
     cheat::init();
 
-    auto battleClass = app::getClass("BlueArchive.dll", "Battle");
-    auto fAfter = app::findMethodAfter(battleClass, "Resume");
-    auto fBetween = app::findMethodBetween(battleClass, "Resume", "Push");
-    auto fBefore = app::findMethodBefore(battleClass, "Push");
-    LOG_DEBUG("fAfter %p, fBetween %p, fBefore %p",
-			  app::getMethodAddress(fAfter), app::getMethodAddress(fBetween), app::getMethodAddress(fBefore));
+    auto characterClass = app::findClassFromField("BlueArchive.dll", "CharacterMovementComponent", "<Character>k__BackingField");
+    auto update = app::getMethodAddress(characterClass, "Update");
+    if (update)
+    {
+        LOG_DEBUG("Found Update method in Character class: %p", update);
+    }
 }
 
 UnityModuleBackendInfo Main::getUnityBackend()

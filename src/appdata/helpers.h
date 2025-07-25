@@ -29,6 +29,35 @@ namespace app
         return klass;
     }
 
+    /**
+     * @brief Resolves an obfuscated class by scanning a known class for a specific field name.
+     *
+     * This is useful when the target class is obfuscated but is used as a field type in a stable class.
+     * For example, class CharacterMovementComponent has a field <Character>k__BackingField
+     * Which is of type Character, but the Character class itself is obfuscated. 
+     * 
+     * @param module The name of the module (e.g., "BlueArchive.dll").
+     * @param containerClass The known, non-obfuscated class that contains the field (e.g., "CharacterMovementComponent").
+     * @param fieldName The EXACT name of the field referencing the obfuscated class (e.g., "<Character>k__BackingField").
+     * @return A pointer to the obfuscated UnityResolve::Class if found, otherwise nullptr.
+     */
+    inline UnityResolve::Class* findClassFromField(const std::string& module, const std::string& containerClass,
+                                                   const std::string_view fieldName)
+    {
+        for (const auto containerClassPtr = getClass(module, containerClass); const auto* field : containerClassPtr->
+             fields)
+        {
+            if (!field || !field->type || field->name != fieldName) continue;
+
+            const std::string& fullTypeName = field->type->name;
+
+            // fullTypeName example: "MX.Logic.BattleEntities.ObfuscatedClassName"
+            return getClass(module,
+                            fullTypeName.substr(fullTypeName.find_last_of('.') + 1));
+        }
+
+        return nullptr;
+    }
 
     /**
      * @brief Finds the method immediately after a given method in a Unity class.
@@ -151,8 +180,8 @@ namespace app
      * @param afterMethodName Name of the anchor method.
      * @return Pointer to the next method in order, or nullptr if not found.
      */
-    inline UnityResolve::Method* findMethodAfter(UnityResolve::Class* klass,
-                                                 std::string_view afterMethodName)
+    inline UnityResolve::Method* findMethodAfter(const UnityResolve::Class* klass,
+                                                 const std::string_view afterMethodName)
     {
         bool found = false;
 
@@ -174,8 +203,8 @@ namespace app
      * @param beforeMethodName Name of the anchor method.
      * @return Pointer to the method that appears before it, or nullptr if not found.
      */
-    inline UnityResolve::Method* findMethodBefore(UnityResolve::Class* klass,
-                                                  std::string_view beforeMethodName)
+    inline UnityResolve::Method* findMethodBefore(const UnityResolve::Class* klass,
+                                                  const std::string_view beforeMethodName)
     {
         UnityResolve::Method* prev = nullptr;
 
@@ -198,9 +227,10 @@ namespace app
      * @param beforeMethodName Optional name of the method that should follow the target.
      * @return The method found between the two, or nullptr on failure.
      */
-    inline UnityResolve::Method* findMethodBetween(UnityResolve::Class* klass,
-                                                   std::string_view afterMethodName,
-                                                   std::optional<std::string_view> beforeMethodName = std::nullopt)
+    inline UnityResolve::Method* findMethodBetween(const UnityResolve::Class* klass,
+                                                   const std::string_view afterMethodName,
+                                                   const std::optional<std::string_view>& beforeMethodName =
+                                                       std::nullopt)
     {
         bool found = false;
 

@@ -5,11 +5,29 @@ private:\
     inline static constexpr const char* ModuleName = MODULE; \
     inline static constexpr const char* ClassName = CLASS_NAME; \
 public: \
+    inline static const char* getClassName() { return ClassName; } \
     inline static UnityResolve::Class* getClass() { \
         static UnityResolve::Class* c = nullptr; \
         if (!c) c = app::getClass(MODULE, CLASS_NAME); \
         return c; \
 	}
+
+#define UNITY_CLASS_DECL_FROM_FIELD_NAME(MODULE, CONTAINER_CLASS_NAME, FIELD_NAME) \
+private: \
+    inline static constexpr const char* ModuleName = MODULE; \
+    inline static constexpr const char* ContainerClassName = CONTAINER_CLASS_NAME; \
+    inline static constexpr const char* FieldName = FIELD_NAME; \
+    inline static const char* ClassName; \
+public: \
+    inline static const char* getClassName() { return ClassName; } \
+    inline static UnityResolve::Class* getClass() { \
+        static UnityResolve::Class* cachedClass = nullptr; \
+        if (!cachedClass) { \
+            cachedClass = app::findClassFromField(ModuleName, ContainerClassName, FieldName); \
+            ClassName = cachedClass ? cachedClass->name.c_str() : ""; \
+        } \
+        return cachedClass; \
+    }
 
 #define UNITY_FIELD(FIELD_TYPE, FIELD_NAME, FIELD_OFFSET) \
     inline FIELD_TYPE FIELD_NAME() { \

@@ -30,7 +30,6 @@ class NewNormalAttackAction;
 
 class CostSkillCardManager
 {
-public:
     UNITY_CLASS_DECL("BlueArchive.dll", "CostSkillCardManager")
 
     UNITY_FIELD(float, MaxCost, 0x38)
@@ -45,7 +44,6 @@ public:
 
 class PlayerSkillCardManager : public CostSkillCardManager
 {
-public:
     UNITY_CLASS_DECL("BlueArchive.dll", "PlayerSkillCardManager")
 
     UNITY_METHOD(void, ProcessSkillCard, PlayerSkillCardManager*)
@@ -53,7 +51,6 @@ public:
 
 class BattleEntityStat
 {
-public:
     UNITY_CLASS_DECL("BlueArchive.dll", "BattleEntityStat")
 
     UNITY_METHOD(int64_t, get_Item, BattleEntityStat*, StatType_Enum)
@@ -61,7 +58,6 @@ public:
 
 class BattleEntityStatProcessor
 {
-public:
     UNITY_CLASS_DECL("BlueArchive.dll", "BattleEntityStatProcessor")
 
     UNITY_FIELD(int64_t, BattlePower, 0x10)
@@ -76,7 +72,6 @@ public:
 
 class BattleEntity
 {
-public:
     UNITY_CLASS_DECL("BlueArchive.dll", "BattleEntity")
 
     UNITY_FIELD(void*, Damaged, 0x28) // EventHandler<BattleEntityDamagedEventArgs>
@@ -88,8 +83,7 @@ public:
     UNITY_FIELD(int64_t, SummonedTime, 0x90)
     UNITY_FIELD(ArmorType_Enum, ArmorType, 0x98)
     UNITY_FIELD(BattleEntityStatProcessor*, statProcessor, 0xA0)
-
-
+    
     // UNITY_METHOD(void, OnDamaged, BattleEntity*, void*)
     UNITY_METHOD(bool, CanBeTargeted, BattleEntity*, BattleEntity*, SkillSlot_Enum)
     UNITY_METHOD(int64_t, AddHitPoint, BattleEntity*, int64_t)
@@ -99,7 +93,6 @@ public:
 
 class BattleSummary
 {
-public:
     UNITY_CLASS_DECL("BlueArchive.dll", "BattleSummary")
 
     UNITY_FIELD(int64_t, HashKey, 0x10)
@@ -132,7 +125,6 @@ struct TimeSpan
 
 class LogicGameTime
 {
-public:
     UNITY_CLASS_DECL("BlueArchive.dll", "LogicGameTime")
 
     UNITY_FIELD(float, UnitySecondPerFrame, 0x10)
@@ -150,7 +142,6 @@ public:
 
 class Battle
 {
-public:
     UNITY_CLASS_DECL("BlueArchive.dll", "Battle")
 
     UNITY_FIELD(BattleLogicState_Enum, state, 0x188)
@@ -203,8 +194,7 @@ public:
 // Obfuscated class
 class Character : public BattleEntity
 {
-public:
-    UNITY_CLASS_DECL("BlueArchive.dll", "Oa5c503f80e3a6fabdca83cda0af9e61bf1cdfa15fe0a322f74c82f8f819ca6e6")
+    UNITY_CLASS_DECL_FROM_FIELD_NAME("BlueArchive.dll", "CharacterMovementComponent", "<Character>k__BackingField")
 
     UNITY_FIELD(bool, IsSearchAndMoveActivated, 0x118)
     UNITY_FIELD(int32_t, lastTargetFindFrame, 0x11C)
@@ -318,7 +308,6 @@ class NewSkillAction : public HeroAction
 
 class NewNormalAttackAction : public NewSkillAction
 {
-public:
     UNITY_CLASS_DECL("BlueArchive.dll", "NewNormalAttackAction")
 
     UNITY_FIELD(Character*, ownerCharacter, 0x178)
