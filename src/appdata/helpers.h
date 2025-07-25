@@ -169,6 +169,29 @@ namespace app
     }
 
     /**
+     * @brief Finds the method that appears immediately before a specified method.
+     * @param klass Pointer to UnityResolve::Class.
+     * @param beforeMethodName Name of the anchor method.
+     * @return Pointer to the method that appears before it, or nullptr if not found.
+     */
+    inline UnityResolve::Method* findMethodBefore(UnityResolve::Class* klass,
+                                                  std::string_view beforeMethodName)
+    {
+        UnityResolve::Method* prev = nullptr;
+
+        for (const auto& method : klass->methods)
+        {
+            if (!method) continue;
+
+            if (method->name == beforeMethodName) return prev;
+
+            prev = method;
+        }
+
+        return nullptr;
+    }
+
+    /**
      * @brief Finds a method that appears between two known methods.
      * @param klass Unity class to search in.
      * @param afterMethodName Name of the method that comes before the target.
@@ -195,29 +218,6 @@ namespace app
             }
 
             if (name == afterMethodName) found = true;
-        }
-
-        return nullptr;
-    }
-
-    /**
-     * @brief Finds the method that appears immediately before a specified method.
-     * @param klass Pointer to UnityResolve::Class.
-     * @param beforeMethodName Name of the anchor method.
-     * @return Pointer to the method that appears before it, or nullptr if not found.
-     */
-    inline UnityResolve::Method* findMethodBefore(UnityResolve::Class* klass,
-                                                  std::string_view beforeMethodName)
-    {
-        UnityResolve::Method* prev = nullptr;
-
-        for (const auto& method : klass->methods)
-        {
-            if (!method) continue;
-
-            if (method->name == beforeMethodName) return prev;
-
-            prev = method;
         }
 
         return nullptr;

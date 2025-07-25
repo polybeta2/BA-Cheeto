@@ -46,7 +46,9 @@ public:
 class PlayerSkillCardManager : public CostSkillCardManager
 {
 public:
-    UNITY_METHOD_FROM("BlueArchive.dll", "PlayerSkillCardManager", void, ProcessSkillCard, PlayerSkillCardManager*)
+    UNITY_CLASS_DECL("BlueArchive.dll", "PlayerSkillCardManager")
+
+    UNITY_METHOD(void, ProcessSkillCard, PlayerSkillCardManager*)
 };
 
 class BattleEntityStat
@@ -163,7 +165,6 @@ public:
     UNITY_FIELD(int, TotalEnemyCount, 0x2F8)
     UNITY_FIELD(int, RemainEnemyCount, 0x2FC)
 
-
     UNITY_METHOD(void, Update, Battle*)
     UNITY_METHOD(void, Begin, Battle*)
     // TODO CRITICAL!!: since this is obfuscated, need to implement a fallback using signatures or some sort of way
@@ -263,7 +264,6 @@ public:
     UNITY_FIELD(int64_t, AIPhaseToChange, 0x430)
     UNITY_FIELD(int64_t, currentActiveGauge, 0x440)
     UNITY_FIELD(int32_t, CurrentNormalAttackCount, 0x448)
-
 
     UNITY_METHOD(void, Update, Character*, Battle*)
     UNITY_METHOD(void, InitAmmo, Character*)
