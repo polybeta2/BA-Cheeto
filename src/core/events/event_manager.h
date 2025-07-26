@@ -4,15 +4,13 @@
 class EventManager
 {
 public:
-    static EventManager& getInstance()
-    {
-        static EventManager instance;
-        return instance;
-    }
+    static EventManager& getInstance();
 
     static Event<> onUpdate;
 
+    static void shutdown();
+
 private:
-    EventManager() = default;
-    ~EventManager() = default;
+    EventManager();
+    ~EventManager();
 };

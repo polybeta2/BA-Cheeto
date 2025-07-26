@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "FeatureBase.h"
+#include "feature_base.h"
 
 namespace cheat
 {

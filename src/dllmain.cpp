@@ -2,15 +2,26 @@
 #include "user/main.h"
 #include <thread>
 
-BOOL APIENTRY DllMain(HMODULE hModule, DWORD   ul_reason_for_call, LPVOID  lpReserved)
+BOOL APIENTRY DllMain(HMODULE hModule, DWORD reason, LPVOID lpReserved)
 {
-    if (ul_reason_for_call != DLL_PROCESS_ATTACH)
-        return TRUE;
+    switch (reason)
+    {
+        case DLL_PROCESS_ATTACH:
+            DisableThreadLibraryCalls(hModule);
+        // Main::run();
+            std::thread(Main::run).detach();
+            break;
 
-    DisableThreadLibraryCalls(hModule);
+        case DLL_PROCESS_DETACH:
+            if (lpReserved == nullptr)
+            {
+                Main::shutdown();
+            }
+            break;
 
-    std::thread(Main::run).detach();
+        default:
+            break;
+    }
 
     return TRUE;
-
 }

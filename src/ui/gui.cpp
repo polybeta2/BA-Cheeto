@@ -1,7 +1,7 @@
 ﻿#include "pch.h"
 #include "gui.h"
 
-#include "user/cheat/FeatureManager.h"
+#include "user/cheat/feature_manager.h"
 
 GUI::GUI()
 {

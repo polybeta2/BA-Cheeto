@@ -17,6 +17,7 @@
     <ClInclude Include="src\appdata\types.h" />
     <ClInclude Include="src\core\events\event.h" />
     <ClInclude Include="src\core\events\event_manager.h" />
+    <ClInclude Include="src\core\pipe\pipe_manager.h" />
     <ClInclude Include="src\core\rendering\backend\dx11_backend.h" />
     <ClInclude Include="src\core\rendering\backend\renderer_backend.h" />
     <ClInclude Include="src\core\rendering\fonts\NotoSans.hpp" />
@@ -26,8 +27,8 @@
     <ClInclude Include="src\pch.h" />
     <ClInclude Include="src\ui\gui.h" />
     <ClInclude Include="src\user\cheat\cheat.h" />
-    <ClInclude Include="src\user\cheat\FeatureBase.h" />
-    <ClInclude Include="src\user\cheat\FeatureManager.h" />
+    <ClInclude Include="src\user\cheat\feature_base.h" />
+    <ClInclude Include="src\user\cheat\feature_manager.h" />
     <ClInclude Include="src\user\cheat\features\combat\DumbEnemies.h" />
     <ClInclude Include="src\user\cheat\features\combat\OneHitKill.h" />
     <ClInclude Include="src\user\cheat\features\debug\Debug.h" />
@@ -68,6 +69,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\core\events\event_manager.cpp" />
+    <ClCompile Include="src\core\pipe\pipe_manager.cpp" />
     <ClCompile Include="src\core\rendering\backend\dx11_backend.cpp" />
     <ClCompile Include="src\core\rendering\renderer.cpp" />
     <ClCompile Include="src\dllmain.cpp" />
@@ -78,7 +80,7 @@
     </ClCompile>
     <ClCompile Include="src\ui\gui.cpp" />
     <ClCompile Include="src\user\cheat\cheat.cpp" />
-    <ClCompile Include="src\user\cheat\FeatureManager.cpp" />
+    <ClCompile Include="src\user\cheat\feature_manager.cpp" />
     <ClCompile Include="src\user\cheat\features\combat\DumbEnemies.cpp" />
     <ClCompile Include="src\user\cheat\features\combat\OneHitKill.cpp" />
     <ClCompile Include="src\user\cheat\features\debug\Debug.cpp" />
@@ -128,7 +130,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="src\appdata\helpers.h" />
-    <Content Include="src\user\cheat\FeatureBase.h" />
+    <Content Include="src\user\cheat\feature_base.h" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="src\core\rendering\fonts\" />

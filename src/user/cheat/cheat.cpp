@@ -1,7 +1,7 @@
 ﻿#include "pch.h"
 #include "cheat.h"
 
-#include "FeatureManager.h"
+#include "feature_manager.h"
 
 #include "features/debug/Debug.h"
 
@@ -34,4 +34,10 @@ void cheat::init()
     >();
 
     manager.init();
+}
+
+void cheat::shutdown()
+{
+    auto& hookManager = HookManager::getInstance();
+    hookManager.shutdown();
 }
