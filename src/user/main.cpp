@@ -6,15 +6,13 @@
 
 void Main::run()
 {
-    utils::attachConsole();
-
     LOG_INFO("Starting initialization...");
     Sleep(1000);
 
     if (!initializeUnity())
         LOG_ERROR("Unable to initialize Unity! Maybe assemblies are not found?");
 
-    // Initialize renderer
+    // TODO: allow user to specify if they want rendering
     if (Renderer& renderer = Renderer::getInstance(); renderer.initialize())
     {
         LOG_INFO("Renderer initialized successfully!");
