@@ -6,27 +6,32 @@
 
 void Main::run()
 {
-    utils::attachConsole();
-
     LOG_INFO("Starting initialization...");
     Sleep(1000);
 
     if (!initializeUnity())
         LOG_ERROR("Unable to initialize Unity! Maybe assemblies are not found?");
 
-    // Initialize renderer
-    if (Renderer& renderer = Renderer::getInstance(); renderer.initialize())
+    if (!PipeManager::isUsingPipes())
     {
-        LOG_INFO("Renderer initialized successfully!");
-        LOG_INFO("Press INSERT to toggle GUI visibility");
-    }
-    else
-    {
-        LOG_INFO("Failed to initialize renderer!");
+        LOG_INFO("%s", Renderer::getInstance().initialize()
+			? "Renderer initialized! Press INSERT to toggle GUI visibility"
+			: "Failed to initialize renderer!");
     }
 
     cheat::init();
 }
+
+void Main::shutdown()
+{
+    LOG_INFO("Shutting down...");
+    Sleep(1000);
+
+    utils::detachConsole();
+    utils::closeFileLogging();
+    cheat::shutdown();
+}
+
 
 Main::UnityModuleBackendInfo Main::getUnityBackend()
 {
@@ -54,21 +59,21 @@ Main::UnityModuleBackendInfo Main::getUnityBackend()
     LOG_WARNING("GameAssembly.dll not found, trying fallback to Mono...");
 
     std::vector<std::string> monoModules = {
-		"mono-2.0.dll",
-		"mono-2.0-bdwgc.dll",
-		"mono.dll"
-	};
-    
+        "mono-2.0.dll",
+        "mono-2.0-bdwgc.dll",
+        "mono.dll"
+    };
+
     for (const auto& monoModule : monoModules)
-	{
-		if (const auto monoHandle = GetModuleHandleA(monoModule.c_str()); monoHandle)
-		{
-			info.module = monoHandle;
-			info.mode = UnityResolve::Mode::Mono;
-			LOG_INFO("Found Mono backend: %s", monoModule.c_str());
-			return info;
-		}
-	}
+    {
+        if (const auto monoHandle = GetModuleHandleA(monoModule.c_str()); monoHandle)
+        {
+            info.module = monoHandle;
+            info.mode = UnityResolve::Mode::Mono;
+            LOG_INFO("Found Mono backend: %s", monoModule.c_str());
+            return info;
+        }
+    }
 
     LOG_ERROR("Unable to find Unity backend! Neither GameAssembly.dll nor mono.dll found.");
     return info;

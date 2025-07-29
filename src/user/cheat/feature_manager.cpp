@@ -1,5 +1,5 @@
 ﻿#include "pch.h"
-#include "FeatureManager.h"
+#include "feature_manager.h"
 
 namespace cheat
 {

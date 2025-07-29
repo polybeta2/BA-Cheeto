@@ -287,13 +287,13 @@ namespace app
      * @return The offset of the field in decimal, or -1 if not found.
      */
     inline int getFieldOffset(const UnityResolve::Class* klass, const std::string& fieldName)
-	{
+    {
         if (auto [field, offset] = getFieldFromClass(klass, fieldName); field)
-		{
-			return offset;
-		}
+        {
+            return offset;
+        }
 
-		LOG_ERROR("Failed to get offset for field '%s' in class '%s'", fieldName.c_str(), klass->name.c_str());
-		return -1;
-	}
+        LOG_ERROR("Failed to get offset for field '%s' in class '%s'", fieldName.c_str(), klass->name.c_str());
+        return -1;
+    }
 }
