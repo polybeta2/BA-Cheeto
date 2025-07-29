@@ -1,6 +1,8 @@
 ﻿#include "pch.h"
 #include "InstantWin.h"
 
+#include "core/events/event_manager.h"
+
 namespace cheat::features
 {
     InstantWin::InstantWin()
@@ -23,6 +25,7 @@ namespace cheat::features
             UNITY_CALL(Battle::Finalize, _this, BattleEndType_Enum::Clear)
         }
 
+        EventManager::onBattleFinalize();
         CALL_ORIGINAL(hBattle_Update, _this);
     }
 }

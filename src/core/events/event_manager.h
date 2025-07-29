@@ -7,6 +7,7 @@ public:
     static EventManager& getInstance();
 
     static Event<> onUpdate;
+    static Event<> onBattleFinalize;
 
     static void shutdown();
 

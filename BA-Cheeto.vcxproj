@@ -27,6 +27,7 @@
     <ClInclude Include="src\pch.h" />
     <ClInclude Include="src\ui\gui.h" />
     <ClInclude Include="src\user\cheat\cheat.h" />
+    <ClInclude Include="src\user\cheat\features\player\PlayerStats.h" />
     <ClInclude Include="src\user\cheat\feature_base.h" />
     <ClInclude Include="src\user\cheat\feature_manager.h" />
     <ClInclude Include="src\user\cheat\features\combat\DumbEnemies.h" />
@@ -80,6 +81,7 @@
     </ClCompile>
     <ClCompile Include="src\ui\gui.cpp" />
     <ClCompile Include="src\user\cheat\cheat.cpp" />
+    <ClCompile Include="src\user\cheat\features\player\PlayerStats.cpp" />
     <ClCompile Include="src\user\cheat\feature_manager.cpp" />
     <ClCompile Include="src\user\cheat\features\combat\DumbEnemies.cpp" />
     <ClCompile Include="src\user\cheat\features\combat\OneHitKill.cpp" />

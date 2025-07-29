@@ -354,13 +354,11 @@ int DX11Backend::onInput(UINT msg, WPARAM wParam, LPARAM lParam)
 
     if (io.WantCaptureKeyboard && isKeyboardMessage(msg))
     {
-        ImGui_ImplWin32_WndProcHandler(m_window, msg, wParam, lParam);
         return 1;
     }
 
     if (io.WantCaptureMouse && isInputMessage(msg))
     {
-        ImGui_ImplWin32_WndProcHandler(m_window, msg, wParam, lParam);
         return 1;
     }
 

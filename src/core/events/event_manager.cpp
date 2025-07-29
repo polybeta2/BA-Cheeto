@@ -2,6 +2,7 @@
 #include "event_manager.h"
 
 inline Event<> EventManager::onUpdate;
+inline Event<> EventManager::onBattleFinalize;
 
 EventManager::EventManager() = default;
 
@@ -19,4 +20,5 @@ EventManager& EventManager::getInstance()
 void EventManager::shutdown()
 {
     onUpdate.clear();
+    onBattleFinalize.clear();
 }

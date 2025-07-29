@@ -117,7 +117,7 @@ void GUI::setupImGuiStyle()
 {
     ImGuiStyle& style = ImGui::GetStyle();
 
-    style.WindowMinSize = ImVec2(420, 320);
+    style.WindowMinSize = ImVec2(600, 360);
     
     // Modern rounded corners
     style.WindowRounding = 12.0f;

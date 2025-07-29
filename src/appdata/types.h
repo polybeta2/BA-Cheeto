@@ -56,6 +56,8 @@ class BattleEntityStat
     UNITY_CLASS_DECL("BlueArchive.dll", "BattleEntityStat")
 
     UNITY_METHOD(int64_t, get_Item, BattleEntityStat*, StatType_Enum)
+    UNITY_METHOD(bool, TryGetValue, BattleEntityStat*, StatType_Enum, int64_t*)
+    UNITY_METHOD(void, SetValue, BattleEntityStat*, StatType_Enum, int64_t)
 };
 
 class BattleEntityStatProcessor
