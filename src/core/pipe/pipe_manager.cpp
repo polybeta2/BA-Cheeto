@@ -7,6 +7,37 @@ PipeManager& PipeManager::getInstance()
     return instance;
 }
 
+bool PipeManager::isUsingPipes()
+{
+    static std::optional<bool> usePipes;
+
+    if (!usePipes.has_value())
+    {
+        const std::string pipeName = PIPE_FLAG_NAME + std::to_string(GetCurrentProcessId());
+        const HANDLE hMapFile = OpenFileMappingA(FILE_MAP_READ, FALSE, pipeName.c_str());
+        if (!hMapFile)
+        {
+            usePipes = false;
+            return *usePipes;
+        }
+
+        const LPVOID pBuf = MapViewOfFile(hMapFile, FILE_MAP_READ, 0, 0, 1);
+        if (!pBuf)
+        {
+            CloseHandle(hMapFile);
+            usePipes = false;
+            return *usePipes;
+        }
+
+        usePipes = *static_cast<char*>(pBuf) == 1;
+
+        UnmapViewOfFile(pBuf);
+        CloseHandle(hMapFile);
+    }
+
+    return *usePipes;
+}
+
 PipeManager::PipeManager() = default;
 
 PipeManager::~PipeManager()

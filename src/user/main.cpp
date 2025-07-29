@@ -12,15 +12,11 @@ void Main::run()
     if (!initializeUnity())
         LOG_ERROR("Unable to initialize Unity! Maybe assemblies are not found?");
 
-    // TODO: allow user to specify if they want rendering
-    if (Renderer& renderer = Renderer::getInstance(); renderer.initialize())
+    if (!PipeManager::isUsingPipes())
     {
-        LOG_INFO("Renderer initialized successfully!");
-        LOG_INFO("Press INSERT to toggle GUI visibility");
-    }
-    else
-    {
-        LOG_INFO("Failed to initialize renderer!");
+        LOG_INFO("%s", Renderer::getInstance().initialize()
+			? "Renderer initialized! Press INSERT to toggle GUI visibility"
+			: "Failed to initialize renderer!");
     }
 
     cheat::init();

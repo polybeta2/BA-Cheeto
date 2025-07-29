@@ -4,6 +4,7 @@ class PipeManager
 {
 public:
     static PipeManager& getInstance();
+    static bool isUsingPipes();
 
     void start();
     void stop();
@@ -31,4 +32,5 @@ private:
     std::unordered_map<std::string, bool> m_features;
 
     static constexpr auto PIPE_NAME = L"\\\\.\\pipe\\cunny_pipe00";
+    static constexpr auto PIPE_FLAG_NAME = "UsePipeModeFlag_";
 };
