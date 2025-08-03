@@ -1,5 +1,21 @@
 ﻿#pragma once
 
+#define FUNC0(R) Func0<R>
+#define FUNC1(A1, R) Func1<A1, R>
+#define FUNC2(A1, A2, R) Func2<A1, A2, R>
+#define FUNC3(A1, A2, A3, R) Func3<A1, A2, A3, R>
+#define FUNC4(A1, A2, A3, A4, R) Func4<A1, A2, A3, A4, R>
+#define FUNC5(A1, A2, A3, A4, A5, R) Func5<A1, A2, A3, A4, A5, R>
+#define FUNC6(A1, A2, A3, A4, A5, A6, R) Func6<A1, A2, A3, A4, A5, A6, R>
+#define ACTION0 Action
+#define ACTION1(T1) Action1<T1>
+#define ACTION2(T1, T2) Action2<T1, T2>
+#define ACTION3(T1, T2, T3) Action3<T1, T2, T3>
+#define ACTION4(T1, T2, T3, T4) Action4<T1, T2, T3, T4>
+#define ACTION5(T1, T2, T3, T4, T5) Action5<T1, T2, T3, T4, T5>
+#define ACTION6(T1, T2, T3, T4, T5, T6) Action6<T1, T2, T3, T4, T5, T6>
+#define VALUETUPLE2(T1, T2) ValueTuple2<T1, T2>
+
 // Func<TResult>
 template <typename TResult>
 struct Func0 : UnityResolve::UnityType::Object
@@ -213,5 +229,27 @@ struct Action6 : UnityResolve::UnityType::Object
                      ->Get("System.Action`6")
                      ->Get<UnityResolve::Method>("Invoke");
         if (method) method->Invoke<void>(this, a1, a2, a3, a4, a5, a6);
+    }
+};
+
+// ValueTuple<T1, T2>
+template <typename T1, typename T2>
+struct ValueTuple2 : UnityResolve::UnityType::Object
+{
+    T1 Item1;
+    T2 Item2;
+
+    T1 GetItem1() { return Item1; }
+    T2 GetItem2() { return Item2; }
+
+    static ValueTuple2* New(T1 a1, T2 a2)
+    {
+        auto klass = UnityResolve::Get("mscorlib.dll")
+                     ->Get("System")
+                     ->Get<UnityResolve::Class>("ValueTuple`2");
+        auto tuple = klass->New<ValueTuple2>();
+        tuple->Item1 = a1;
+        tuple->Item2 = a2;
+        return tuple;
     }
 };

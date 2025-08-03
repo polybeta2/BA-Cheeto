@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 #include "enums.h"
-#include "mscorlib.h"
+#include "cs-types.h"
 #include "types-helper.h"
 
 using UTYPE = UnityResolve::UnityType;
@@ -91,7 +91,8 @@ class BattleEntity
     UNITY_FIELD(ArmorType_Enum, ArmorType, 0x98)
     UNITY_FIELD(BattleEntityStatProcessor*, statProcessor, 0xA0)
 
-    // UNITY_METHOD(void, OnDamaged, BattleEntity*, void*)
+    UNITY_METHOD(bool, get_HasTarget, BattleEntity*)
+    UNITY_METHOD(bool, get_HasMainTarget, BattleEntity*)
     UNITY_METHOD(bool, CanBeTargeted, BattleEntity*, BattleEntity*, SkillSlot_Enum)
     UNITY_METHOD(int64_t, AddHitPoint, BattleEntity*, int64_t)
     UNITY_METHOD(void, SetHitPoint, BattleEntity*, int64_t)
@@ -151,33 +152,6 @@ class LogicGameTime
 class LogicEffect
 {
     UNITY_CLASS_DECL("BlueArchive.dll", "LogicEffect")
-
-    // UNITY_FIELD(SkillSpecification*, SkillSpecification, 0x10)
-    // UNITY_FIELD(LogicEffectHitSpecification*, LogicEffectHitSpecification, 0x18)
-    // UNITY_FIELD(BattleEntity*, Invoker, 0x20)
-    // UNITY_FIELD(BattleEntity*, Target, 0x28)
-    // UNITY_FIELD(BattleEntity*, OriginalTarget, 0x30)
-    // UNITY_FIELD(Func_1_Boolean_*, ExpirationCheck, 0x38)
-    // UNITY_FIELD(Entity*, ExpirationCheckOwner, 0x40)
-    // UNITY_FIELD(String*, SkillEntityName, 0x48)
-    // UNITY_FIELD(int64_t, SpawnRate, 0x50)
-    // UNITY_FIELD(String*, LogicEffectGroupId, 0x58)
-    // UNITY_FIELD(LogicEffectCategory__Enum, Category, 0x60)
-    // UNITY_FIELD(String*, templateId, 0x68)
-    // UNITY_FIELD(Hash64, TemplateIdHash, 0x70)
-    // UNITY_FIELD(int32_t, Channel, 0x78)
-    // UNITY_FIELD(BasisPoint, ApplyRate, 0x80)
-    // UNITY_FIELD(uint32_t, CommonVisualIdHash, 0x88)
-    // UNITY_FIELD(Vector2, HitPosition, 0x8C)
-    // UNITY_FIELD(Vector2, BulletPosition, 0x94)
-    // UNITY_FIELD(Vector2, BulletDirection, 0x9C)
-    // UNITY_FIELD(Entity*, BulletEntity, 0xA8)
-    // UNITY_FIELD(ResolvePriority__Enum, priority, 0xB0)
-    // UNITY_FIELD(int32_t, Priority, 0xB4)
-    // UNITY_FIELD(int32_t, ResolveIndex, 0xB8)
-    // UNITY_FIELD(int32_t, DotIndex, 0xBC)
-    // UNITY_FIELD(int32_t, ExtraCostUsed, 0xC0)
-    // UNITY_FIELD(bool, ForceFloaterHide, 0xC4)
 };
 
 // Obfuscated class

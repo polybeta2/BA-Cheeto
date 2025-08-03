@@ -13,7 +13,7 @@
   <ItemGroup>
     <ClInclude Include="src\appdata\enums.h" />
     <ClInclude Include="src\appdata\helpers.h" />
-    <ClInclude Include="src\appdata\mscorlib.h" />
+    <ClInclude Include="src\appdata\cs-types.h" />
     <ClInclude Include="src\appdata\types-helper.h" />
     <ClInclude Include="src\appdata\types.h" />
     <ClInclude Include="src\core\events\event.h" />
