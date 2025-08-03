@@ -1,8 +1,6 @@
 ﻿#include "pch.h"
 #include "PlayerStats.h"
 
-#include <misc/cpp/imgui_stdlib.h>
-
 namespace cheat::features
 {
     PlayerStats::PlayerStats()
@@ -83,8 +81,7 @@ namespace cheat::features
                 battleEntity->statProcessor()->DefaultStat(currentStat);
                 if (fst == StatType_Enum::MaxHP)
                 {
-                    battleEntity->MaxHPCapGauge(snd);
-                    battleEntity->statProcessor()->lastMaxHP(snd);
+                    BattleEntity::SetHitPoint()(battleEntity, snd);
                 }
             }
         }
