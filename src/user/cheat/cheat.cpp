@@ -42,4 +42,5 @@ void cheat::shutdown()
 {
     auto& hookManager = HookManager::getInstance();
     hookManager.shutdown();
+    LOG_INFO("Hooks shutdown successfully");
 }

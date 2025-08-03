@@ -184,12 +184,14 @@ void PipeManager::handleClient(HANDLE hPipe)
 
 bool PipeManager::isFeatureEnabled(const std::string& featureName) const
 {
+    std::lock_guard lock(m_featuresMutex);
     const auto it = m_features.find(featureName);
     return it != m_features.end() ? it->second : false;
 }
 
 void PipeManager::setFeatureState(const std::string& featureName, bool enabled)
 {
+    std::lock_guard lock(m_featuresMutex);
     m_features[featureName] = enabled;
     LOG_INFO("Feature %s set to %s", featureName.c_str(), enabled ? "enabled" : "disabled");
 }

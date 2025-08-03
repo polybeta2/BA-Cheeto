@@ -30,6 +30,7 @@ private:
     std::atomic<bool> m_running{false};
     std::thread m_serverThread;
     std::unordered_map<std::string, bool> m_features;
+    mutable std::mutex m_featuresMutex;
 
     static constexpr auto PIPE_NAME = L"\\\\.\\pipe\\cunny_pipe00";
     static constexpr auto PIPE_FLAG_NAME = "UsePipeModeFlag_";

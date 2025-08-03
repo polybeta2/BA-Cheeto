@@ -13,6 +13,9 @@
 #include <magic_enum.hpp>
 
 #include <imgui.h>
+#include <misc/cpp/imgui_stdlib.h>
+
+#include <nlohmann/json.hpp>
 
 // Project includes
 #include "utils/dx_utils.h"

@@ -10,16 +10,22 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD reason, LPVOID lpReserved)
             DisableThreadLibraryCalls(hModule);
             utils::attachConsole();
             if (PipeManager::isUsingPipes())
+            {
+                Main::run();
                 PipeManager::getInstance().start();
-
-            std::thread(Main::run).detach();
+            }
+            else
+            {
+                std::thread(Main::run).detach();
+            }
             break;
 
         case DLL_PROCESS_DETACH:
             if (lpReserved == nullptr)
             {
                 Main::shutdown();
-                PipeManager::getInstance().stop();
+                if (PipeManager::isUsingPipes())
+					PipeManager::getInstance().stop();
             }
             break;
 

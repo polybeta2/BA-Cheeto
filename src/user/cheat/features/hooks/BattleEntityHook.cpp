@@ -31,9 +31,8 @@ namespace cheat::features
         {
             if (_this->TacticEntityType() == TacticEntityType_Enum::Student)
             {
+                // LOG_DEBUG("Add HitPoint %d, HitPointBefore %d, MaxHPCapGauge %d,", _this->HitPoint(), _this->HitPointBefore(), _this->MaxHPCapGauge());
                 _this->Damaged(nullptr); // So OnDamaged event won't be invoked
-                _this->HitPoint(0);
-                _this->HitPointBefore(0);
                 return 0;
             }
         }

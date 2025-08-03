@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "enums.h"
+#include "mscorlib.h"
 #include "types-helper.h"
 
 using UTYPE = UnityResolve::UnityType;
@@ -9,12 +10,14 @@ using UTYPE = UnityResolve::UnityType;
 /// All Forward Declarations
 ///////////////////////////////
 
-class CostSkillCardManager;
 class PlayerSkillCardManager;
 class BattleEntityStat;
 class BattleEntityStatProcessor;
 class BattleEntity;
 class BattleSummary;
+class LogicGameTime;
+class LogicEffect;
+class LogicEffectProcessor;
 class Battle;
 class CharacterGroup;
 class PlayerGroup;
@@ -91,6 +94,7 @@ class BattleEntity
     // UNITY_METHOD(void, OnDamaged, BattleEntity*, void*)
     UNITY_METHOD(bool, CanBeTargeted, BattleEntity*, BattleEntity*, SkillSlot_Enum)
     UNITY_METHOD(int64_t, AddHitPoint, BattleEntity*, int64_t)
+    UNITY_METHOD(void, SetHitPoint, BattleEntity*, int64_t)
     UNITY_METHOD(void, ApplyStat, BattleEntity*, StatType_Enum)
     UNITY_METHOD(BattleEntityStat*, get_CurrentStat, BattleEntity*)
 };
