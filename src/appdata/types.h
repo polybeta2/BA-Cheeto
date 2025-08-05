@@ -47,9 +47,10 @@ class CostSkillCardManager
     UNITY_FIELD(float, RegenCostBefore, 0x6c)
 };
 
+// Obfuscated class
 class PlayerSkillCardManager : public CostSkillCardManager
 {
-    UNITY_CLASS_DECL("BlueArchive.dll", "PlayerSkillCardManager")
+    UNITY_CLASS_DECL_FROM_FIELD_NAME("BlueArchive.dll", "GroundCommandPlayTransitionVisual", "skillCardManager")
 
     UNITY_METHOD(void, ProcessSkillCard, PlayerSkillCardManager*)
 };
@@ -324,9 +325,10 @@ class NewSkillAction : public HeroAction
     UNITY_FIELD(bool, ignoreCrashByTSSObstacleCheck, 0x174)
 };
 
+// Obfuscated class
 class NewNormalAttackAction : public NewSkillAction
 {
-    UNITY_CLASS_DECL("BlueArchive.dll", "NewNormalAttackAction")
+    UNITY_CLASS_DECL_FROM_FIELDS("BlueArchive.dll", 2, "currentPhaseEndIn", "initCurPhaseEndIn")
 
     UNITY_FIELD(Character*, ownerCharacter, 0x178)
     UNITY_FIELD(float, currentPhaseEndIn, 0x180)

@@ -7,6 +7,7 @@
 #include <memory>
 #include <mutex>
 #include <filesystem>
+#include <unordered_set>
 
 #include <UnityResolve.hpp>
 

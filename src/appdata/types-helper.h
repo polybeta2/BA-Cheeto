@@ -31,6 +31,23 @@ public: \
         return cachedClass; \
     }
 
+// Used to declare a class that can be resolved from a set of field names
+#define UNITY_CLASS_DECL_FROM_FIELDS(MODULE, MIN_MATCHES, ... ) \
+private: \
+    inline static constexpr const char* ModuleName = MODULE; \
+    inline static const std::vector<std::string> RequiredFields = { __VA_ARGS__ }; \
+    inline static const char* ClassName; \
+public: \
+    inline static const char* getClassName() { return ClassName; } \
+	inline static UnityResolve::Class* getClass() { \
+		static UnityResolve::Class* cachedClass = nullptr; \
+		if (!cachedClass) { \
+			cachedClass = app::findClassByFields(ModuleName, RequiredFields, MIN_MATCHES); \
+			ClassName = cachedClass ? cachedClass->name.c_str() : ""; \
+		} \
+		return cachedClass; \
+	}
+
 // Used to initialize a method pointer for a class that's declared with UNITY_CLASS_DECL
 #define UNITY_METHOD(RETURN_TYPE, METHOD_NAME, ...) \
 private: \
@@ -39,7 +56,7 @@ private: \
 public: \
     inline static UnityResolve::MethodPointer<RETURN_TYPE, __VA_ARGS__> METHOD_NAME() { \
         if (!METHOD_NAME##_initialized) { \
-            auto method = app::getMethod(ModuleName, ClassName, #METHOD_NAME); \
+            auto method = app::getMethod(getClass(), #METHOD_NAME); \
             if (method) { \
                 METHOD_NAME##_ptr = method->Cast<RETURN_TYPE, __VA_ARGS__>(); \
             } \

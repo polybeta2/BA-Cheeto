@@ -16,7 +16,7 @@ namespace cheat::features
 
     void DumbEnemies::draw()
     {
-        ImGui::Checkbox("Dumb Player", &m_dumbPlayer);
+        // ImGui::Checkbox("Dumb Player", &m_dumbPlayer);
     }
 
     // bool DumbEnemies::hBattleEntity_CanBeTargeted(BattleEntity* _this, BattleEntity* attacker, SkillSlot_Enum skillSlot)

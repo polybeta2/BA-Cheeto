@@ -60,6 +60,90 @@ namespace app
     }
 
     /**
+     * @brief Finds a Unity class by matching multiple known field names for fast identification of obfuscated classes.
+     * @param module The name of the Unity module (e.g., "BlueArchive.dll").
+     * @param requiredFields Vector of field names that must exist in the target class.
+     * @param minMatches Minimum number of fields that must match (default: all fields must match).
+     * @return A pointer to the obfuscated UnityResolve::Class if found, otherwise nullptr.
+     */
+    inline UnityResolve::Class* findClassByFields(const std::string& module,
+                                                  const std::vector<std::string>& requiredFields,
+                                                  size_t minMatches = 0)
+    {
+        if (requiredFields.empty())
+        {
+            LOG_ERROR("No field name provided for class search");
+            return nullptr;
+        }
+        
+        if (minMatches == 0) minMatches = requiredFields.size();
+        if (minMatches > requiredFields.size()) minMatches = requiredFields.size();
+
+        auto unityModule = UnityResolve::Get(module);
+        if (!unityModule)
+        {
+            LOG_ERROR("Module '%s' not found", module.c_str());
+            return nullptr;
+        }
+
+        std::vector<UnityResolve::Class*> matchingClasses;
+        
+        for (const auto& klass : unityModule->classes)
+        {
+            if (!klass || klass->fields.empty()) continue;
+
+            size_t matchCount = 0;
+            
+            if (klass->fields.size() < minMatches) continue;
+
+            std::unordered_set<std::string> classFieldNames;
+            classFieldNames.reserve(klass->fields.size());
+            
+            for (const auto& field : klass->fields)
+            {
+                if (field && !field->name.empty())
+				{
+					classFieldNames.insert(field->name);
+				}
+            }
+
+            for (const auto& requiredField : requiredFields)
+            {
+                if (classFieldNames.contains(requiredField))
+                {
+                    matchCount++;
+                }
+            }
+
+            if (matchCount >= minMatches)
+            {
+                matchingClasses.push_back(klass);
+            }
+        }
+
+        if (matchingClasses.empty())
+        {
+            LOG_ERROR("No class found in module '%s' with required fields", module.c_str());
+			return nullptr;
+        }
+
+        if (matchingClasses.size() == 1)
+		{
+			// LOG_DEBUG("Found class '%s' in module '%s' with required fields", matchingClasses[0]->name.c_str(),
+			// 		  module.c_str());
+			return matchingClasses[0];
+		}
+
+        LOG_ERROR("%d classes found in module '%s' with required fields", matchingClasses.size(), module.c_str());
+        for (const auto& klass : matchingClasses)
+        {
+            LOG_ERROR("Class '%s' with fields: ", klass->name.c_str());
+        }
+        
+        return nullptr;
+    }
+    
+    /**
      * @brief Finds the method immediately after a given method in a Unity class.
      * @param module The name of the Unity module (e.g., "Assembly-CSharp.dll", "mscorlib.dll").
      * @param className The name of the class within that module (e.g., "PlayerController", "GameManager"). 
