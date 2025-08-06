@@ -33,6 +33,14 @@ class NewNormalAttackAction;
 /// Class Definitions
 ///////////////////////////////
 
+class Application
+{
+    UNITY_CLASS_DECL("UnityEngine.CoreModule.dll", "Application")
+
+    UNITY_METHOD(UTYPE::String*, get_version, )
+};
+
+
 class CostSkillCardManager
 {
     UNITY_CLASS_DECL("BlueArchive.dll", "CostSkillCardManager")
@@ -181,7 +189,9 @@ class Battle
 
     UNITY_METHOD(void, Update, Battle*)
     UNITY_METHOD(void, Begin, Battle*)
-    UNITY_METHOD_BETWEEN(void, Finalize, "Resume", "Push", Battle*, BattleEndType_Enum)
+    UNITY_METHOD(void, set_GameState, Battle*, BattleLogicState_Enum)
+    UNITY_METHOD(void, set_GameTime, Battle*, LogicGameTime*)
+    UNITY_METHOD_BETWEEN(void, Finalize, "set_MaxDurationFrame", "OnObstacleStatChanged", Battle*, BattleEndType_Enum)
 };
 
 class CharacterGroup

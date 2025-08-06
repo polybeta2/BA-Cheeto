@@ -21,8 +21,7 @@ namespace cheat::features
             _this->BattleSummary_()->EndType(BattleEndType_Enum::Clear);
             _this->BattleSummary_()->EndFrame(0);
             _this->BattleSummary_()->ElapsedRealtime(0.f);
-
-            UNITY_CALL(Battle::Finalize, _this, BattleEndType_Enum::Clear)
+            UNITY_CALL(Battle::set_GameState, _this, BattleLogicState_Enum::Finished)
         }
 
         EventManager::onBattleFinalize();
