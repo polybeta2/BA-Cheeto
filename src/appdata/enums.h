@@ -514,3 +514,27 @@ enum class SpawnDirectionTypes_Enum : int32_t
     CasterToTarget = 0x00000009,
     TargetToCaster = 0x0000000a,
 };
+
+enum class BattleSceneState_Enum : int32_t
+{
+    None = 0x00000000,
+    Preparing = 0x00000001,
+    InBattle = 0x00000002,
+    Ending = 0x00000003,
+    ShowResult = 0x00000004,
+    Paused = 0x00000005,
+    SkillTargetSelect = 0x00000006,
+    ShowTargetPopup = 0x00000007,
+    AskContinue = 0x00000008,
+    ShowUltimate = 0x00000009,
+    Replicate = 0x0000000a,
+    WaitPeer = 0x0000000b,
+    WaitSyncTurn = 0x0000000c,
+};
+
+enum class BattleResultSkipType_Enum : int32_t
+{
+    None = 0x00000000,
+    SkipPopup = 0x00000001,
+    SkipTimeline = 0x00000002,
+};

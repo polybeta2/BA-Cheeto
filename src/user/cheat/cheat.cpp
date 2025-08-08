@@ -13,6 +13,7 @@
 #include "features/combat/OneHitKill.h"
 
 #include "features/game/InstantWin.h"
+#include "features/game/SkipBattleSummary.h"
 
 #include "features/hooks/BattleEntityHook.h"
 
@@ -30,6 +31,7 @@ void cheat::init()
         features::DumbEnemies,
         features::OneHitKill,
         features::InstantWin,
+        features::SkipBattleSummary,
 
         // Hooks
         features::BattleEntityHook

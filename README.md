@@ -15,6 +15,7 @@
 - Dumb Enemies (enemies ignore you)
 - One Hit Kill
 - Instant Win
+- Skip Battle Summary
 - Player Stats Editor
 
 ## 📚 Resources

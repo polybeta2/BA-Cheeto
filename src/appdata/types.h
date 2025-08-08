@@ -141,6 +141,13 @@ struct TimeSpan
     int64_t _ticks;
 };
 
+class DateTime
+{
+    UNITY_CLASS_DECL("mscorlib.dll", "DateTime")
+    UNITY_METHOD(int64_t, get_Ticks, )
+    UNITY_METHOD(DateTime, get_Now, )
+};
+
 class LogicGameTime
 {
     UNITY_CLASS_DECL("BlueArchive.dll", "LogicGameTime")
@@ -364,3 +371,45 @@ class NewNormalAttackAction : public NewSkillAction
 
     UNITY_METHOD(void, Update, NewNormalAttackAction*, Battle*)
 };
+
+class BattleGameTime
+{
+    UNITY_CLASS_DECL("BlueArchive.dll", "BattleGameTime")
+
+    UNITY_FIELD(float, elapsedFromLastTick, 0x10)
+    UNITY_FIELD(float, realtimeSinceBattleStart, 0x14)
+    UNITY_FIELD(bool, IsPaused, 0x18)
+    UNITY_FIELD(int32_t, CurrentFrame, 0x1C)
+    UNITY_FIELD(int64_t, TicksPerLogicFrame, 0x20)
+    UNITY_FIELD(float, LogicSecondPerFrame, 0x28)
+    
+    UNITY_METHOD(void, Tick, BattleGameTime*)
+};
+
+class BattleSceneHandler : public UTYPE::MonoBehaviour
+{
+    UNITY_CLASS_DECL("BlueArchive.dll", "BattleSceneHandler")
+
+    // UNITY_FIELD(void*, logicComponent, 0x18)
+    // UNITY_FIELD(BattleActorComponent*, actorComponent, 0x20)
+    UNITY_FIELD(bool, PauseUpdate, 0x28)
+    UNITY_FIELD(BattleGameTime*, SceneGameTime, 0x30)
+    UNITY_FIELD(BattleSceneState_Enum, currentState, 0x40)
+    UNITY_FIELD(bool, DisableInteraction, 0x44)
+    // UNITY_FIELD(GroundCamera*, GroundCamera, 0x50)
+    UNITY_FIELD(BattleResultSkipType_Enum, BattleResultSkipType, 0x58)
+    // UNITY_FIELD(UIBattle*, uiBattle, 0x60)
+    
+    UNITY_METHOD(void, Update, BattleSceneHandler*)
+};
+
+
+class EndingSubScene
+{
+    UNITY_CLASS_DECL("BlueArchive.dll", "EndingSubScene")
+
+    UNITY_METHOD(void, Enter, EndingSubScene*)
+    UNITY_METHOD(void, Advance, EndingSubScene*)
+};
+
+
