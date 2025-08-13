@@ -5,6 +5,13 @@
 
 namespace cheat::features
 {
+    static constexpr auto blockedTypes = std::to_array({
+        TacticEntityType_Enum::Minion,
+        TacticEntityType_Enum::Elite,
+        TacticEntityType_Enum::Champion,
+        TacticEntityType_Enum::Boss
+    });
+
     DumbEnemies::DumbEnemies()
         : FeatureBase("Dumb Enemies", "Enemies ignore targeting you",
                       FeatureSection::Combat)
@@ -37,14 +44,18 @@ namespace cheat::features
 
     bool DumbEnemies::hBattleEntity_get_HasTarget(BattleEntity* _this)
     {
-        if (s_instance->isEnabled() && _this->TacticEntityType() != TacticEntityType_Enum::Student) return false;
+        if (s_instance->isEnabled() &&
+            std::ranges::find(blockedTypes, _this->TacticEntityType()) != blockedTypes.end())
+            return false;
 
         return CALL_ORIGINAL(hBattleEntity_get_HasTarget, _this);
     }
 
     bool DumbEnemies::hBattleEntity_get_HasMainTarget(BattleEntity* _this)
     {
-        if (s_instance->isEnabled() && _this->TacticEntityType() != TacticEntityType_Enum::Student) return false;
+        if (s_instance->isEnabled() &&
+            std::ranges::find(blockedTypes, _this->TacticEntityType()) != blockedTypes.end())
+            return false;
 
         return CALL_ORIGINAL(hBattleEntity_get_HasMainTarget, _this);
     }

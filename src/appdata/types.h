@@ -41,9 +41,10 @@ class Application
 };
 
 
+// Obfuscated class
 class CostSkillCardManager
 {
-    UNITY_CLASS_DECL("BlueArchive.dll", "CostSkillCardManager")
+    UNITY_CLASS_DECL_FROM_FIELD_NAME("BlueArchive.dll", "<MaxCost>k__BackingField", "<CurCost>k__BackingField")
 
     UNITY_FIELD(float, MaxCost, 0x38)
     UNITY_FIELD(float, CurCost, 0x3c)
