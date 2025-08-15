@@ -16,7 +16,6 @@ namespace cheat::features
         : FeatureBase("Dumb Enemies", "Enemies ignore targeting you",
                       FeatureSection::Combat)
     {
-        HookManager::install(BattleEntity::get_HasTarget(), hBattleEntity_get_HasTarget);
         HookManager::install(BattleEntity::get_HasMainTarget(), hBattleEntity_get_HasMainTarget);
         // HookManager::install(BattleEntity::CanBeTargeted(), hBattleEntity_CanBeTargeted);
     }
@@ -42,21 +41,13 @@ namespace cheat::features
     //     return CALL_ORIGINAL(hBattleEntity_CanBeTargeted, _this, attacker, skillSlot);
     // }
 
-    bool DumbEnemies::hBattleEntity_get_HasTarget(BattleEntity* _this)
-    {
-        if (s_instance->isEnabled() &&
-            std::ranges::find(blockedTypes, _this->TacticEntityType()) != blockedTypes.end())
-            return false;
-
-        return CALL_ORIGINAL(hBattleEntity_get_HasTarget, _this);
-    }
-
     bool DumbEnemies::hBattleEntity_get_HasMainTarget(BattleEntity* _this)
     {
+        
         if (s_instance->isEnabled() &&
             std::ranges::find(blockedTypes, _this->TacticEntityType()) != blockedTypes.end())
-            return false;
-
+            BattleEntity::ClearTarget()(_this);
+        
         return CALL_ORIGINAL(hBattleEntity_get_HasMainTarget, _this);
     }
 }

@@ -14,6 +14,7 @@
 
 #include "features/game/InstantWin.h"
 #include "features/game/SkipBattleSummary.h"
+#include "features/game/Timescale.h"
 
 #include "features/hooks/BattleEntityHook.h"
 
@@ -32,6 +33,7 @@ void cheat::init()
         features::OneHitKill,
         features::InstantWin,
         features::SkipBattleSummary,
+        features::Timescale,
 
         // Hooks
         features::BattleEntityHook
