@@ -18,18 +18,18 @@ namespace cheat
 
     void FeatureManager::init()
     {
-        LOG_INFO("Initializing %zu features", m_features.size());
+        LOG_INFO("Initializing {} features...", m_features.size());
 
         for (const auto& feature : m_features)
         {
             try
             {
                 feature->init();
-                LOG_INFO("Feature '%s' initialized successfully", feature->getName().c_str());
+                LOG_INFO("Feature '{}' initialized successfully", feature->getName().c_str());
             }
             catch (const std::exception& e)
             {
-                LOG_ERROR("Exception during initialization of feature '%s': %s", feature->getName().c_str(), e.what());
+                LOG_ERROR("Exception during initialization of feature '{}': {}", feature->getName().c_str(), e.what());
             }
         }
     }

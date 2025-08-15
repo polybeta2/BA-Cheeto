@@ -391,15 +391,11 @@ class BattleSceneHandler : public UTYPE::MonoBehaviour
 {
     UNITY_CLASS_DECL("BlueArchive.dll", "BattleSceneHandler")
 
-    // UNITY_FIELD(void*, logicComponent, 0x18)
-    // UNITY_FIELD(BattleActorComponent*, actorComponent, 0x20)
     UNITY_FIELD(bool, PauseUpdate, 0x28)
     UNITY_FIELD(BattleGameTime*, SceneGameTime, 0x30)
     UNITY_FIELD(BattleSceneState_Enum, currentState, 0x40)
     UNITY_FIELD(bool, DisableInteraction, 0x44)
-    // UNITY_FIELD(GroundCamera*, GroundCamera, 0x50)
     UNITY_FIELD(BattleResultSkipType_Enum, BattleResultSkipType, 0x58)
-    // UNITY_FIELD(UIBattle*, uiBattle, 0x60)
     
     UNITY_METHOD(void, Update, BattleSceneHandler*)
 };

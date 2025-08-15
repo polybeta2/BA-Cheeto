@@ -142,7 +142,7 @@ public: \
             } else { \
                 offset = app::getFieldOffset(klass, OBFUSCATED_NAME); \
                 if (offset == -1) { \
-                    LOG_ERROR("Field '" OBFUSCATED_NAME "' not found in class '%s'", klass->name.c_str()); \
+                    LOG_ERROR("Field '" OBFUSCATED_NAME "' not found in class '{}'", klass->name.c_str()); \
                 } \
             } \
         } \
@@ -157,7 +157,7 @@ public: \
             } else { \
                 offset = app::getFieldOffset(klass, OBFUSCATED_NAME); \
                 if (offset == -1) { \
-                    LOG_ERROR("Field '" OBFUSCATED_NAME "' not found in class '%s'", klass->name.c_str()); \
+                    LOG_ERROR("Field '" OBFUSCATED_NAME "' not found in class '{}'", klass->name.c_str()); \
                 } \
             } \
         } \

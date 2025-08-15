@@ -75,7 +75,7 @@ void PipeManager::runServer()
 
         if (hPipe == INVALID_HANDLE_VALUE)
         {
-            LOG_ERROR("Failed to create named pipe: %lu", GetLastError());
+            LOG_ERROR("Failed to create named pipe: {}", GetLastError());
             std::this_thread::sleep_for(std::chrono::milliseconds(1000));
             continue;
         }
@@ -89,7 +89,7 @@ void PipeManager::runServer()
         }
         else
         {
-            LOG_ERROR("Failed to connect to client: %lu", GetLastError());
+            LOG_ERROR("Failed to connect to client: {}", GetLastError());
         }
 
         FlushFileBuffers(hPipe);
@@ -125,7 +125,7 @@ void PipeManager::handleClient(HANDLE hPipe)
             }
             else
             {
-                LOG_ERROR("Failed to read from pipe: %lu", error);
+                LOG_ERROR("Failed to read from pipe: {}", error);
             }
             break;
         }
@@ -134,7 +134,7 @@ void PipeManager::handleClient(HANDLE hPipe)
         buffer[bytesRead] = '\0';
         std::string message(buffer, bytesRead);
 
-        LOG_INFO("Received message: '%s' (length: %lu)", message.c_str(), bytesRead);
+        LOG_INFO("Received message: '{}' (length: {})", message.c_str(), bytesRead);
 
         // Message format: "feature:featureName:enable/disable"
         const size_t colon1 = message.find(':');
@@ -154,7 +154,7 @@ void PipeManager::handleClient(HANDLE hPipe)
             {
                 const bool enabled = state == "enable";
                 m_features[feature] = enabled;
-                LOG_INFO("Feature '%s' set to %s", feature.c_str(), enabled ? "enabled" : "disabled");
+                LOG_INFO("Feature '{}' set to {}", feature.c_str(), enabled ? "enabled" : "disabled");
 
                 // Send acknowledgment back to client
                 std::string response = "OK: " + feature + ":" + (enabled ? "enabled" : "disabled");
@@ -164,7 +164,7 @@ void PipeManager::handleClient(HANDLE hPipe)
             }
             else
             {
-                LOG_ERROR("Unknown command: '%s'", cmd.c_str());
+                LOG_ERROR("Unknown command: '{}'", cmd.c_str());
                 std::string response = "ERROR: Unknown command";
                 DWORD bytesWritten;
                 WriteFile(hPipe, response.c_str(), response.length(), &bytesWritten, nullptr);
@@ -173,7 +173,7 @@ void PipeManager::handleClient(HANDLE hPipe)
         }
         else
         {
-            LOG_ERROR("Invalid message format: '%s'", message.c_str());
+            LOG_ERROR("Invalid message format: '{}'", message.c_str());
             std::string response = "ERROR: Invalid format";
             DWORD bytesWritten;
             WriteFile(hPipe, response.c_str(), response.length(), &bytesWritten, nullptr);
@@ -193,5 +193,5 @@ void PipeManager::setFeatureState(const std::string& featureName, bool enabled)
 {
     std::lock_guard lock(m_featuresMutex);
     m_features[featureName] = enabled;
-    LOG_INFO("Feature %s set to %s", featureName.c_str(), enabled ? "enabled" : "disabled");
+    LOG_INFO("Feature {} set to {}", featureName.c_str(), enabled ? "enabled" : "disabled");
 }
