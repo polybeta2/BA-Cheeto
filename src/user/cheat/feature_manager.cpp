@@ -1,5 +1,6 @@
 ﻿#include "pch.h"
 #include "feature_manager.h"
+#include "utils/config_manager.h"
 
 namespace cheat
 {
@@ -18,12 +19,17 @@ namespace cheat
 
     void FeatureManager::init()
     {
-        LOG_INFO("Initializing {} features...", m_features.size());
+    LOG_INFO("Initializing {} features...", m_features.size());
+    ConfigManager::getInstance().load();
 
         for (const auto& feature : m_features)
         {
             try
             {
+                // apply persisted enabled state
+                const bool persisted = ConfigManager::getInstance().getFeatureEnabled(getSectionName(feature->getSection()), feature->getName(), false);
+                feature->setEnabled(persisted);
+
                 feature->init();
                 LOG_INFO("Feature '{}' initialized successfully", feature->getName().c_str());
             }
@@ -59,6 +65,8 @@ namespace cheat
                         if (ImGui::Checkbox(feature->getName().c_str(), &enabled))
                         {
                             feature->setEnabled(enabled);
+                            ConfigManager::getInstance().setFeatureEnabled(getSectionName(feature->getSection()), feature->getName(), enabled);
+                            ConfigManager::getInstance().save();
                         }
 
                         if (!feature->getDescription().empty())

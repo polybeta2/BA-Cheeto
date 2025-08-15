@@ -81,17 +81,17 @@ void GUI::renderMainMenuBar()
         if (fps >= 60.0f)
         {
             ImGui::SameLine();
-            ImGui::TextColored(ImVec4(0.2f, 0.8f, 0.2f, 1.0f), "●");
+            ImGui::TextColored(ImVec4(0.2f, 0.8f, 0.2f, 1.0f), "o");
         }
         else if (fps >= 30.0f)
         {
             ImGui::SameLine();
-            ImGui::TextColored(ImVec4(0.8f, 0.8f, 0.2f, 1.0f), "●");
+            ImGui::TextColored(ImVec4(0.8f, 0.8f, 0.2f, 1.0f), "o");
         }
         else
         {
             ImGui::SameLine();
-            ImGui::TextColored(ImVec4(0.8f, 0.2f, 0.2f, 1.0f), "●");
+            ImGui::TextColored(ImVec4(0.8f, 0.2f, 0.2f, 1.0f), "o");
         }
 
         // Controls hint
