@@ -101,8 +101,8 @@ class BattleEntity
     UNITY_FIELD(ArmorType_Enum, ArmorType, 0x98)
     UNITY_FIELD(BattleEntityStatProcessor*, statProcessor, 0xA0)
 
-    UNITY_METHOD(bool, get_HasTarget, BattleEntity*)
     UNITY_METHOD(bool, get_HasMainTarget, BattleEntity*)
+    UNITY_METHOD(bool, ClearTarget, BattleEntity*)
     UNITY_METHOD(bool, CanBeTargeted, BattleEntity*, BattleEntity*, SkillSlot_Enum)
     UNITY_METHOD(int64_t, AddHitPoint, BattleEntity*, int64_t)
     UNITY_METHOD(void, SetHitPoint, BattleEntity*, int64_t)

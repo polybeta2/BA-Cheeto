@@ -32,8 +32,8 @@ void cheat::init()
         features::DumbEnemies,
         features::OneHitKill,
         features::InstantWin,
-    features::SkipBattleSummary,
-    features::Timescale,
+        features::SkipBattleSummary,
+        features::Timescale,
 
         // Hooks
         features::BattleEntityHook
