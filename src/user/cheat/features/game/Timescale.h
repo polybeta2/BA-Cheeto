@@ -1,4 +1,3 @@
-// Timescale feature — declaration and inline methods
 #pragma once
 #include "user/cheat/feature_base.h"
 #include "appdata/types.h"
