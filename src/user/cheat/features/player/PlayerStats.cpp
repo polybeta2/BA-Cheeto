@@ -11,6 +11,18 @@ namespace cheat::features
         HookManager::install(NewNormalAttackAction::Update(), hNewNormalAttackAction_Update);
     }
 
+    void PlayerStats::init()
+    {
+        // Load persisted stat values
+        for (auto stat = StatType_Enum::MaxHP; stat < StatType_Enum::Max;
+             stat = static_cast<StatType_Enum>(static_cast<int>(stat) + 1))
+        {
+            const std::string key = std::string("stat_") + std::string(magic_enum::enum_name(stat));
+            int val = ConfigManager::getInstance().getFeatureValue<int>("Player", getName(), key, 0);
+            if (val != 0) m_statValues[stat] = val;
+        }
+    }
+
     void PlayerStats::draw()
     {
         ImGui::InputText("Search Stats", &m_searchFilter);
@@ -22,6 +34,7 @@ namespace cheat::features
             {
                 pair.second = 0;
             }
+            saveStatsToConfig();
         }
 
         if (ImGui::BeginChild("StatsList", ImVec2(0, 340), true))
@@ -35,7 +48,14 @@ namespace cheat::features
                     m_statValues[stat] = 0;
                 }
 
-                ImGui::InputInt(statName, &m_statValues[stat]);
+                int before = m_statValues[stat];
+                if (ImGui::InputInt(statName, &m_statValues[stat]))
+                {
+                    if (m_statValues[stat] != before)
+                    {
+                        saveStatsToConfig();
+                    }
+                }
             }
         }
         ImGui::EndChild();
@@ -103,5 +123,15 @@ namespace cheat::features
         }
 
         CALL_ORIGINAL(hNewNormalAttackAction_Update, _this, battle);
+    }
+
+    void PlayerStats::saveStatsToConfig()
+    {
+        for (const auto& [stat, value] : m_statValues)
+        {
+            const std::string key = std::string("stat_") + std::string(magic_enum::enum_name(stat));
+            ConfigManager::getInstance().setFeatureValue("Player", getName(), key, value);
+        }
+        ConfigManager::getInstance().save();
     }
 }
