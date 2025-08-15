@@ -4,6 +4,7 @@
 #include "memory/hook_manager.h"
 #include <algorithm>
 #include "utils/config_manager.h"
+#include "utils/config_field.h"
 
 namespace cheat::features
 {
@@ -21,7 +22,8 @@ namespace cheat::features
 
 		inline void init() override
 		{
-			m_scale = ConfigManager::getInstance().getFeatureValue<float>("Game", getName(), "scale", 1.0f);
+			m_scaleField = Config::Field<float>("Game", getName(), "scale", 1.0f);
+			m_scale = m_scaleField.get();
 		}
 
 		inline void draw() override
@@ -34,8 +36,7 @@ namespace cheat::features
 
 			if (m_scale != prev)
 			{
-				ConfigManager::getInstance().setFeatureValue("Game", getName(), "scale", m_scale);
-				ConfigManager::getInstance().save();
+				m_scaleField = m_scale;
 			}
 		}
 
@@ -68,5 +69,6 @@ namespace cheat::features
 		}
 
 		float m_scale = 1.0f;
+		Config::Field<float> m_scaleField;
 	};
 }

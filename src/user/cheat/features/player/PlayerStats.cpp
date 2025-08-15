@@ -13,12 +13,13 @@ namespace cheat::features
 
     void PlayerStats::init()
     {
-        // Load persisted stat values
+        // Load persisted stat values using Field wrappers
         for (auto stat = StatType_Enum::MaxHP; stat < StatType_Enum::Max;
              stat = static_cast<StatType_Enum>(static_cast<int>(stat) + 1))
         {
             const std::string key = std::string("stat_") + std::string(magic_enum::enum_name(stat));
-            int val = ConfigManager::getInstance().getFeatureValue<int>("Player", getName(), key, 0);
+            m_statFields.emplace(stat, Config::Field<int>("Player", getName(), key, 0));
+            int val = m_statFields[stat].get();
             if (val != 0) m_statValues[stat] = val;
         }
     }
@@ -52,9 +53,7 @@ namespace cheat::features
                 if (ImGui::InputInt(statName, &m_statValues[stat]))
                 {
                     if (m_statValues[stat] != before)
-                    {
-                        saveStatsToConfig();
-                    }
+                        m_statFields[stat] = m_statValues[stat];
                 }
             }
         }
@@ -128,10 +127,6 @@ namespace cheat::features
     void PlayerStats::saveStatsToConfig()
     {
         for (const auto& [stat, value] : m_statValues)
-        {
-            const std::string key = std::string("stat_") + std::string(magic_enum::enum_name(stat));
-            ConfigManager::getInstance().setFeatureValue("Player", getName(), key, value);
-        }
-        ConfigManager::getInstance().save();
+            m_statFields[stat] = value;
     }
 }

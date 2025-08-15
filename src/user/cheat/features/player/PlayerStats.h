@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "user/cheat/feature_base.h"
 #include "utils/config_manager.h"
+#include "utils/config_field.h"
 
 struct BasisPoint;
 
@@ -17,7 +18,8 @@ namespace cheat::features
         void draw() override;
 
     private:
-        std::unordered_map<StatType_Enum, int> m_statValues;
+    std::unordered_map<StatType_Enum, int> m_statValues;
+    std::unordered_map<StatType_Enum, Config::Field<int>> m_statFields;
         std::string m_searchFilter;
     void saveStatsToConfig();
 
