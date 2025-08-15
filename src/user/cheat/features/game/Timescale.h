@@ -3,6 +3,7 @@
 #include "appdata/types.h"
 #include "memory/hook_manager.h"
 #include <algorithm>
+#include "utils/config_manager.h"
 
 namespace cheat::features
 {
@@ -18,12 +19,24 @@ namespace cheat::features
 			HookManager::install(BattleGameTime::Tick(), hBattleGameTime_Tick);
 		}
 
+		inline void init() override
+		{
+			m_scale = ConfigManager::getInstance().getFeatureValue<float>("Game", getName(), "scale", 1.0f);
+		}
+
 		inline void draw() override
 		{
+			float prev = m_scale;
 			ImGui::SliderFloat("Scale (x)", &m_scale, 0.1f, 10.0f, "%.2fx");
 			ImGui::SameLine();
 			if (ImGui::Button("Reset")) m_scale = 1.0f;
 			ImGui::TextDisabled("Affects battle logic tick; 2.0x ~ twice as fast");
+
+			if (m_scale != prev)
+			{
+				ConfigManager::getInstance().setFeatureValue("Game", getName(), "scale", m_scale);
+				ConfigManager::getInstance().save();
+			}
 		}
 
 		float getScale() const { return m_scale; }
