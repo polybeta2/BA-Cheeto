@@ -8,7 +8,7 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD reason, LPVOID lpReserved)
     {
         case DLL_PROCESS_ATTACH:
             DisableThreadLibraryCalls(hModule);
-            utils::attachConsole();
+            Logger::attach().showFileName().showLineNumber().consoleOnly().enableColors();
             if (PipeManager::isUsingPipes())
             {
                 Main::run();

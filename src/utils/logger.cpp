@@ -1,231 +1,346 @@
 ﻿#include "pch.h"
 #include "logger.h"
 
-namespace utils
+void Logger::writeLog(const char* file, int line, LogLevel level, const std::string& message)
 {
-    std::string logFilePath;
-    LogType logType = Console;
-    std::mutex logMutex;
-    std::unique_ptr<std::ofstream> logFile;
-    
-    void attachConsole()
+    if (m_excludedLevels.find(level) != m_excludedLevels.end()) return;
+
+    const std::lock_guard<std::mutex> lock(m_logMutex);
+
+    std::string formattedMessage = formatLogMessage(file, line, level, message);
+
+    // Write to console if enabled
+    if (static_cast<int>(m_output) & static_cast<int>(LogOutput::Console))
+    {
+        writeToConsole(formattedMessage, level);
+    }
+
+    // Write to file if enabled
+    if (static_cast<int>(m_output) & static_cast<int>(LogOutput::File))
+    {
+        writeToFile(formattedMessage);
+    }
+}
+
+void Logger::attachConsole()
+{
+#ifdef _WIN32
+    if (!m_consoleAttached)
     {
         AllocConsole();
+        
         freopen_s((FILE**)stdin, "CONIN$", "r", stdin);
         freopen_s((FILE**)stdout, "CONOUT$", "w", stdout);
         freopen_s((FILE**)stderr, "CONOUT$", "w", stderr);
         SetConsoleOutputCP(CP_UTF8);
+        
+        // Enable virtual terminal processing for ANSI color support
+        HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+        DWORD dwMode = 0;
+        if (GetConsoleMode(hOut, &dwMode))
+        {
+            dwMode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
+            SetConsoleMode(hOut, dwMode);
+        }
+        
+        m_consoleAttached = true;
     }
+#endif
+}
 
-    void detachConsole()
+void Logger::detachConsole()
+{
+#ifdef _WIN32
+    if (m_consoleAttached)
     {
         fclose(stdin);
         fclose(stdout);
         fclose(stderr);
         FreeConsole();
+        m_consoleAttached = false;
     }
+#endif
+}
 
-    void clearConsole()
+void Logger::clearConsole()
+{
+#ifdef _WIN32
+    HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
+    if (h == INVALID_HANDLE_VALUE) return;
+
+    CONSOLE_SCREEN_BUFFER_INFO csbi;
+    if (!GetConsoleScreenBufferInfo(h, &csbi)) return;
+
+    DWORD size = csbi.dwSize.X * csbi.dwSize.Y;
+    COORD coord = {0, 0};
+    DWORD written;
+
+    FillConsoleOutputCharacter(h, TEXT(' '), size, coord, &written);
+    GetConsoleScreenBufferInfo(h, &csbi);
+    FillConsoleOutputAttribute(h, csbi.wAttributes, size, coord, &written);
+    SetConsoleCursorPosition(h, coord);
+#else
+    std::cout << "\033[2J\033[H" << std::flush;
+#endif
+}
+
+char Logger::consoleReadKey()
+{
+    return std::cin.get();
+}
+
+bool Logger::prepareFileLogging(const std::string& directory)
+{
+    try
     {
-        HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
-        if (h == INVALID_HANDLE_VALUE) return;
-
-        CONSOLE_SCREEN_BUFFER_INFO csbi;
-        if (!GetConsoleScreenBufferInfo(h, &csbi)) return;
-
-        DWORD size = csbi.dwSize.X * csbi.dwSize.Y;
-        COORD coord = {0, 0};
-        DWORD n;
-
-        // Overwrite the screen buffer with whitespace
-        FillConsoleOutputCharacter(h, TEXT(' '), size, coord, &n);
-        GetConsoleScreenBufferInfo(h, &csbi);
-        FillConsoleOutputAttribute(h, csbi.wAttributes, size, coord, &n);
-
-        // Reset the cursor to the top left position
-        SetConsoleCursorPosition(h, coord);
-    }
-
-    char consoleReadKey()
-    {
-        return std::cin.get();
-    }
-
-    void logToFile(const std::string& filepath, const std::string& msg)
-    {
-        if (logFile && logFile->is_open())
+        // Create directory if it doesn't exist
+        if (!std::filesystem::exists(directory))
         {
-            *logFile << msg << std::endl;
-            logFile->flush(); // Ensure immediate write
-        }
-        else
-        {
-            // Fallback to individual file operations if persistent file isn't available
-            std::ofstream tempFile(filepath, std::ios::out | std::ios::app | std::ios::binary);
-            if (tempFile.is_open())
+            if (!std::filesystem::create_directories(directory))
             {
-                tempFile << msg << std::endl;
+                return false;
             }
         }
-    }
 
-    void log(const char* filepath, int line, LogLevel level, const char* fmt, ...)
-    {
-        char buf[4096];
-        auto levelStr = "";
-        WORD levelColor, filenameColor = FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY; // Light Blue
-        WORD lineColor = FOREGROUND_GREEN | FOREGROUND_RED | FOREGROUND_INTENSITY; // Light Yellow
+        // Generate filename with timestamp
+        auto now = std::chrono::system_clock::now();
+        auto time_t = std::chrono::system_clock::to_time_t(now);
+        
+        struct tm tm_buf;
+#ifdef _WIN32
+        gmtime_s(&tm_buf, &time_t);
+#else
+        gmtime_r(&time_t, &tm_buf);
+#endif
 
-        // Determine log level string and corresponding color
-        switch (level)
+        // Create filename with timestamp using simple string concatenation
+        std::string filename = "log_" 
+            + std::to_string(1900 + tm_buf.tm_year) + "-"
+            + (tm_buf.tm_mon + 1 < 10 ? "0" : "") + std::to_string(tm_buf.tm_mon + 1) + "-"
+            + (tm_buf.tm_mday < 10 ? "0" : "") + std::to_string(tm_buf.tm_mday) + "_"
+            + (tm_buf.tm_hour < 10 ? "0" : "") + std::to_string(tm_buf.tm_hour) + "-"
+            + (tm_buf.tm_min < 10 ? "0" : "") + std::to_string(tm_buf.tm_min) + "-"
+            + (tm_buf.tm_sec < 10 ? "0" : "") + std::to_string(tm_buf.tm_sec) + ".txt";
+        
+        m_logFilePath = directory + "/" + filename;
+
+        // Close existing file if open
+        if (m_logFile && m_logFile->is_open())
         {
-            case Info:
-                levelStr = "Info";
-                levelColor = FOREGROUND_GREEN | FOREGROUND_INTENSITY; // Green
-                break;
-
-            case Debug:
-                levelStr = "Debug";
-                levelColor = FOREGROUND_BLUE | FOREGROUND_RED | FOREGROUND_INTENSITY; // Magenta
-                break;
-
-            case Error:
-                levelStr = "Error";
-                levelColor = FOREGROUND_RED | FOREGROUND_INTENSITY; // Red
-                break;
-
-            case Warning:
-                levelStr = "Warning";
-                levelColor = FOREGROUND_GREEN | FOREGROUND_RED | FOREGROUND_INTENSITY; // Yellow
-                break;
-
-            case None:
-            default:
-                levelStr = "Log";
-                levelColor = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY; // Light Gray
-                break;
+            m_logFile->close();
         }
 
-        va_list va;
-        va_start(va, fmt);
-        vsprintf_s(buf, fmt, va);
-        va_end(va);
+        // Open new log file
+        m_logFile = std::make_unique<std::ofstream>(m_logFilePath, std::ios::out | std::ios::app);
+        if (!m_logFile->is_open())
+        {
+            m_logFile.reset();
+            return false;
+        }
 
-        const std::lock_guard<std::mutex> lock(logMutex);
+        return true;
+    }
+    catch (const std::exception&)
+    {
+        return false;
+    }
+}
 
-        // Console output with coloring
+void Logger::closeFileLogging()
+{
+    if (m_logFile && m_logFile->is_open())
+    {
+        m_logFile->close();
+        m_logFile.reset();
+    }
+}
+
+void Logger::writeToConsole(const std::string& formattedMessage, LogLevel level)
+{
+#ifdef _WIN32
+    if (m_enableColors)
+    {
         HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
         if (hConsole != INVALID_HANDLE_VALUE)
         {
             CONSOLE_SCREEN_BUFFER_INFO consoleInfo;
             if (GetConsoleScreenBufferInfo(hConsole, &consoleInfo))
             {
-                WORD saved_attributes = consoleInfo.wAttributes;
-                auto filename = std::filesystem::path(filepath).filename().string();
-
-                // Print '[' in default color
-                std::cout << "[";
-
-                // Print filename in light blue
-                SetConsoleTextAttribute(hConsole, filenameColor);
-                std::cout << filename;
-
-                // Print ':' in default color
-                SetConsoleTextAttribute(hConsole, saved_attributes);
-                std::cout << ":";
-
-                // Print line in light yellow
-                SetConsoleTextAttribute(hConsole, lineColor);
-                std::cout << line;
-
-                // Reset to default color, print level in its color, and reset again
-                SetConsoleTextAttribute(hConsole, saved_attributes);
-                std::cout << "] [";
-                SetConsoleTextAttribute(hConsole, levelColor);
-                std::cout << levelStr;
-                SetConsoleTextAttribute(hConsole, saved_attributes);
-                std::cout << "] " << buf << std::endl;
-            }
-            else
-            {
-                // Fallback without coloring if console info retrieval fails
-                auto filename = std::filesystem::path(filepath).filename().string();
-                std::cout << "[" << filename << ":" << line << "] [" << levelStr << "] " << buf << std::endl;
-            }
-        }
-
-        // File logging
-        if (logType == File && !logFilePath.empty())
-        {
-            auto rawTime = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
-            struct tm gmtm;
-            gmtime_s(&gmtm, &rawTime);
-
-            auto filename = std::filesystem::path(filepath).filename().string();
-            auto logLineFile = string_format("[%02d:%02d:%02d] [%s] [%s:%d] %s",
-                                             gmtm.tm_hour, gmtm.tm_min, gmtm.tm_sec,
-                                             levelStr, filename.c_str(), line, buf);
-
-            logToFile(logFilePath, logLineFile);
-        }
-    }
-
-    bool prepareFileLogging(const std::string& directory)
-    {
-        try
-        {
-            auto rawTime = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
-            tm gmtm;
-            gmtime_s(&gmtm, &rawTime);
-
-            if (!std::filesystem::is_directory(directory))
-            {
-                if (!std::filesystem::create_directories(directory))
+                WORD savedAttributes = consoleInfo.wAttributes;
+                WORD levelColor = getLevelColor(level);
+                WORD filenameColor = FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY; // Light Blue
+                WORD lineColor = FOREGROUND_GREEN | FOREGROUND_RED | FOREGROUND_INTENSITY; // Light Yellow
+                
+                size_t pos = 0;
+                
+                // Handle timestamp if present
+                if (formattedMessage[0] == '[' && formattedMessage.find("] [") != std::string::npos)
                 {
-                    return false;
+                    size_t timestampEnd = formattedMessage.find("] ");
+                    std::cout << formattedMessage.substr(0, timestampEnd + 2);
+                    pos = timestampEnd + 2;
                 }
+                
+                // Handle filename and line number
+                if (pos < formattedMessage.length() && formattedMessage[pos] == '[')
+                {
+                    size_t filenameStart = pos + 1;
+                    size_t colonPos = formattedMessage.find(':', filenameStart);
+                    size_t filenameEnd = formattedMessage.find(']', filenameStart);
+                    
+                    if (filenameEnd != std::string::npos)
+                    {
+                        std::cout << "[";
+                        
+                        if (colonPos != std::string::npos && colonPos < filenameEnd)
+                        {
+                            // Print filename in light blue
+                            SetConsoleTextAttribute(hConsole, filenameColor);
+                            std::cout << formattedMessage.substr(filenameStart, colonPos - filenameStart);
+                            
+                            // Print colon in default color
+                            SetConsoleTextAttribute(hConsole, savedAttributes);
+                            std::cout << ":";
+                            
+                            // Print line number in light yellow
+                            SetConsoleTextAttribute(hConsole, lineColor);
+                            std::cout << formattedMessage.substr(colonPos + 1, filenameEnd - colonPos - 1);
+                        }
+                        else
+                        {
+                            // Just filename, no line number
+                            SetConsoleTextAttribute(hConsole, filenameColor);
+                            std::cout << formattedMessage.substr(filenameStart, filenameEnd - filenameStart);
+                        }
+                        
+                        // Reset color and print closing bracket
+                        SetConsoleTextAttribute(hConsole, savedAttributes);
+                        std::cout << "] ";
+                        pos = filenameEnd + 2;
+                    }
+                }
+                
+                // Handle log level
+                if (pos < formattedMessage.length() && formattedMessage[pos] == '[')
+                {
+                    size_t levelStart = pos + 1;
+                    size_t levelEnd = formattedMessage.find(']', levelStart);
+                    
+                    if (levelEnd != std::string::npos)
+                    {
+                        std::cout << "[";
+                        
+                        // Print level in its color
+                        SetConsoleTextAttribute(hConsole, levelColor);
+                        std::cout << formattedMessage.substr(levelStart, levelEnd - levelStart);
+                        
+                        // Reset color and print rest of message
+                        SetConsoleTextAttribute(hConsole, savedAttributes);
+                        std::cout << formattedMessage.substr(levelEnd) << std::endl;
+                        return;
+                    }
+                }
+                
+                // Fallback: print remaining message
+                std::cout << formattedMessage.substr(pos) << std::endl;
+                return;
             }
-
-            logFilePath = string_format("%s\\log_%04d-%02d-%02d_%02d-%02d.txt", directory.c_str(),
-                                        1900 + gmtm.tm_year, gmtm.tm_mon + 1, gmtm.tm_mday, gmtm.tm_hour, gmtm.tm_min);
-
-            // Close existing file if open
-            if (logFile && logFile->is_open())
-            {
-                logFile->close();
-            }
-
-            // Open the log file for appending
-            logFile = std::make_unique<std::ofstream>(logFilePath, std::ios::out | std::ios::app | std::ios::binary);
-            if (!logFile->is_open())
-            {
-                logFile.reset();
-                return false;
-            }
-
-            logType = File;
-            return true;
-        }
-        catch (const std::exception&)
-        {
-            return false;
         }
     }
+#endif
+    std::cout << formattedMessage << std::endl;
+}
 
-    void setLogType(LogType type)
+void Logger::writeToFile(const std::string& formattedMessage)
+{
+    if (m_logFile && m_logFile->is_open())
     {
-        const std::lock_guard lock(logMutex);
-        logType = type;
-    }
-
-    void closeFileLogging()
-    {
-        const std::lock_guard lock(logMutex);
-        if (logFile && logFile->is_open())
-        {
-            logFile->close();
-            logFile.reset();
-        }
-        logType = Console;
+        *m_logFile << formattedMessage << std::endl;
+        m_logFile->flush();
     }
 }
+
+std::string Logger::formatLogMessage(const char* file, int line, LogLevel level, const std::string& message)
+{
+    std::string result;
+
+    // Add timestamp if enabled
+    if (m_showTimeStamp)
+    {
+        result += "[" + getCurrentTimeString() + "] ";
+    }
+
+    // Add file info if enabled
+    if (m_showFileName && file && std::strlen(file) > 0)
+    {
+        std::string filename = std::filesystem::path(file).filename().string();
+        result += "[" + filename;
+        
+        if (m_showLineNumber && line > 0)
+        {
+            result += ":" + std::to_string(line);
+        }
+        
+        result += "] ";
+    }
+
+    // Add level
+    result += "[" + getLevelString(level) + "] ";
+
+    // Add message
+    result += message;
+
+    return result;
+}
+
+std::string Logger::getLevelString(LogLevel level)
+{
+    switch (level)
+    {
+        case LogLevel::Debug:   return "DEBUG";
+        case LogLevel::Info:    return "INFO";
+        case LogLevel::Warning: return "WARN";
+        case LogLevel::Error:   return "ERROR";
+        default:                return "LOG";
+    }
+}
+
+std::string Logger::getCurrentTimeString()
+{
+    auto now = std::chrono::system_clock::now();
+    auto time_t = std::chrono::system_clock::to_time_t(now);
+    
+    struct tm tm_buf;
+#ifdef _WIN32
+    localtime_s(&tm_buf, &time_t);
+#else
+    localtime_r(&time_t, &tm_buf);
+#endif
+
+    // Format time using simple string concatenation
+    std::string timeStr = 
+        (tm_buf.tm_hour < 10 ? "0" : "") + std::to_string(tm_buf.tm_hour) + ":" +
+        (tm_buf.tm_min < 10 ? "0" : "") + std::to_string(tm_buf.tm_min) + ":" +
+        (tm_buf.tm_sec < 10 ? "0" : "") + std::to_string(tm_buf.tm_sec);
+    
+    return timeStr;
+}
+
+#ifdef _WIN32
+WORD Logger::getLevelColor(LogLevel level)
+{
+    switch (level)
+    {
+        case LogLevel::Debug:
+            return FOREGROUND_BLUE | FOREGROUND_RED | FOREGROUND_INTENSITY; // Magenta
+        case LogLevel::Info:
+            return FOREGROUND_GREEN | FOREGROUND_INTENSITY; // Green
+        case LogLevel::Warning:
+            return FOREGROUND_GREEN | FOREGROUND_RED | FOREGROUND_INTENSITY; // Yellow
+        case LogLevel::Error:
+            return FOREGROUND_RED | FOREGROUND_INTENSITY; // Red
+        default:
+            return FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY; // White
+    }
+}
+#endif

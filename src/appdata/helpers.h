@@ -15,14 +15,14 @@ namespace app
         auto unityModule = UnityResolve::Get(module);
         if (!unityModule)
         {
-            LOG_ERROR("Module '%s' not found", module.c_str());
+            LOG_ERROR("Module '{}' not found", module.c_str());
             return nullptr;
         }
 
         auto klass = unityModule->Get(className);
         if (!klass)
         {
-            LOG_ERROR("Class '%s' not found in module '%s'", className.c_str(), module.c_str());
+            LOG_ERROR("Class '{}' not found in module '{}'", className.c_str(), module.c_str());
             return nullptr;
         }
 
@@ -82,7 +82,7 @@ namespace app
         auto unityModule = UnityResolve::Get(module);
         if (!unityModule)
         {
-            LOG_ERROR("Module '%s' not found", module.c_str());
+            LOG_ERROR("Module '{}' not found", module.c_str());
             return nullptr;
         }
 
@@ -123,21 +123,21 @@ namespace app
 
         if (matchingClasses.empty())
         {
-            LOG_ERROR("No class found in module '%s' with required fields", module.c_str());
+            LOG_ERROR("No class found in module '{}' with required fields", module.c_str());
 			return nullptr;
         }
 
         if (matchingClasses.size() == 1)
 		{
-			// LOG_DEBUG("Found class '%s' in module '%s' with required fields", matchingClasses[0]->name.c_str(),
+			// LOG_DEBUG("Found class '{}' in module '{}' with required fields", matchingClasses[0]->name.c_str(),
 			// 		  module.c_str());
 			return matchingClasses[0];
 		}
 
-        LOG_ERROR("%d classes found in module '%s' with required fields", matchingClasses.size(), module.c_str());
+        LOG_ERROR("{} classes found in module '{}' with required fields", matchingClasses.size(), module.c_str());
         for (const auto& klass : matchingClasses)
         {
-            LOG_ERROR("Class '%s' with fields: ", klass->name.c_str());
+            LOG_ERROR("Class '{}' with fields: ", klass->name.c_str());
         }
         
         return nullptr;
@@ -157,14 +157,14 @@ namespace app
         auto klass = getClass(module, className);
         if (!klass)
         {
-            LOG_ERROR("Failed to get class '%s' from module '%s'", className.c_str(), module.c_str());
+            LOG_ERROR("Failed to get class '{}' from module '{}'", className.c_str(), module.c_str());
             return nullptr;
         }
 
         auto method = klass->Get<UnityResolve::Method>(methodName);
         if (!method)
         {
-            LOG_ERROR("Method '%s' not found in class '%s' of module '%s'", methodName.c_str(), className.c_str(),
+            LOG_ERROR("Method '{}' not found in class '{}' of module '{}'", methodName.c_str(), className.c_str(),
                       module.c_str());
             return nullptr;
         }
@@ -189,7 +189,7 @@ namespace app
         auto method = klass->Get<UnityResolve::Method>(methodName);
         if (!method)
         {
-            LOG_ERROR("Method '%s' not found in class '%s'", methodName.c_str(), klass->name.c_str());
+            LOG_ERROR("Method '{}' not found in class '{}'", methodName.c_str(), klass->name.c_str());
             return nullptr;
         }
 
@@ -210,7 +210,7 @@ namespace app
         auto method = getMethod(module, className, methodName);
         if (!method)
         {
-            LOG_ERROR("Failed to get method '%s' from class '%s' in module '%s'", methodName.c_str(), className.c_str(),
+            LOG_ERROR("Failed to get method '{}' from class '{}' in module '{}'", methodName.c_str(), className.c_str(),
                       module.c_str());
             return nullptr;
         }
@@ -235,7 +235,7 @@ namespace app
         auto method = getMethod(klass, methodName);
         if (!method)
         {
-            LOG_ERROR("Failed to get method '%s' from class '%s'", methodName.c_str(), klass->name.c_str());
+            LOG_ERROR("Failed to get method '{}' from class '{}'", methodName.c_str(), klass->name.c_str());
             return nullptr;
         }
 
@@ -360,7 +360,7 @@ namespace app
             }
         }
 
-        LOG_ERROR("Field '%s' not found in class '%s'", fieldName.c_str(), klass->name.c_str());
+        LOG_ERROR("Field '{}' not found in class '{}'", fieldName.c_str(), klass->name.c_str());
         return {nullptr, -1};
     }
 
@@ -377,7 +377,7 @@ namespace app
             return offset;
         }
 
-        LOG_ERROR("Failed to get offset for field '%s' in class '%s'", fieldName.c_str(), klass->name.c_str());
+        LOG_ERROR("Failed to get offset for field '{}' in class '{}'", fieldName.c_str(), klass->name.c_str());
         return -1;
     }
 }

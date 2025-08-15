@@ -93,7 +93,7 @@ namespace cheat::features
         {
             if (_this->Executer()->TacticEntityType() == TacticEntityType_Enum::Student)
             {
-                // LOG_DEBUG("Executer: %s", _this->Executer()->Name()->ToString().c_str());
+                // LOG_DEBUG("Executer: {}", _this->Executer()->Name()->ToString().c_str());
                 if (const auto entityStat = _this->Executer()->get_CurrentStat()(_this->Executer());
                     entityStat != nullptr)
                 {

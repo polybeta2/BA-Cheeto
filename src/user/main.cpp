@@ -14,7 +14,7 @@ void Main::run()
 
     if (!PipeManager::isUsingPipes())
     {
-        LOG_INFO("%s", Renderer::getInstance().initialize()
+        LOG_INFO("{}", Renderer::getInstance().initialize()
                  ? "Renderer initialized! Press INSERT to toggle GUI visibility"
                  : "Failed to initialize renderer!");
     }
@@ -28,8 +28,7 @@ void Main::shutdown()
     Sleep(1000);
 
     cheat::shutdown();
-    utils::closeFileLogging();
-    utils::detachConsole();
+    Logger::close();
 }
 
 

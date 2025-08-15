@@ -109,7 +109,7 @@ bool HookManager::install(T target, T detour)
     auto status = MH_CreateHook(reinterpret_cast<void*>(target), reinterpret_cast<void*>(detour), &originalPtr);
     if (status != MH_OK)
     {
-        LOG_ERROR("Failed to create hook %d", status);
+        LOG_ERROR("Failed to create hook {}", magic_enum::enum_name(status));
         return false;
     }
 
@@ -117,7 +117,7 @@ bool HookManager::install(T target, T detour)
     if (status != MH_OK)
     {
         MH_RemoveHook(reinterpret_cast<void*>(target));
-        LOG_ERROR("Failed to enable hook: %d", status);
+        LOG_ERROR("Failed to enable hook: {}", magic_enum::enum_name(status));
         return false;
     }
 
@@ -144,7 +144,7 @@ bool HookManager::install(const std::string& moduleName, intptr_t offset, T deto
     auto status = MH_CreateHook(target, reinterpret_cast<void*>(detour), &originalPtr);
     if (status != MH_OK)
     {
-        LOG_ERROR("Failed to create hook %d", status);
+        LOG_ERROR("Failed to create hook %d", magic_enum::enum_name(status));
         return false;
     }
 
@@ -152,7 +152,7 @@ bool HookManager::install(const std::string& moduleName, intptr_t offset, T deto
     if (status != MH_OK)
     {
         MH_RemoveHook(target);
-        LOG_ERROR("Failed to enable hook: %d", status);
+        LOG_ERROR("Failed to enable hook: %d", magic_enum::enum_name(status));
         return false;
     }
 
