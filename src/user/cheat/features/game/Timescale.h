@@ -31,6 +31,12 @@ namespace cheat::features
 			float prev = m_scale;
 			ImGui::SliderFloat("Scale (x)", &m_scale, 0.1f, 10.0f, "%.2fx");
 			ImGui::SameLine();
+			ImGui::SetNextItemWidth(80.0f);
+			if (ImGui::InputFloat("##scale_input", &m_scale, 0.0f, 0.0f, "%.2f"))
+			{
+				m_scale = std::clamp(m_scale, 0.1f, 10.0f);
+			}
+			ImGui::SameLine();
 			if (ImGui::Button("Reset")) m_scale = 1.0f;
 			ImGui::TextDisabled("Affects battle logic tick; 2.0x ~ twice as fast");
 

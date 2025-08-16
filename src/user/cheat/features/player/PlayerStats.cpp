@@ -13,6 +13,8 @@ namespace cheat::features
 
     void PlayerStats::init()
     {
+    m_statFields.clear();
+    m_statValues.clear();
         // Load persisted stat values using Field wrappers
         for (auto stat = StatType_Enum::MaxHP; stat < StatType_Enum::Max;
              stat = static_cast<StatType_Enum>(static_cast<int>(stat) + 1))
@@ -22,6 +24,7 @@ namespace cheat::features
             int val = m_statFields[stat].get();
             if (val != 0) m_statValues[stat] = val;
         }
+        reloadFromConfig();
     }
 
     void PlayerStats::draw()
@@ -128,5 +131,18 @@ namespace cheat::features
     {
         for (const auto& [stat, value] : m_statValues)
             m_statFields[stat] = value;
+    }
+
+    void PlayerStats::reloadFromConfig()
+    {
+        // Refresh current values from fields (which pull from active profile)
+        for (auto stat = StatType_Enum::MaxHP; stat < StatType_Enum::Max;
+             stat = static_cast<StatType_Enum>(static_cast<int>(stat) + 1))
+        {
+            auto itF = m_statFields.find(stat);
+            if (itF == m_statFields.end()) continue;
+            int v = itF->second.get();
+            if (v != 0) m_statValues[stat] = v; else m_statValues.erase(stat);
+        }
     }
 }

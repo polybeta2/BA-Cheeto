@@ -20,7 +20,8 @@ std::string ConfigManager::configPath() const {
         std::filesystem::create_directories(dir, ec);
         if (ec) LOG_ERROR("Failed to create config directory: {}", ec.message().c_str());
     }
-    return (dir / "config.json").string();
+    std::string file = (m_profile == "default") ? std::string("config.json") : ("config." + m_profile + ".json");
+    return (dir / file).string();
 }
 
 bool ConfigManager::load() {
@@ -51,6 +52,21 @@ bool ConfigManager::save() {
         LOG_ERROR("Failed to save config: {}", e.what());
         return false;
     }
+}
+
+void ConfigManager::scheduleSave(int debounceMs)
+{
+    // Increment a sequence and spawn a detached timer that only saves if it is the latest
+    const unsigned long long mySeq = ++m_saveSeq;
+    std::thread([this, mySeq, debounceMs]() {
+        int delay = debounceMs < 0 ? 0 : debounceMs;
+        std::this_thread::sleep_for(std::chrono::milliseconds(delay));
+        if (m_saveSeq.load() == mySeq)
+        {
+            std::scoped_lock lk(m_saveMutex);
+            (void)this->save();
+        }
+    }).detach();
 }
 
 const nlohmann::json* ConfigManager::getFeatureNodeConst(const std::string& section, const std::string& name) const {
@@ -93,4 +109,88 @@ bool ConfigManager::getFeatureEnabled(const std::string& section, const std::str
 void ConfigManager::setFeatureEnabled(const std::string& section, const std::string& name, bool enabled) {
     auto& node = getOrCreateFeatureNode(section, name);
     node["enabled"] = enabled;
+}
+
+std::string ConfigManager::profileNameFromFile(const std::string& file) const
+{
+    // Accept "config.json" -> default, or "config.NAME.json" -> NAME
+    std::string name = file;
+    if (name == "config.json") return "default";
+    const std::string prefix = "config.";
+    const std::string suffix = ".json";
+    if (name.rfind(prefix, 0) == 0 && name.size() > prefix.size() + suffix.size() &&
+        name.substr(name.size() - suffix.size()) == suffix)
+    {
+        return name.substr(prefix.size(), name.size() - prefix.size() - suffix.size());
+    }
+    return file; // fallback: already a name
+}
+
+void ConfigManager::setProfile(const std::string& profileNameOrFile)
+{
+    if (profileNameOrFile.empty()) return;
+    std::string normalized = profileNameFromFile(profileNameOrFile);
+    if (normalized == m_profile) return;
+
+    // Save current profile first
+    (void)save();
+
+    m_profile = normalized;
+    // Load profile file (separate json per profile)
+    // We reuse configPath but append profile name, e.g., config.default.json
+    if (!load())
+    {
+        // if no file yet, start fresh
+        m_data = nlohmann::json{ {"version", 1}, {"features", nlohmann::json::object()} };
+    }
+}
+
+std::vector<std::string> ConfigManager::listProfiles() const
+{
+    std::vector<std::string> profiles;
+    try
+    {
+        auto base = std::filesystem::path(configPath()).parent_path();
+        for (auto& e : std::filesystem::directory_iterator(base))
+        {
+            if (!e.is_regular_file()) continue;
+            auto name = e.path().filename().string();
+            if (name == "config.json")
+                profiles.push_back("default");
+            else if (name.rfind("config.", 0) == 0 && e.path().extension() == ".json")
+                profiles.push_back(profileNameFromFile(name));
+        }
+    }
+    catch (...) { }
+    // Ensure "default" is present even if file doesn’t exist yet
+    if (std::find(profiles.begin(), profiles.end(), "default") == profiles.end()) profiles.push_back("default");
+    std::sort(profiles.begin(), profiles.end());
+    profiles.erase(std::unique(profiles.begin(), profiles.end()), profiles.end());
+    return profiles;
+}
+
+void ConfigManager::resetFeature(const std::string& section, const std::string& name)
+{
+    if (!m_data.contains("features")) return;
+    auto& features = m_data["features"];
+    if (!features.contains(section)) return;
+    features[section].erase(name);
+}
+
+void ConfigManager::resetAll()
+{
+    m_data = nlohmann::json{ {"version", 1}, {"features", nlohmann::json::object()} };
+    (void)save();
+}
+
+bool ConfigManager::createProfile(const std::string& profileName)
+{
+    if (profileName.empty() || profileName == "config" || profileName == "json") return false;
+    std::string prev = m_profile;
+    // Switch to new profile and write a fresh file
+    m_profile = profileName;
+    m_data = nlohmann::json{ {"version", 1}, {"features", nlohmann::json::object()} };
+    bool ok = save();
+    if (!ok) m_profile = prev; // revert on failure
+    return ok;
 }

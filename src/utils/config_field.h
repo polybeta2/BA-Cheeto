@@ -27,17 +27,17 @@ public:
     void set(const T& v)
     {
         m_value = v;
-        ConfigManager::getInstance().setFeatureValue(m_section, m_feature, m_key, m_value);
-        if (m_autoSave) ConfigManager::getInstance().save();
+    ConfigManager::getInstance().setFeatureValue(m_section, m_feature, m_key, m_value);
+    if (m_autoSave) ConfigManager::getInstance().scheduleSave();
     }
 
     // Ensure defaults exist and/or refresh from disk
     void reload(const T& defaultValue)
     {
-        m_value = ConfigManager::getInstance().getFeatureValue<T>(m_section, m_feature, m_key, defaultValue);
-        // Make sure the key exists on disk as well
-        ConfigManager::getInstance().setFeatureValue(m_section, m_feature, m_key, m_value);
-        if (m_autoSave) ConfigManager::getInstance().save();
+    m_value = ConfigManager::getInstance().getFeatureValue<T>(m_section, m_feature, m_key, defaultValue);
+    // Ensure the key exists on disk as well
+    ConfigManager::getInstance().setFeatureValue(m_section, m_feature, m_key, m_value);
+    if (m_autoSave) ConfigManager::getInstance().scheduleSave();
     }
 
     const std::string& section() const { return m_section; }

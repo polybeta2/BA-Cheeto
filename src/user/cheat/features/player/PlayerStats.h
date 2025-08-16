@@ -15,6 +15,7 @@ namespace cheat::features
         PlayerStats();
 
     void init() override;
+    void reloadFromConfig();
         void draw() override;
 
     private:
