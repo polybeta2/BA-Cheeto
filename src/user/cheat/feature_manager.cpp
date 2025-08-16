@@ -24,17 +24,14 @@ namespace cheat
     void FeatureManager::init()
     {
         LOG_INFO("Initializing {} features...", m_features.size());
-
-        ConfigManager::getInstance().load();
+        
         // Ensure hotkey IDs exist for all features and load their values
+        auto& hk = HotkeyManager::getInstance();
+        for (const auto& feature : m_features)
         {
-            auto& hk = HotkeyManager::getInstance();
-            for (const auto& feature : m_features)
-            {
-                hk.registerHotkey(std::string("feature_") + feature->getName(), 0);
-            }
-            hk.load();
+            hk.registerHotkey(std::string("feature_") + feature->getName(), 0);
         }
+        hk.load();
 
         for (const auto& feature : m_features)
         {
@@ -90,7 +87,6 @@ namespace cheat
                         {
                             auto& hk = HotkeyManager::getInstance();
                             std::string id = std::string("feature_") + feature->getName();
-                            // hk.registerHotkey(id, 0);
                             int current = hk.getVk(id);
                             ImGui::TextDisabled("Hotkey: [%s]", HotkeyManager::keyName(current));
                             ImGui::SameLine();

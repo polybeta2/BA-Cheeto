@@ -20,7 +20,7 @@
     <ClInclude Include="src\core\events\event_manager.h" />
     <ClInclude Include="src\core\pipe\pipe_manager.h" />
     <ClInclude Include="src\core\rendering\backend\dx11_backend.h" />
-  <ClInclude Include="src\core\rendering\backend\dx12_backend.h" />
+    <ClInclude Include="src\core\rendering\backend\dx12_backend.h" />
     <ClInclude Include="src\core\rendering\backend\renderer_backend.h" />
     <ClInclude Include="src\core\rendering\fonts\NotoSans.hpp" />
     <ClInclude Include="src\core\rendering\renderer.h" />
@@ -29,22 +29,23 @@
     <ClInclude Include="src\pch.h" />
     <ClInclude Include="src\ui\gui.h" />
     <ClInclude Include="src\user\cheat\cheat.h" />
-    <ClInclude Include="src\user\cheat\features\game\SkipBattleSummary.h" />
-    <ClInclude Include="src\user\cheat\features\player\PlayerStats.h" />
-    <ClInclude Include="src\user\cheat\feature_base.h" />
-    <ClInclude Include="src\user\cheat\feature_manager.h" />
     <ClInclude Include="src\user\cheat\features\combat\DumbEnemies.h" />
     <ClInclude Include="src\user\cheat\features\combat\OneHitKill.h" />
     <ClInclude Include="src\user\cheat\features\debug\Debug.h" />
     <ClInclude Include="src\user\cheat\features\game\InstantWin.h" />
-  <ClInclude Include="src\user\cheat\features\game\Timescale.h" />
+    <ClInclude Include="src\user\cheat\features\game\SkipBattleSummary.h" />
+    <ClInclude Include="src\user\cheat\features\game\Timescale.h" />
     <ClInclude Include="src\user\cheat\features\hooks\BattleEntityHook.h" />
     <ClInclude Include="src\user\cheat\features\player\GodMode.h" />
     <ClInclude Include="src\user\cheat\features\player\NoCost.h" />
+    <ClInclude Include="src\user\cheat\features\player\PlayerStats.h" />
+    <ClInclude Include="src\user\cheat\feature_base.h" />
+    <ClInclude Include="src\user\cheat\feature_manager.h" />
     <ClInclude Include="src\user\main.h" />
+    <ClInclude Include="src\utils\config_field.h" />
+    <ClInclude Include="src\utils\config_manager.h" />
     <ClInclude Include="src\utils\dx_utils.h" />
-  <ClInclude Include="src\utils\hotkey_manager.h" />
-  <ClInclude Include="src\utils\config_manager.h" />
+    <ClInclude Include="src\utils\hotkey_manager.h" />
     <ClInclude Include="src\utils\logger.h" />
     <ClInclude Include="src\utils\singleton.h" />
     <ClInclude Include="vendor\imgui\backends\imgui_impl_dx11.h" />
@@ -78,7 +79,7 @@
     <ClCompile Include="src\core\events\event_manager.cpp" />
     <ClCompile Include="src\core\pipe\pipe_manager.cpp" />
     <ClCompile Include="src\core\rendering\backend\dx11_backend.cpp" />
-  <ClCompile Include="src\core\rendering\backend\dx12_backend.cpp" />
+    <ClCompile Include="src\core\rendering\backend\dx12_backend.cpp" />
     <ClCompile Include="src\core\rendering\renderer.cpp" />
     <ClCompile Include="src\dllmain.cpp" />
     <ClCompile Include="src\memory\hook_manager.cpp" />
@@ -88,22 +89,22 @@
     </ClCompile>
     <ClCompile Include="src\ui\gui.cpp" />
     <ClCompile Include="src\user\cheat\cheat.cpp" />
-    <ClCompile Include="src\user\cheat\features\game\SkipBattleSummary.cpp" />
-    <ClCompile Include="src\user\cheat\features\player\PlayerStats.cpp" />
-    <ClCompile Include="src\user\cheat\feature_manager.cpp" />
     <ClCompile Include="src\user\cheat\features\combat\DumbEnemies.cpp" />
     <ClCompile Include="src\user\cheat\features\combat\OneHitKill.cpp" />
     <ClCompile Include="src\user\cheat\features\debug\Debug.cpp" />
     <ClCompile Include="src\user\cheat\features\game\InstantWin.cpp" />
-  <ClCompile Include="src\user\cheat\features\game\Timescale.cpp" />
+    <ClCompile Include="src\user\cheat\features\game\SkipBattleSummary.cpp" />
+    <ClCompile Include="src\user\cheat\features\game\Timescale.cpp" />
     <ClCompile Include="src\user\cheat\features\hooks\BattleEntityHook.cpp" />
     <ClCompile Include="src\user\cheat\features\player\GodMode.cpp" />
     <ClCompile Include="src\user\cheat\features\player\NoCost.cpp" />
+    <ClCompile Include="src\user\cheat\features\player\PlayerStats.cpp" />
+    <ClCompile Include="src\user\cheat\feature_manager.cpp" />
     <ClCompile Include="src\user\main.cpp" />
+    <ClCompile Include="src\utils\config_manager.cpp" />
     <ClCompile Include="src\utils\dx_utils.cpp" />
-  <ClCompile Include="src\utils\hotkey_manager.cpp" />
+    <ClCompile Include="src\utils\hotkey_manager.cpp" />
     <ClCompile Include="src\utils\logger.cpp" />
-  <ClCompile Include="src\utils\config_manager.cpp" />
     <ClCompile Include="vendor\imgui\backends\imgui_impl_dx11.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
@@ -231,7 +232,7 @@
       <EnableUAC>false</EnableUAC>
       <AdditionalDependencies>libMinHook.x64.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(ProjectDir)vendor\minhook\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-  <IgnoreSpecificDefaultLibraries>LIBCMT;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <IgnoreSpecificDefaultLibraries>LIBCMT;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

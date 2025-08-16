@@ -20,6 +20,8 @@
 
 void cheat::init()
 {
+    ConfigManager::getInstance().load();
+
     auto& manager = FeatureManager::getInstance();
 
     manager.registerFeatures<

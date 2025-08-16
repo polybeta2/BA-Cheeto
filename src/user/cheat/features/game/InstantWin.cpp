@@ -11,9 +11,8 @@ namespace cheat::features
     {
         // Alternatively, hook Begin(). But the user can just enable the feature anytime during the battle.
         HookManager::install(Battle::Update(), hBattle_Update);
-
     }
-    
+
     void InstantWin::hBattle_Update(Battle* _this)
     {
         if (s_instance->isEnabled())
