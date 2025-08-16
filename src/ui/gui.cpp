@@ -222,7 +222,7 @@ void GUI::renderMainMenuBar()
         ImGui::SameLine();
         ImGui::Separator();
         ImGui::SameLine();
-    ImGui::TextDisabled("F2: Toggle GUI");
+    ImGui::TextDisabled("CTRL+W: Toggle GUI");
 
     ImGui::SameLine();
     ImGui::Separator();

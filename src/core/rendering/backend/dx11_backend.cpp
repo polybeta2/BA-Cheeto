@@ -75,10 +75,20 @@ LRESULT CALLBACK DX11Backend::hookedWndProc(HWND hWnd, UINT uMsg, WPARAM wParam,
     if (uMsg == WM_KEYDOWN)
     {
         GUI& gui = GUI::getInstance();
-    auto& hotkeys = HotkeyManager::getInstance();
-    if (cheat::FeatureManager::getInstance().onKeyDown((int)wParam)) return true;
-    const int toggle = VK_F2;
-        if ((int)wParam == toggle) { gui.setVisible(!gui.isVisible()); return true; }
+
+        if (!ImGui::IsAnyItemActive())
+        {
+            if (static_cast<int>(wParam) == 'T')
+            {
+                if (GetAsyncKeyState(VK_CONTROL) & 0x8000)
+                {
+                    gui.setVisible(!gui.isVisible());
+                    return true;
+                }
+            }
+
+            if (cheat::FeatureManager::getInstance().onKeyDown(static_cast<int>(wParam))) return true;
+        }
     }
 
     // TODO: Handle hotkeys later properly
@@ -133,8 +143,9 @@ bool DX11Backend::setupHooks()
 
 void DX11Backend::setupWindowHook()
 {
-    if (m_window && !m_originalWndProc) m_originalWndProc = (WNDPROC)SetWindowLongPtrW(
-        m_window, GWLP_WNDPROC, (LONG_PTR)hookedWndProc);
+    if (m_window && !m_originalWndProc)
+        m_originalWndProc = (WNDPROC)SetWindowLongPtrW(
+            m_window, GWLP_WNDPROC, (LONG_PTR)hookedWndProc);
 }
 
 void* DX11Backend::getVTableFunction(void* instance, int index)

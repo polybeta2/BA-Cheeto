@@ -99,8 +99,9 @@ bool DX12Backend::setupHooks()
 
 void DX12Backend::setupWindowHook()
 {
-    if (m_window && !m_originalWndProc) m_originalWndProc = (WNDPROC)SetWindowLongPtrW(
-        m_window, GWLP_WNDPROC, (LONG_PTR)hookedWndProc);
+    if (m_window && !m_originalWndProc)
+        m_originalWndProc = (WNDPROC)SetWindowLongPtrW(
+            m_window, GWLP_WNDPROC, (LONG_PTR)hookedWndProc);
 }
 
 LRESULT CALLBACK DX12Backend::hookedWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -110,10 +111,14 @@ LRESULT CALLBACK DX12Backend::hookedWndProc(HWND hWnd, UINT uMsg, WPARAM wParam,
     if (uMsg == WM_KEYDOWN)
     {
         GUI& gui = GUI::getInstance();
-    auto& hotkeys = HotkeyManager::getInstance();
-    if (cheat::FeatureManager::getInstance().onKeyDown((int)wParam)) return true;
-    const int toggle = VK_F2;
-        if ((int)wParam == toggle) { gui.setVisible(!gui.isVisible()); return true; }
+        auto& hotkeys = HotkeyManager::getInstance();
+        if (cheat::FeatureManager::getInstance().onKeyDown(static_cast<int>(wParam))) return true;
+        constexpr int toggle = VK_F2;
+        if (static_cast<int>(wParam) == toggle)
+        {
+            gui.setVisible(!gui.isVisible());
+            return true;
+        }
     }
 
     return CallWindowProc(m_originalWndProc, hWnd, uMsg, wParam, lParam);
@@ -123,7 +128,7 @@ bool DX12Backend::getDeviceAndSwapchain(IDXGISwapChain* swapChain)
 {
     if (!swapChain) return false;
 
-    m_swapChain = (IDXGISwapChain3*)swapChain;
+    m_swapChain = static_cast<IDXGISwapChain3*>(swapChain);
 
     DXGI_SWAP_CHAIN_DESC desc{};
     swapChain->GetDesc(&desc);
@@ -155,7 +160,8 @@ HRESULT WINAPI DX12Backend::hookedPresent(IDXGISwapChain* swapChain, UINT SyncIn
     return m_originalPresent(swapChain, SyncInterval, Flags);
 }
 
-HRESULT WINAPI DX12Backend::hookedResizeBuffers(IDXGISwapChain* swapChain, UINT BufferCount, UINT Width, UINT Height, DXGI_FORMAT NewFormat, UINT SwapChainFlags)
+HRESULT WINAPI DX12Backend::hookedResizeBuffers(IDXGISwapChain* swapChain, UINT BufferCount, UINT Width, UINT Height,
+                                                DXGI_FORMAT NewFormat, UINT SwapChainFlags)
 {
     if (s_instance && s_instance->m_imguiInitialized)
         s_instance->cleanupRenderTargets();
@@ -187,7 +193,9 @@ bool DX12Backend::createDeviceObjects()
 
     if (!m_commandList)
     {
-        if (FAILED(m_device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, nullptr, nullptr, IID_PPV_ARGS(&m_commandList))))
+        if (FAILED(
+            m_device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, nullptr, nullptr, IID_PPV_ARGS(&m_commandList
+            ))))
         {
             m_commandList = nullptr;
             return false;
@@ -207,9 +215,21 @@ bool DX12Backend::createDeviceObjects()
 
 void DX12Backend::cleanupDeviceObjects()
 {
-    if (m_fenceEvent) { CloseHandle(m_fenceEvent); m_fenceEvent = nullptr; }
-    if (m_fence) { m_fence->Release(); m_fence = nullptr; }
-    if (m_commandList) { m_commandList->Release(); m_commandList = nullptr; }
+    if (m_fenceEvent)
+    {
+        CloseHandle(m_fenceEvent);
+        m_fenceEvent = nullptr;
+    }
+    if (m_fence)
+    {
+        m_fence->Release();
+        m_fence = nullptr;
+    }
+    if (m_commandList)
+    {
+        m_commandList->Release();
+        m_commandList = nullptr;
+    }
 }
 
 bool DX12Backend::createRenderTargets()
@@ -270,7 +290,11 @@ void DX12Backend::cleanupRenderTargets()
     }
     m_frames.clear();
 
-    if (m_rtvHeap) { m_rtvHeap->Release(); m_rtvHeap = nullptr; }
+    if (m_rtvHeap)
+    {
+        m_rtvHeap->Release();
+        m_rtvHeap = nullptr;
+    }
 }
 
 bool DX12Backend::initializeImGui()
@@ -292,7 +316,7 @@ bool DX12Backend::initializeImGui()
         15.0f,
         &fontConfig,
         io.Fonts->GetGlyphRangesDefault()
-    );
+        );
 
     D3D12_DESCRIPTOR_HEAP_DESC srvDesc = {};
     srvDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
@@ -318,7 +342,11 @@ void DX12Backend::shutdownImGui()
     ImGui_ImplWin32_Shutdown();
     ImGui::DestroyContext();
 
-    if (m_srvHeap) { m_srvHeap->Release(); m_srvHeap = nullptr; }
+    if (m_srvHeap)
+    {
+        m_srvHeap->Release();
+        m_srvHeap = nullptr;
+    }
 
     m_imguiInitialized = false;
 }

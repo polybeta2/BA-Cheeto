@@ -17,12 +17,16 @@ public:
 
     // Hook types
     using Present_t = HRESULT(WINAPI*)(IDXGISwapChain* swapChain, UINT SyncInterval, UINT Flags);
-    using ResizeBuffers_t = HRESULT(WINAPI*)(IDXGISwapChain* swapChain, UINT BufferCount, UINT Width, UINT Height, DXGI_FORMAT NewFormat, UINT SwapChainFlags);
-    using ExecuteCommandLists_t = void (WINAPI*)(ID3D12CommandQueue* queue, UINT NumCommandLists, ID3D12CommandList* const* ppCommandLists);
+    using ResizeBuffers_t = HRESULT(WINAPI*)(IDXGISwapChain* swapChain, UINT BufferCount, UINT Width, UINT Height,
+                                             DXGI_FORMAT NewFormat, UINT SwapChainFlags);
+    using ExecuteCommandLists_t = void (WINAPI*)(ID3D12CommandQueue* queue, UINT NumCommandLists,
+                                                 ID3D12CommandList* const* ppCommandLists);
 
     static HRESULT WINAPI hookedPresent(IDXGISwapChain* swapChain, UINT SyncInterval, UINT Flags);
-    static HRESULT WINAPI hookedResizeBuffers(IDXGISwapChain* swapChain, UINT BufferCount, UINT Width, UINT Height, DXGI_FORMAT NewFormat, UINT SwapChainFlags);
-    static void WINAPI hookedExecuteCommandLists(ID3D12CommandQueue* queue, UINT NumCommandLists, ID3D12CommandList* const* ppCommandLists);
+    static HRESULT WINAPI hookedResizeBuffers(IDXGISwapChain* swapChain, UINT BufferCount, UINT Width, UINT Height,
+                                              DXGI_FORMAT NewFormat, UINT SwapChainFlags);
+    static void WINAPI hookedExecuteCommandLists(ID3D12CommandQueue* queue, UINT NumCommandLists,
+                                                 ID3D12CommandList* const* ppCommandLists);
 
 private:
     bool setupHooks();

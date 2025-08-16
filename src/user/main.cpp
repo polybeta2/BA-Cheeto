@@ -16,7 +16,7 @@ void Main::run()
     if (!PipeManager::isUsingPipes())
     {
         LOG_INFO("{}", Renderer::getInstance().initialize()
-                 ? "Renderer initialized! Press INSERT to toggle GUI visibility"
+                 ? "Renderer initialized!"
                  : "Failed to initialize renderer!");
     }
 
