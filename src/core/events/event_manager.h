@@ -6,6 +6,7 @@ class EventManager
 public:
     static EventManager& getInstance();
 
+    static Event<> onReloadConfig;
     static Event<> onUpdate;
     static Event<> onBattleFinalize;
 

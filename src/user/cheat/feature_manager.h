@@ -17,10 +17,10 @@ namespace cheat
         void init();
 
         void draw();
-    // Reload persisted config values for all features (e.g., after profile switch)
-    void reloadConfig();
-    // Handle a key press for hotkeys; returns true if consumed
-    bool onKeyDown(int vk);
+        // Reload persisted config values for all features (e.g., after profile switch)
+        void reloadConfig();
+        // Handle a key press for hotkeys; returns true if consumed
+        bool onKeyDown(int vk);
 
         FeatureBase* getFeature(const std::string& name);
         std::vector<FeatureBase*> getFeaturesBySection(FeatureSection section);

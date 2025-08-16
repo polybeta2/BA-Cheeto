@@ -29,7 +29,7 @@ void HookManager::shutdown()
     m_blockNewHooks.store(true);
 
     // Best-effort disable all, then remove each explicitly
-    (void)disableAllHooks();
+    disableAllHooks();
 
     for (auto& hook : m_hooks)
     {

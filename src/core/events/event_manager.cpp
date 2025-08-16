@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 #include "event_manager.h"
 
+inline Event<> EventManager::onReloadConfig;
 inline Event<> EventManager::onUpdate;
 inline Event<> EventManager::onBattleFinalize;
 
@@ -19,6 +20,7 @@ EventManager& EventManager::getInstance()
 
 void EventManager::shutdown()
 {
+    onReloadConfig.clear();
     onUpdate.clear();
     onBattleFinalize.clear();
 }

@@ -41,7 +41,7 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD reason, LPVOID lpReserved)
             {
                 Main::shutdown();
                 if (PipeManager::isUsingPipes())
-					PipeManager::getInstance().stop();
+                    PipeManager::getInstance().stop();
             }
             break;
 

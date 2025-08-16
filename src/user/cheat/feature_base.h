@@ -23,14 +23,16 @@ namespace cheat
             : m_name(name)
             , m_description(description)
             , m_section(section)
-            , m_enabled(false)
             , m_allowDraw(section != FeatureSection::Hooks && section != FeatureSection::Count)
+            , m_enabledField("Unknown", name, "enabled", false)
         {
         }
 
         virtual ~FeatureBase() = default;
 
-    virtual void init() { }
+        virtual void init()
+        {
+        }
 
         virtual void draw()
         {
@@ -49,47 +51,42 @@ namespace cheat
         const std::string& getName() const { return m_name; }
         const std::string& getDescription() const { return m_description; }
         FeatureSection getSection() const { return m_section; }
-        bool isEnabled() const { return m_enabled; }
+        bool isEnabled() const { return m_enabledField.get(); }
 
         void setEnabled(bool enabled)
         {
-            if (m_enabled != enabled)
+            bool currentState = m_enabledField.get();
+            if (currentState == enabled) return;
+
+            m_enabledField = enabled;
+
+            if (enabled)
             {
-                m_enabled = enabled;
-                if (m_hasEnabledField)
-                {
-                    m_enabledField = m_enabled;
-                }
-                if (m_enabled)
-                {
-                    onEnable();
-                }
-                else
-                {
-                    onDisable();
-                }
+                onEnable();
+            }
+            else
+            {
+                onDisable();
             }
         }
 
         bool isAllowDraw() const { return m_allowDraw; }
 
-        // Initialize self-managed enabled field (called by FeatureManager during init)
-        void setupEnabledField(const char* sectionName)
+        void setupConfig(const char* sectionName)
         {
-            m_enabledField = Config::Field<bool>(sectionName ? sectionName : "Unknown", m_name, "enabled", false);
-            m_hasEnabledField = true;
-            // Apply persisted state without double-saving
-            m_enabled = static_cast<bool>(m_enabledField.get());
-            if (m_enabled) onEnable();
+            if (!sectionName) return;
+
+            m_enabledField = Config::Field(sectionName, m_name, "enabled", false);
+
+            if (m_enabledField.get()) onEnable();
         }
 
     protected:
         std::string m_name;
         std::string m_description;
         FeatureSection m_section;
-        bool m_enabled;
         bool m_allowDraw;
-        bool m_hasEnabledField{false};
+        bool m_hasEnabledField;
         Config::Field<bool> m_enabledField{};
     };
 }
