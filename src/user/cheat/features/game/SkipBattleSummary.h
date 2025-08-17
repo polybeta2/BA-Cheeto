@@ -6,7 +6,7 @@ namespace cheat::features
     class SkipBattleSummary : public FeatureBase
     {
         DECL_SINGLETON(SkipBattleSummary)
-        
+
     public:
         SkipBattleSummary();
 

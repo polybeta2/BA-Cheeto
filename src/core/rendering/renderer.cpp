@@ -2,7 +2,6 @@
 #include "renderer.h"
 
 #include "backend/dx11_backend.h"
-// #include "backend/dx12_backend.h"
 
 Renderer& Renderer::getInstance()
 {
@@ -21,8 +20,13 @@ bool Renderer::initialize()
 
     // Auto-detect render API
     RenderAPI detectedAPI = utils::DXUtils::getRenderAPI();
-    if (detectedAPI == RenderAPI::Unknown) return false;
+    if (detectedAPI == RenderAPI::Unknown)
+    {
+        LOG_ERROR("Unable to detect rendering API");
+        return false;
+    }
 
+    LOG_INFO("Detected rendering API: {}", magic_enum::enum_name(detectedAPI).data());
     return initialize(detectedAPI);
 }
 
@@ -77,8 +81,6 @@ std::unique_ptr<IRendererBackend> Renderer::createBackend(RenderAPI api)
         case RenderAPI::DirectX11:
             return std::make_unique<DX11Backend>();
         case RenderAPI::DirectX12:
-            // TODO: Implement DirectX12 backend
-            return nullptr;
         default:
             return nullptr;
     }

@@ -14,7 +14,7 @@ namespace cheat::features
     {
         if (s_instance->isEnabled())
         {
-            if (_this->currentState() ==  BattleSceneState_Enum::Ending)
+            if (_this->currentState() == BattleSceneState_Enum::Ending)
             {
                 _this->currentState(BattleSceneState_Enum::ShowResult);
                 _this->BattleResultSkipType(BattleResultSkipType_Enum::SkipTimeline);

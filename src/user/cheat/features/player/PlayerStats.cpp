@@ -1,6 +1,8 @@
 ﻿#include "pch.h"
 #include "PlayerStats.h"
 
+#include "core/events/event_manager.h"
+
 namespace cheat::features
 {
     PlayerStats::PlayerStats()
@@ -9,6 +11,23 @@ namespace cheat::features
     {
         // Alternatively, you can find a better function to hook as long as it gets called every update
         HookManager::install(NewNormalAttackAction::Update(), hNewNormalAttackAction_Update);
+        EventManager::onReloadConfig.addListener<PlayerStats, &PlayerStats::reloadFromConfig>(this);
+    }
+
+    void PlayerStats::init()
+    {
+        m_statFields.clear();
+        m_statValues.clear();
+
+        // Load persisted stat values using Field wrappers
+        for (auto stat = StatType_Enum::MaxHP; stat < StatType_Enum::Max;
+             stat = static_cast<StatType_Enum>(static_cast<int>(stat) + 1))
+        {
+            const std::string key = std::string("stat_") + std::string(magic_enum::enum_name(stat));
+            m_statFields.emplace(stat, Config::Field<int>("Player", getName(), key, 0));
+            int val = m_statFields[stat].get();
+            if (val != 0) m_statValues[stat] = val;
+        }
     }
 
     void PlayerStats::draw()
@@ -22,6 +41,7 @@ namespace cheat::features
             {
                 pair.second = 0;
             }
+            saveStatsToConfig();
         }
 
         if (ImGui::BeginChild("StatsList", ImVec2(0, 340), true))
@@ -35,7 +55,12 @@ namespace cheat::features
                     m_statValues[stat] = 0;
                 }
 
-                ImGui::InputInt(statName, &m_statValues[stat]);
+                int before = m_statValues[stat];
+                if (ImGui::InputInt(statName, &m_statValues[stat]))
+                {
+                    if (m_statValues[stat] != before)
+                        m_statFields[stat] = m_statValues[stat];
+                }
             }
         }
         ImGui::EndChild();
@@ -89,7 +114,7 @@ namespace cheat::features
 
     void PlayerStats::hNewNormalAttackAction_Update(NewNormalAttackAction* _this, Battle* battle)
     {
-        if (s_instance->m_enabled)
+        if (s_instance->isEnabled())
         {
             if (_this->Executer()->TacticEntityType() == TacticEntityType_Enum::Student)
             {
@@ -103,5 +128,25 @@ namespace cheat::features
         }
 
         CALL_ORIGINAL(hNewNormalAttackAction_Update, _this, battle);
+    }
+
+    void PlayerStats::saveStatsToConfig()
+    {
+        for (const auto& [stat, value] : m_statValues)
+            m_statFields[stat] = value;
+    }
+
+    void PlayerStats::reloadFromConfig()
+    {
+        // Refresh current values from fields (which pull from active profile)
+        for (auto stat = StatType_Enum::MaxHP; stat < StatType_Enum::Max;
+             stat = static_cast<StatType_Enum>(static_cast<int>(stat) + 1))
+        {
+            auto itF = m_statFields.find(stat);
+            if (itF == m_statFields.end()) continue;
+            int v = itF->second.get();
+            if (v != 0) m_statValues[stat] = v;
+            else m_statValues.erase(stat);
+        }
     }
 }
