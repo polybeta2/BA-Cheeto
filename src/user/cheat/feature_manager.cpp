@@ -24,7 +24,7 @@ namespace cheat
     void FeatureManager::init()
     {
         LOG_INFO("Initializing {} features...", m_features.size());
-        
+
         // Ensure hotkey IDs exist for all features and load their values
         auto& hk = HotkeyManager::getInstance();
         for (const auto& feature : m_features)
@@ -32,6 +32,8 @@ namespace cheat
             hk.registerHotkey(std::string("feature_") + feature->getName(), 0);
         }
         hk.load();
+
+        EventManager::onKeyDown.addListener<FeatureManager, &FeatureManager::onKeyDown>(this);
 
         for (const auto& feature : m_features)
         {
@@ -84,24 +86,22 @@ namespace cheat
                         }
 
                         // Per-feature hotkey capture row
+                        auto& hk = HotkeyManager::getInstance();
+                        std::string id = std::string("feature_") + feature->getName();
+                        int current = hk.getVk(id);
+                        ImGui::TextDisabled("Hotkey: [%s]", HotkeyManager::keyName(current));
+                        ImGui::SameLine();
+                        if (!hk.isCapturing())
                         {
-                            auto& hk = HotkeyManager::getInstance();
-                            std::string id = std::string("feature_") + feature->getName();
-                            int current = hk.getVk(id);
-                            ImGui::TextDisabled("Hotkey: [%s]", HotkeyManager::keyName(current));
+                            if (ImGui::Button((std::string("Add Hotkey##") + id).c_str())) hk.beginCapture(id);
                             ImGui::SameLine();
-                            if (!hk.isCapturing())
-                            {
-                                if (ImGui::Button((std::string("Add Hotkey##") + id).c_str())) hk.beginCapture(id);
-                                ImGui::SameLine();
-                                if (current != 0 && ImGui::Button((std::string("Reset##") + id).c_str())) hk.clear(id);
-                            }
-                            else if (hk.captureId() == id)
-                            {
-                                ImGui::TextUnformatted(" Press any key...");
-                                ImGui::SameLine();
-                                if (ImGui::Button("Cancel")) hk.cancelCapture();
-                            }
+                            if (current != 0 && ImGui::Button((std::string("Reset##") + id).c_str())) hk.clear(id);
+                        }
+                        else if (hk.captureId() == id)
+                        {
+                            ImGui::TextUnformatted(" Press any key...");
+                            ImGui::SameLine();
+                            if (ImGui::Button("Cancel")) hk.cancelCapture();
                         }
 
                         feature->draw();
@@ -139,17 +139,18 @@ namespace cheat
             feature->setupConfig(getSectionName(feature->getSection()));
             feature->init();
 
-            EventManager::onReloadConfig.invoke();
+            EventManager::onReloadConfig();
         }
     }
 
-    bool FeatureManager::onKeyDown(int vk)
+    void FeatureManager::onKeyDown(int vk, bool& handled) const
     {
         auto& hk = HotkeyManager::getInstance();
         if (hk.isCapturing())
         {
             hk.setCaptured(vk);
-            return true;
+            handled = true;
+            return;
         }
 
         // Feature toggles: feature_<Name>
@@ -159,10 +160,10 @@ namespace cheat
             if (hk.getVk(id) == vk && vk != 0)
             {
                 f->setEnabled(!f->isEnabled());
-                return true;
+                handled = true;
+                return;
             }
         }
-        return false;
     }
 
     FeatureBase* FeatureManager::getFeature(const std::string& name)

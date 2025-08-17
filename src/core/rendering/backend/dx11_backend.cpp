@@ -4,12 +4,10 @@
 #include <imgui_impl_dx11.h>
 #include <imgui_impl_win32.h>
 
+#include "core/events/event_manager.h"
 #include "core/rendering/fonts/NotoSans.hpp"
-#include "core/rendering/renderer.h"
 #include "ui/gui.h"
 #include "utils/dx_utils.h"
-#include "utils/hotkey_manager.h"
-#include "user/cheat/feature_manager.h"
 
 DX11Backend* DX11Backend::s_instance = nullptr;
 DX11Backend::Present_t DX11Backend::m_originalPresent = nullptr;
@@ -87,11 +85,12 @@ LRESULT CALLBACK DX11Backend::hookedWndProc(HWND hWnd, UINT uMsg, WPARAM wParam,
                 }
             }
 
-            if (cheat::FeatureManager::getInstance().onKeyDown(static_cast<int>(wParam))) return true;
+            bool handled = false;
+            EventManager::onKeyDown(static_cast<int>(wParam), handled);
+            if (handled) return true;
         }
     }
 
-    // TODO: Handle hotkeys later properly
     if (s_instance->onInput(uMsg, wParam, lParam)) return true;
 
     // Handle specific messages
@@ -178,7 +177,7 @@ HRESULT WINAPI DX11Backend::hookedPresent(IDXGISwapChain* swapChain, UINT syncIn
         }
     }
 
-    if (s_instance && s_instance->m_imguiInitialized && Renderer::getInstance().isInitialized())
+    if (s_instance && s_instance->m_imguiInitialized)
     {
         s_instance->beginFrame();
         s_instance->renderImGui();
@@ -371,6 +370,5 @@ int DX11Backend::onInput(UINT msg, WPARAM wParam, LPARAM lParam)
         return 1;
     }
 
-    // TODO: Handle input.
     return 0;
 }

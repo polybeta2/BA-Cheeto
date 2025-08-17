@@ -2,6 +2,7 @@
 #include "event_manager.h"
 
 inline Event<> EventManager::onReloadConfig;
+inline Event<int, bool&> EventManager::onKeyDown;
 inline Event<> EventManager::onUpdate;
 inline Event<> EventManager::onBattleFinalize;
 
@@ -21,6 +22,7 @@ EventManager& EventManager::getInstance()
 void EventManager::shutdown()
 {
     onReloadConfig.clear();
+    onKeyDown.clear();
     onUpdate.clear();
     onBattleFinalize.clear();
 }

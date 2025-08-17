@@ -15,12 +15,9 @@ namespace cheat
         }
 
         void init();
-
         void draw();
-        // Reload persisted config values for all features (e.g., after profile switch)
+
         void reloadConfig();
-        // Handle a key press for hotkeys; returns true if consumed
-        bool onKeyDown(int vk);
 
         FeatureBase* getFeature(const std::string& name);
         std::vector<FeatureBase*> getFeaturesBySection(FeatureSection section);
@@ -34,5 +31,9 @@ namespace cheat
 
         static const char* getSectionName(FeatureSection section);
         static void helpMarker(const char* desc);
+
+        void onKeyDown(int vk, bool& handled) const;
+
+        // Event<int, bool&>::Connection m_keyDownConnection;
     };
 }

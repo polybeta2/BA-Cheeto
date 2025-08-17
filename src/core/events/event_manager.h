@@ -7,6 +7,8 @@ public:
     static EventManager& getInstance();
 
     static Event<> onReloadConfig;
+    static Event<int, bool&> onKeyDown;
+    
     static Event<> onUpdate;
     static Event<> onBattleFinalize;
 

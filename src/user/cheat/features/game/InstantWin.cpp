@@ -1,8 +1,6 @@
 ﻿#include "pch.h"
 #include "InstantWin.h"
 
-#include "core/events/event_manager.h"
-
 namespace cheat::features
 {
     InstantWin::InstantWin()
