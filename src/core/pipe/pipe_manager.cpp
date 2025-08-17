@@ -159,8 +159,7 @@ void PipeManager::handleClient(HANDLE hPipe)
                 // Send acknowledgment back to client
                 std::string response = "OK: " + feature + ":" + (enabled ? "enabled" : "disabled");
                 DWORD bytesWritten;
-                const DWORD toWrite = static_cast<DWORD>(response.size());
-                WriteFile(hPipe, response.c_str(), toWrite, &bytesWritten, nullptr);
+                WriteFile(hPipe, response.c_str(), response.length(), &bytesWritten, nullptr);
                 FlushFileBuffers(hPipe);
             }
             else
@@ -168,8 +167,7 @@ void PipeManager::handleClient(HANDLE hPipe)
                 LOG_ERROR("Unknown command: '{}'", cmd.c_str());
                 std::string response = "ERROR: Unknown command";
                 DWORD bytesWritten;
-                const DWORD toWrite = static_cast<DWORD>(response.size());
-                WriteFile(hPipe, response.c_str(), toWrite, &bytesWritten, nullptr);
+                WriteFile(hPipe, response.c_str(), response.length(), &bytesWritten, nullptr);
                 FlushFileBuffers(hPipe);
             }
         }
@@ -178,8 +176,7 @@ void PipeManager::handleClient(HANDLE hPipe)
             LOG_ERROR("Invalid message format: '{}'", message.c_str());
             std::string response = "ERROR: Invalid format";
             DWORD bytesWritten;
-            const DWORD toWrite = static_cast<DWORD>(response.size());
-            WriteFile(hPipe, response.c_str(), toWrite, &bytesWritten, nullptr);
+            WriteFile(hPipe, response.c_str(), response.length(), &bytesWritten, nullptr);
             FlushFileBuffers(hPipe);
         }
     }

@@ -5,15 +5,8 @@
 #include "user/main.h"
 #include "utils/config_manager.h"
 #include "utils/hotkey_manager.h"
-#include <atomic>
 #include <filesystem>
 #include <shellapi.h>
-
-std::atomic_bool GUI::s_softUninjectRequested{false};
-
-void GUI::requestSoftUninject() { s_softUninjectRequested.store(true); }
-bool GUI::isSoftUninjectRequested() { return s_softUninjectRequested.load(); }
-void GUI::clearSoftUninjectRequest() { s_softUninjectRequested.store(false); }
 
 extern HMODULE g_hModule;
 
@@ -42,20 +35,6 @@ void GUI::render()
     if (m_showExample)
     {
         renderExampleWindow();
-    }
-
-    // Defer shutdown until after UI finished for this frame
-    if (isSoftUninjectRequested())
-    {
-        // Hide GUI to prevent any further drawing
-        m_visible = false;
-        clearSoftUninjectRequest();
-        // Trigger shutdown on a detached thread a bit later to be safely outside Present
-        std::thread([]()
-        {
-            std::this_thread::sleep_for(std::chrono::milliseconds(200));
-            Main::shutdown();
-        }).detach();
     }
 }
 
@@ -97,6 +76,7 @@ void GUI::renderMainMenuBar()
             }
 
             ImGui::Separator();
+
             // Profiles
             if (ImGui::BeginMenu("Profiles"))
             {
@@ -192,13 +172,6 @@ void GUI::renderMainMenuBar()
                 configManager.resetAll();
                 configManager.save();
                 cheat::FeatureManager::getInstance().reloadConfig();
-            }
-
-            // Hotkeys submenu removed; per-feature hotkeys are shown inline under each cheat.
-            if (ImGui::MenuItem("Uninject (soft)", "", false, true))
-            {
-                // Request a deferred shutdown outside of the current ImGui frame/present
-                requestSoftUninject();
             }
 
             ImGui::EndMenu();

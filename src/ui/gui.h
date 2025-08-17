@@ -15,11 +15,6 @@ public:
     // Demo functions
     void showExampleWindow();
 
-    // Soft-uninject flow control
-    static void requestSoftUninject();
-    static bool isSoftUninjectRequested();
-    static void clearSoftUninjectRequest();
-
 private:
     GUI();
 
@@ -36,7 +31,4 @@ private:
 
     // Utility
     void setupImGuiStyle();
-
-    // Shared flag to coordinate safe shutdown outside the render callback
-    static std::atomic_bool s_softUninjectRequested;
 };

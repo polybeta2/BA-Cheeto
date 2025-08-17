@@ -20,7 +20,6 @@
     <ClInclude Include="src\core\events\event_manager.h" />
     <ClInclude Include="src\core\pipe\pipe_manager.h" />
     <ClInclude Include="src\core\rendering\backend\dx11_backend.h" />
-    <ClInclude Include="src\core\rendering\backend\dx12_backend.h" />
     <ClInclude Include="src\core\rendering\backend\renderer_backend.h" />
     <ClInclude Include="src\core\rendering\fonts\NotoSans.hpp" />
     <ClInclude Include="src\core\rendering\renderer.h" />
@@ -79,7 +78,6 @@
     <ClCompile Include="src\core\events\event_manager.cpp" />
     <ClCompile Include="src\core\pipe\pipe_manager.cpp" />
     <ClCompile Include="src\core\rendering\backend\dx11_backend.cpp" />
-    <ClCompile Include="src\core\rendering\backend\dx12_backend.cpp" />
     <ClCompile Include="src\core\rendering\renderer.cpp" />
     <ClCompile Include="src\dllmain.cpp" />
     <ClCompile Include="src\memory\hook_manager.cpp" />
