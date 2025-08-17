@@ -2,8 +2,8 @@
 #include "feature_manager.h"
 
 #include "core/events/event_manager.h"
-#include "utils/config_manager.h"
-#include "utils/hotkey_manager.h"
+#include "core/config/config_manager.h"
+#include "core/hotkey/hotkey_manager.h"
 #include "features/player/PlayerStats.h"
 
 namespace cheat

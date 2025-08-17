@@ -3,8 +3,8 @@
 
 #include "user/cheat/feature_manager.h"
 #include "user/main.h"
-#include "utils/config_manager.h"
-#include "utils/hotkey_manager.h"
+#include "core/config/config_manager.h"
+#include "core/hotkey/hotkey_manager.h"
 #include <filesystem>
 #include <shellapi.h>
 

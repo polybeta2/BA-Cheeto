@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "hotkey_manager.h"
-#include "config_manager.h"
+#include "core/config/config_manager.h"
 
 HotkeyManager& HotkeyManager::getInstance()
 {

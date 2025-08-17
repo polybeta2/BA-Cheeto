@@ -1,7 +1,7 @@
 ﻿#pragma once
 
+#include "core/config/config_field.h"
 #include "utils/singleton.h"
-#include "utils/config_field.h"
 
 namespace cheat
 {
