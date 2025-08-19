@@ -3,7 +3,7 @@
 
 namespace cheat::features
 {
-    class Debug : public FeatureBase
+    class Debug : public FeatureBase<Debug>
     {
         DECL_SINGLETON(Debug)
 

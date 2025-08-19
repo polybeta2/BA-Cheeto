@@ -20,6 +20,8 @@
 
 void cheat::init()
 {
+    ConfigManager::getInstance().load();
+
     auto& manager = FeatureManager::getInstance();
 
     manager.registerFeatures<
@@ -42,8 +44,8 @@ void cheat::init()
     const auto fullVersion = Application::get_version()()->ToString();
     const size_t dotPos = fullVersion.rfind('.');
     const auto version = fullVersion.substr(dotPos + 1);
-    LOG_INFO("Blue Archive version: %s", version.c_str());
-    
+    LOG_INFO("Blue Archive version: {}", version.c_str());
+
     manager.init();
 }
 

@@ -1,6 +1,9 @@
 #include "pch.h"
 #include "user/main.h"
+#include "core/config/config_manager.h"
+#include <filesystem>
 #include <thread>
+
 
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD reason, LPVOID lpReserved)
 {
@@ -8,7 +11,7 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD reason, LPVOID lpReserved)
     {
         case DLL_PROCESS_ATTACH:
             DisableThreadLibraryCalls(hModule);
-            Logger::attach().showFileName().showLineNumber().consoleOnly().enableColors();
+            Logger::attach();
             if (PipeManager::isUsingPipes())
             {
                 Main::run();
@@ -24,8 +27,7 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD reason, LPVOID lpReserved)
             if (lpReserved == nullptr)
             {
                 Main::shutdown();
-                if (PipeManager::isUsingPipes())
-					PipeManager::getInstance().stop();
+                if (PipeManager::isUsingPipes()) PipeManager::getInstance().stop();
             }
             break;
 

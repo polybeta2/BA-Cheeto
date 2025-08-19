@@ -3,7 +3,7 @@
 
 void Logger::writeLog(const char* file, int line, LogLevel level, const std::string& message)
 {
-    if (m_excludedLevels.find(level) != m_excludedLevels.end()) return;
+    if (m_excludedLevels.contains(level)) return;
 
     const std::lock_guard<std::mutex> lock(m_logMutex);
 
@@ -28,12 +28,12 @@ void Logger::attachConsole()
     if (!m_consoleAttached)
     {
         AllocConsole();
-        
+
         freopen_s((FILE**)stdin, "CONIN$", "r", stdin);
         freopen_s((FILE**)stdout, "CONOUT$", "w", stdout);
         freopen_s((FILE**)stderr, "CONOUT$", "w", stderr);
         SetConsoleOutputCP(CP_UTF8);
-        
+
         // Enable virtual terminal processing for ANSI color support
         HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
         DWORD dwMode = 0;
@@ -42,7 +42,7 @@ void Logger::attachConsole()
             dwMode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
             SetConsoleMode(hOut, dwMode);
         }
-        
+
         m_consoleAttached = true;
     }
 #endif
@@ -105,7 +105,7 @@ bool Logger::prepareFileLogging(const std::string& directory)
         // Generate filename with timestamp
         auto now = std::chrono::system_clock::now();
         auto time_t = std::chrono::system_clock::to_time_t(now);
-        
+
         struct tm tm_buf;
 #ifdef _WIN32
         gmtime_s(&tm_buf, &time_t);
@@ -114,14 +114,14 @@ bool Logger::prepareFileLogging(const std::string& directory)
 #endif
 
         // Create filename with timestamp using simple string concatenation
-        std::string filename = "log_" 
+        std::string filename = "log_"
             + std::to_string(1900 + tm_buf.tm_year) + "-"
             + (tm_buf.tm_mon + 1 < 10 ? "0" : "") + std::to_string(tm_buf.tm_mon + 1) + "-"
             + (tm_buf.tm_mday < 10 ? "0" : "") + std::to_string(tm_buf.tm_mday) + "_"
             + (tm_buf.tm_hour < 10 ? "0" : "") + std::to_string(tm_buf.tm_hour) + "-"
             + (tm_buf.tm_min < 10 ? "0" : "") + std::to_string(tm_buf.tm_min) + "-"
             + (tm_buf.tm_sec < 10 ? "0" : "") + std::to_string(tm_buf.tm_sec) + ".txt";
-        
+
         m_logFilePath = directory + "/" + filename;
 
         // Close existing file if open
@@ -170,10 +170,10 @@ void Logger::writeToConsole(const std::string& formattedMessage, LogLevel level)
                 WORD levelColor = getLevelColor(level);
                 WORD filenameColor = FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY; // Light Blue
                 WORD lineColor = FOREGROUND_GREEN | FOREGROUND_RED | FOREGROUND_INTENSITY; // Light Yellow
-                
+
                 size_t pos = 0;
                 bool foundFileSection = false;
-                
+
                 // Handle timestamp if present (starts with [HH:MM:SS])
                 if (formattedMessage[0] == '[' && formattedMessage.length() > 8)
                 {
@@ -184,46 +184,46 @@ void Logger::writeToConsole(const std::string& formattedMessage, LogLevel level)
                         pos = firstBracketEnd + 2;
                     }
                 }
-                
+
                 // Handle filename and line number
                 if (pos < formattedMessage.length() && formattedMessage[pos] == '[')
                 {
                     size_t sectionStart = pos;
                     size_t sectionEnd = formattedMessage.find(']', sectionStart);
-                    
+
                     if (sectionEnd != std::string::npos)
                     {
                         std::string section = formattedMessage.substr(sectionStart + 1, sectionEnd - sectionStart - 1);
-                        
+
                         size_t colonPos = section.find(':');
                         size_t dotPos = section.find('.');
-                        
+
                         if (dotPos != std::string::npos && colonPos != std::string::npos && colonPos > dotPos)
                         {
                             foundFileSection = true;
                             std::cout << "[";
-                            
+
                             // Print filename in light blue
                             SetConsoleTextAttribute(hConsole, filenameColor);
                             std::cout << section.substr(0, colonPos);
-                            
+
                             // Print colon in default color
                             SetConsoleTextAttribute(hConsole, savedAttributes);
                             std::cout << ":";
-                            
+
                             // Print line number in light yellow
                             SetConsoleTextAttribute(hConsole, lineColor);
                             std::cout << section.substr(colonPos + 1);
-                            
+
                             // Reset color and close bracket
                             SetConsoleTextAttribute(hConsole, savedAttributes);
                             std::cout << "] ";
-                            
+
                             pos = sectionEnd + 2; // move past "] "
                         }
                     }
                 }
-                
+
                 if (!foundFileSection)
                 {
                     // Find the next bracket which should be the level
@@ -234,28 +234,28 @@ void Logger::writeToConsole(const std::string& formattedMessage, LogLevel level)
                         pos = nextBracket;
                     }
                 }
-                
+
                 // Handle log level [LEVEL]
                 if (pos < formattedMessage.length() && formattedMessage[pos] == '[')
                 {
                     size_t levelStart = pos + 1;
                     size_t levelEnd = formattedMessage.find(']', levelStart);
-                    
+
                     if (levelEnd != std::string::npos)
                     {
                         std::cout << "[";
-                        
+
                         // Print level in its color
                         SetConsoleTextAttribute(hConsole, levelColor);
                         std::cout << formattedMessage.substr(levelStart, levelEnd - levelStart);
-                        
+
                         // Reset color and print rest of message
                         SetConsoleTextAttribute(hConsole, savedAttributes);
                         std::cout << formattedMessage.substr(levelEnd) << std::endl;
                         return;
                     }
                 }
-                
+
                 SetConsoleTextAttribute(hConsole, savedAttributes);
                 std::cout << formattedMessage.substr(pos) << std::endl;
                 return;
@@ -290,12 +290,12 @@ std::string Logger::formatLogMessage(const char* file, int line, LogLevel level,
     {
         std::string filename = std::filesystem::path(file).filename().string();
         result += "[" + filename;
-        
+
         if (m_showLineNumber && line > 0)
         {
             result += ":" + std::to_string(line);
         }
-        
+
         result += "] ";
     }
 
@@ -312,11 +312,16 @@ std::string Logger::getLevelString(LogLevel level)
 {
     switch (level)
     {
-        case LogLevel::Debug:   return "DEBUG";
-        case LogLevel::Info:    return "INFO";
-        case LogLevel::Warning: return "WARN";
-        case LogLevel::Error:   return "ERROR";
-        default:                return "LOG";
+        case LogLevel::Debug:
+            return "DEBUG";
+        case LogLevel::Info:
+            return "INFO";
+        case LogLevel::Warning:
+            return "WARN";
+        case LogLevel::Error:
+            return "ERROR";
+        default:
+            return "LOG";
     }
 }
 
@@ -324,7 +329,7 @@ std::string Logger::getCurrentTimeString()
 {
     auto now = std::chrono::system_clock::now();
     auto time_t = std::chrono::system_clock::to_time_t(now);
-    
+
     struct tm tm_buf;
 #ifdef _WIN32
     localtime_s(&tm_buf, &time_t);
@@ -333,11 +338,11 @@ std::string Logger::getCurrentTimeString()
 #endif
 
     // Format time using simple string concatenation
-    std::string timeStr = 
+    std::string timeStr =
         (tm_buf.tm_hour < 10 ? "0" : "") + std::to_string(tm_buf.tm_hour) + ":" +
         (tm_buf.tm_min < 10 ? "0" : "") + std::to_string(tm_buf.tm_min) + ":" +
         (tm_buf.tm_sec < 10 ? "0" : "") + std::to_string(tm_buf.tm_sec);
-    
+
     return timeStr;
 }
 

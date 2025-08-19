@@ -75,7 +75,7 @@ namespace app
             LOG_ERROR("No field name provided for class search");
             return nullptr;
         }
-        
+
         if (minMatches == 0) minMatches = requiredFields.size();
         if (minMatches > requiredFields.size()) minMatches = requiredFields.size();
 
@@ -87,24 +87,24 @@ namespace app
         }
 
         std::vector<UnityResolve::Class*> matchingClasses;
-        
+
         for (const auto& klass : unityModule->classes)
         {
             if (!klass || klass->fields.empty()) continue;
 
             size_t matchCount = 0;
-            
+
             if (klass->fields.size() < minMatches) continue;
 
             std::unordered_set<std::string> classFieldNames;
             classFieldNames.reserve(klass->fields.size());
-            
+
             for (const auto& field : klass->fields)
             {
                 if (field && !field->name.empty())
-				{
-					classFieldNames.insert(field->name);
-				}
+                {
+                    classFieldNames.insert(field->name);
+                }
             }
 
             for (const auto& requiredField : requiredFields)
@@ -124,25 +124,25 @@ namespace app
         if (matchingClasses.empty())
         {
             LOG_ERROR("No class found in module '{}' with required fields", module.c_str());
-			return nullptr;
+            return nullptr;
         }
 
         if (matchingClasses.size() == 1)
-		{
-			// LOG_DEBUG("Found class '{}' in module '{}' with required fields", matchingClasses[0]->name.c_str(),
-			// 		  module.c_str());
-			return matchingClasses[0];
-		}
+        {
+            // LOG_DEBUG("Found class '{}' in module '{}' with required fields", matchingClasses[0]->name.c_str(),
+            // 		  module.c_str());
+            return matchingClasses[0];
+        }
 
         LOG_ERROR("{} classes found in module '{}' with required fields", matchingClasses.size(), module.c_str());
         for (const auto& klass : matchingClasses)
         {
             LOG_ERROR("Class '{}' with fields: ", klass->name.c_str());
         }
-        
+
         return nullptr;
     }
-    
+
     /**
      * @brief Finds the method immediately after a given method in a Unity class.
      * @param module The name of the Unity module (e.g., "Assembly-CSharp.dll", "mscorlib.dll").

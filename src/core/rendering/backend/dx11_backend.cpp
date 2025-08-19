@@ -4,6 +4,7 @@
 #include <imgui_impl_dx11.h>
 #include <imgui_impl_win32.h>
 
+#include "core/events/event_manager.h"
 #include "core/rendering/fonts/NotoSans.hpp"
 #include "ui/gui.h"
 #include "utils/dx_utils.h"
@@ -73,17 +74,23 @@ LRESULT CALLBACK DX11Backend::hookedWndProc(HWND hWnd, UINT uMsg, WPARAM wParam,
     {
         GUI& gui = GUI::getInstance();
 
-        switch (wParam)
+        if (!ImGui::IsAnyItemActive())
         {
-            case VK_INSERT:
-                gui.setVisible(!gui.isVisible());
-                return true;
-            default:
-                break;
+            if (static_cast<int>(wParam) == 'T')
+            {
+                if (GetAsyncKeyState(VK_CONTROL) & 0x8000)
+                {
+                    gui.setVisible(!gui.isVisible());
+                    return true;
+                }
+            }
+
+            bool handled = false;
+            EventManager::onKeyDown(static_cast<int>(wParam), handled);
+            if (handled) return true;
         }
     }
 
-    // TODO: Handle hotkeys later properly
     if (s_instance->onInput(uMsg, wParam, lParam)) return true;
 
     // Handle specific messages
@@ -135,8 +142,9 @@ bool DX11Backend::setupHooks()
 
 void DX11Backend::setupWindowHook()
 {
-    if (m_window && !m_originalWndProc) m_originalWndProc = (WNDPROC)SetWindowLongPtrW(
-        m_window, GWLP_WNDPROC, (LONG_PTR)hookedWndProc);
+    if (m_window && !m_originalWndProc)
+        m_originalWndProc = (WNDPROC)SetWindowLongPtrW(
+            m_window, GWLP_WNDPROC, (LONG_PTR)hookedWndProc);
 }
 
 void* DX11Backend::getVTableFunction(void* instance, int index)
@@ -276,7 +284,7 @@ void DX11Backend::shutdownImGui()
 
 void DX11Backend::beginFrame()
 {
-    if (!m_imguiInitialized) return;
+    if (!m_imguiInitialized || !m_context) return;
 
     ImGui_ImplDX11_NewFrame();
     ImGui_ImplWin32_NewFrame();
@@ -285,7 +293,7 @@ void DX11Backend::beginFrame()
 
 void DX11Backend::endFrame()
 {
-    if (!m_imguiInitialized) return;
+    if (!m_imguiInitialized || !m_context || !m_renderTargetView) return;
 
     ImGui::EndFrame();
     ImGui::Render();
@@ -362,6 +370,5 @@ int DX11Backend::onInput(UINT msg, WPARAM wParam, LPARAM lParam)
         return 1;
     }
 
-    // TODO: Handle input.
     return 0;
 }

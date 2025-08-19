@@ -3,7 +3,7 @@
 
 namespace cheat::features
 {
-    class DumbEnemies : public FeatureBase
+    class DumbEnemies : public FeatureBase<DumbEnemies>
     {
         DECL_SINGLETON(DumbEnemies)
 

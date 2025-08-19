@@ -15,7 +15,7 @@
 #define LOG_INFO(fmt, ...)  Logger::log(__FILE__, __LINE__, LogLevel::Info, fmt, __VA_ARGS__)
 #define LOG_DEBUG(fmt, ...) Logger::log(__FILE__, __LINE__, LogLevel::Debug, fmt, __VA_ARGS__)
 #define LOG_ERROR(fmt, ...) Logger::log(__FILE__, __LINE__, LogLevel::Error, fmt, __VA_ARGS__)
-#define LOG_WARNING(fmt, ...)  Logger::log(__FILE__, __LINE__, LogLevel::Warning, fmt, __VA_ARGS__)
+#define LOG_WARN(fmt, ...)  Logger::log(__FILE__, __LINE__, LogLevel::Warning, fmt, __VA_ARGS__)
 
 enum class LogLevel
 {
@@ -108,7 +108,7 @@ public:
         return *this;
     }
 
-    template<typename... Args>
+    template <typename... Args>
     static void log(const char* file, int line, LogLevel level, const std::string& fmt, Args&&... args)
     {
         if constexpr (sizeof...(args) == 0)
@@ -130,7 +130,7 @@ public:
     }
 
     // Direct logging methods
-    template<typename... Args>
+    template <typename... Args>
     static void info(const std::string& fmt, Args&&... args)
     {
         if constexpr (sizeof...(args) == 0)
@@ -151,7 +151,7 @@ public:
         }
     }
 
-    template<typename... Args>
+    template <typename... Args>
     static void debug(const std::string& fmt, Args&&... args)
     {
         if constexpr (sizeof...(args) == 0)
@@ -172,7 +172,7 @@ public:
         }
     }
 
-    template<typename... Args>
+    template <typename... Args>
     static void error(const std::string& fmt, Args&&... args)
     {
         if constexpr (sizeof...(args) == 0)
@@ -193,7 +193,7 @@ public:
         }
     }
 
-    template<typename... Args>
+    template <typename... Args>
     static void warn(const std::string& fmt, Args&&... args)
     {
         if constexpr (sizeof...(args) == 0)
@@ -232,10 +232,12 @@ public:
     static void close()
     {
         instance().closeFileLogging();
+        instance().detachConsole();
     }
 
 private:
     Logger() = default;
+
     ~Logger()
     {
         closeFileLogging();

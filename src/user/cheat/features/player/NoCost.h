@@ -3,7 +3,7 @@
 
 namespace cheat::features
 {
-    class NoCost : public FeatureBase
+    class NoCost : public FeatureBase<NoCost>
     {
         DECL_SINGLETON(NoCost)
 

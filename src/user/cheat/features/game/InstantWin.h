@@ -3,7 +3,7 @@
 
 namespace cheat::features
 {
-    class InstantWin : public FeatureBase
+    class InstantWin : public FeatureBase<InstantWin>
     {
         DECL_SINGLETON(InstantWin)
 

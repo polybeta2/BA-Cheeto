@@ -20,4 +20,4 @@
         }; \
         SingletonSetter m_singletonSetter{static_cast<CLASS_NAME*>(this)}; \
 	private: \
-		inline static CLASS_NAME* s_instance = nullptr; \
+		inline static CLASS_NAME* s_instance = nullptr;
