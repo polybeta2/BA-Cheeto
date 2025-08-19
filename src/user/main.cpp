@@ -2,7 +2,6 @@
 #include "main.h"
 
 #include "core/rendering/renderer.h"
-#include <atomic>
 #include "cheat/cheat.h"
 
 void Main::run()
@@ -25,23 +24,11 @@ void Main::run()
 
 void Main::shutdown()
 {
-    static std::atomic_bool s_shuttingDown{ false };
-    bool expected = false;
-    if (!s_shuttingDown.compare_exchange_strong(expected, true))
-        return; // already shutting down
-
     LOG_INFO("Shutting down...");
 
-    // Tear down renderer first to restore WndProc and ImGui before disabling hooks
     Renderer::getInstance().shutdown();
-
-    // Then tear down hooks and other cheat systems
     cheat::shutdown();
-
-    // Small grace period to let any in-flight frames settle
     Sleep(100);
-
-    // Close logs; keep console attached by default (soft-uninject hides UI only)
     Logger::close();
 }
 
@@ -72,7 +59,6 @@ Main::UnityModuleBackendInfo Main::getUnityBackend()
     LOG_WARNING("GameAssembly.dll not found, trying fallback to Mono...");
 
     std::vector<std::string> monoModules = {
-        "mono-2.0.dll",
         "mono-2.0-bdwgc.dll",
         "mono.dll"
     };

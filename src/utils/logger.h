@@ -232,6 +232,7 @@ public:
     static void close()
     {
         instance().closeFileLogging();
+        instance().detachConsole();
     }
 
 private:

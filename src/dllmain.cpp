@@ -4,8 +4,6 @@
 #include <filesystem>
 #include <thread>
 
-// Global module handle used for safe uninjection
-HMODULE g_hModule = nullptr;
 
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD reason, LPVOID lpReserved)
 {
@@ -13,18 +11,11 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD reason, LPVOID lpReserved)
     {
         case DLL_PROCESS_ATTACH:
             DisableThreadLibraryCalls(hModule);
-            g_hModule = hModule;
-            {
-                // Log verbosely to file under %APPDATA%\Cunny\logs and also to console
-                auto configDir = std::filesystem::path(ConfigManager::getInstance().getConfigFilePath()).parent_path();
-                auto logsDir = (configDir / "logs").string();
-                Logger::attach()
-                    .showTimeStamp(true)
-                    .showFileName(true)
-                    .showLineNumber(true)
-                    .enableColors(true)
-                    .logToFile(logsDir);
-            }
+            Logger::attach()
+                .showTimeStamp(true)
+                .showFileName(true)
+                .showLineNumber(true)
+                .enableColors(true);
             if (PipeManager::isUsingPipes())
             {
                 Main::run();
@@ -40,8 +31,7 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD reason, LPVOID lpReserved)
             if (lpReserved == nullptr)
             {
                 Main::shutdown();
-                if (PipeManager::isUsingPipes())
-                    PipeManager::getInstance().stop();
+                if (PipeManager::isUsingPipes()) PipeManager::getInstance().stop();
             }
             break;
 
