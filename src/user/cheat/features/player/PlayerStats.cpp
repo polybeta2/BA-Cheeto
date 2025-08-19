@@ -11,23 +11,13 @@ namespace cheat::features
     {
         // Alternatively, you can find a better function to hook as long as it gets called every update
         HookManager::install(NewNormalAttackAction::Update(), hNewNormalAttackAction_Update);
-        EventManager::onReloadConfig.addListener<PlayerStats, &PlayerStats::reloadFromConfig>(this);
+        m_reloadConnection = EventManager::onReloadConfig.connect<&PlayerStats::onReloadConfig>(this);
     }
 
     void PlayerStats::init()
     {
-        m_statFields.clear();
-        m_statValues.clear();
-
-        // Load persisted stat values using Field wrappers
-        for (auto stat = StatType_Enum::MaxHP; stat < StatType_Enum::Max;
-             stat = static_cast<StatType_Enum>(static_cast<int>(stat) + 1))
-        {
-            const std::string key = std::string("stat_") + std::string(magic_enum::enum_name(stat));
-            m_statFields.emplace(stat, Config::Field<int>("Player", getName(), key, 0));
-            int val = m_statFields[stat].get();
-            if (val != 0) m_statValues[stat] = val;
-        }
+        createStatFields();
+        loadStatsFromConfig();
     }
 
     void PlayerStats::draw()
@@ -37,16 +27,14 @@ namespace cheat::features
 
         if (ImGui::Button("Reset All"))
         {
-            for (auto& pair : m_statValues)
-            {
-                pair.second = 0;
-            }
-            saveStatsToConfig();
+            resetAllStats();
         }
 
         if (ImGui::BeginChild("StatsList", ImVec2(0, 340), true))
         {
-            for (const auto filteredStats = getFilteredStats(); auto stat : filteredStats)
+            auto filteredStats = getFilteredStats();
+
+            for (auto stat : filteredStats)
             {
                 const char* statName = magic_enum::enum_name(stat).data();
 
@@ -55,20 +43,93 @@ namespace cheat::features
                     m_statValues[stat] = 0;
                 }
 
-                int before = m_statValues[stat];
-                if (ImGui::InputInt(statName, &m_statValues[stat]))
+                int currentValue = m_statValues[stat];
+                if (ImGui::InputInt(statName, &currentValue))
                 {
-                    if (m_statValues[stat] != before)
-                        m_statFields[stat] = m_statValues[stat];
+                    if (currentValue != m_statValues[stat])
+                    {
+                        m_statValues[stat] = currentValue;
+
+                        if (auto it = m_statFields.find(stat); it != m_statFields.end())
+                        {
+                            it->second->set(currentValue);
+                        }
+                    }
                 }
             }
         }
         ImGui::EndChild();
     }
 
+    void PlayerStats::createStatFields()
+    {
+        m_statFields.clear();
+
+        // Create a config field for each stat type
+        for (auto stat = StatType_Enum::MaxHP; stat < StatType_Enum::Max;
+             stat = static_cast<StatType_Enum>(static_cast<int>(stat) + 1))
+        {
+            const std::string key = std::string("stat_") + std::string(magic_enum::enum_name(stat));
+
+            auto field = std::make_unique<config::Field<int>>(this->getPath(), key, 0);
+            // TODO: its okay for now, but fix later
+            config::Field<int>::Connection fieldConnection = field->onChanged(
+                [this, stat](const int& oldVal, const int& newVal)
+                {
+                    LOG_DEBUG("Stat {} changed from {} to {}",
+                              magic_enum::enum_name(stat), oldVal, newVal);
+
+                    // Update local cache
+                    if (newVal != 0)
+                    {
+                        m_statValues[stat] = newVal;
+                    }
+                    else
+                    {
+                        m_statValues.erase(stat);
+                    }
+                });
+
+            m_statFields[stat] = std::move(field);
+        }
+    }
+
+    void PlayerStats::loadStatsFromConfig()
+    {
+        m_statValues.clear();
+
+        for (const auto& [stat, field] : m_statFields)
+        {
+            int value = field->get();
+            if (value != 0)
+            {
+                // LOG_DEBUG("Loading {} stat with value {}", magic_enum::enum_name(stat), value);
+                m_statValues[stat] = value;
+            }
+        }
+    }
+
+    void PlayerStats::resetAllStats()
+    {
+        for (auto& [stat, value] : m_statValues)
+        {
+            value = 0;
+        }
+
+        for (const auto& [stat, field] : m_statFields)
+        {
+            field->set(0);
+        }
+
+        m_statValues.clear();
+
+        LOG_INFO("Reset all player stats to default values");
+    }
+
     std::vector<StatType_Enum> PlayerStats::getFilteredStats() const
     {
         std::vector<StatType_Enum> filtered;
+
         for (auto stat = StatType_Enum::MaxHP; stat < StatType_Enum::Max;
              stat = static_cast<StatType_Enum>(static_cast<int>(stat) + 1))
         {
@@ -80,6 +141,7 @@ namespace cheat::features
             {
                 std::string statName = magic_enum::enum_name(stat).data();
                 std::ranges::transform(statName, statName.begin(), tolower);
+
                 std::string searchLower = m_searchFilter;
                 std::ranges::transform(searchLower, searchLower.begin(), tolower);
 
@@ -89,24 +151,26 @@ namespace cheat::features
                 }
             }
         }
+
         return filtered;
     }
 
     void PlayerStats::applyStats(BattleEntityStat* entityStat, BattleEntity* battleEntity) const
     {
-        for (const auto& [fst, snd] : m_statValues)
+        for (const auto& [stat, value] : m_statValues)
         {
-            if (snd != 0)
+            if (value != 0)
             {
-                BattleEntityStatProcessor::Apply()(battleEntity->statProcessor(), fst);
+                BattleEntityStatProcessor::Apply()(battleEntity->statProcessor(), stat);
+                BattleEntityStat::SetValue()(entityStat, stat, static_cast<int64_t>(value));
 
-                BattleEntityStat::SetValue()(entityStat, fst, static_cast<int64_t>(snd));
                 auto currentStat = battleEntity->statProcessor()->CurrentStat();
                 battleEntity->statProcessor()->InitialStat(currentStat);
                 battleEntity->statProcessor()->DefaultStat(currentStat);
-                if (fst == StatType_Enum::MaxHP)
+
+                if (stat == StatType_Enum::MaxHP)
                 {
-                    BattleEntity::SetHitPoint()(battleEntity, snd);
+                    BattleEntity::SetHitPoint()(battleEntity, value);
                 }
             }
         }
@@ -118,7 +182,6 @@ namespace cheat::features
         {
             if (_this->Executer()->TacticEntityType() == TacticEntityType_Enum::Student)
             {
-                // LOG_DEBUG("Executer: {}", _this->Executer()->Name()->ToString().c_str());
                 if (const auto entityStat = _this->Executer()->get_CurrentStat()(_this->Executer());
                     entityStat != nullptr)
                 {
@@ -130,23 +193,9 @@ namespace cheat::features
         CALL_ORIGINAL(hNewNormalAttackAction_Update, _this, battle);
     }
 
-    void PlayerStats::saveStatsToConfig()
+    void PlayerStats::onReloadConfig()
     {
-        for (const auto& [stat, value] : m_statValues)
-            m_statFields[stat] = value;
-    }
-
-    void PlayerStats::reloadFromConfig()
-    {
-        // Refresh current values from fields (which pull from active profile)
-        for (auto stat = StatType_Enum::MaxHP; stat < StatType_Enum::Max;
-             stat = static_cast<StatType_Enum>(static_cast<int>(stat) + 1))
-        {
-            auto itF = m_statFields.find(stat);
-            if (itF == m_statFields.end()) continue;
-            int v = itF->second.get();
-            if (v != 0) m_statValues[stat] = v;
-            else m_statValues.erase(stat);
-        }
+        // LOG_DEBUG("Reloading PlayerStats config...");
+        loadStatsFromConfig();
     }
 }

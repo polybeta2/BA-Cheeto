@@ -56,7 +56,7 @@ Main::UnityModuleBackendInfo Main::getUnityBackend()
         LOG_INFO("Found Il2Cpp backend!");
         return info;
     }
-    LOG_WARNING("GameAssembly.dll not found, trying fallback to Mono...");
+    LOG_WARN("GameAssembly.dll not found, trying fallback to Mono...");
 
     std::vector<std::string> monoModules = {
         "mono-2.0-bdwgc.dll",

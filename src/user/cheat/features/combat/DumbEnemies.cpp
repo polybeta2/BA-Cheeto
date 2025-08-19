@@ -43,11 +43,10 @@ namespace cheat::features
 
     bool DumbEnemies::hBattleEntity_get_HasMainTarget(BattleEntity* _this)
     {
-        
         if (s_instance->isEnabled() &&
             std::ranges::find(blockedTypes, _this->TacticEntityType()) != blockedTypes.end())
             BattleEntity::ClearTarget()(_this);
-        
+
         return CALL_ORIGINAL(hBattleEntity_get_HasMainTarget, _this);
     }
 }

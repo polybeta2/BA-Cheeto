@@ -3,7 +3,7 @@
 
 namespace cheat::features
 {
-    class BattleEntityHook : public FeatureBase
+    class BattleEntityHook : public FeatureBase<BattleEntityHook>
     {
     public:
         BattleEntityHook();

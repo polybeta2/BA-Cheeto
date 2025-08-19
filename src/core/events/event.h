@@ -1,6 +1,4 @@
 ﻿#pragma once
-#include <nano_signal_slot.hpp>
-#include <functional>
 
 template <typename... Args>
 class EventConnection
@@ -10,9 +8,8 @@ public:
 
     EventConnection() = default;
 
-    // Create a connection with a custom disconnect function
-    explicit EventConnection(DisconnectFunc disconnect_func)
-        : disconnect_func_(std::move(disconnect_func))
+    explicit EventConnection(DisconnectFunc disconnectFunc)
+        : m_disconnectFunc(std::move(disconnectFunc))
     {
     }
 
@@ -25,9 +22,9 @@ public:
     EventConnection& operator=(const EventConnection&) = delete;
 
     EventConnection(EventConnection&& other) noexcept
-        : disconnect_func_(std::move(other.disconnect_func_))
+        : m_disconnectFunc(std::move(other.m_disconnectFunc))
     {
-        other.disconnect_func_ = nullptr;
+        other.m_disconnectFunc = nullptr;
     }
 
     EventConnection& operator=(EventConnection&& other) noexcept
@@ -35,28 +32,28 @@ public:
         if (this != &other)
         {
             disconnect();
-            disconnect_func_ = std::move(other.disconnect_func_);
-            other.disconnect_func_ = nullptr;
+            m_disconnectFunc = std::move(other.m_disconnectFunc);
+            other.m_disconnectFunc = nullptr;
         }
         return *this;
     }
 
     void disconnect()
     {
-        if (disconnect_func_)
+        if (m_disconnectFunc)
         {
-            disconnect_func_();
-            disconnect_func_ = nullptr;
+            m_disconnectFunc();
+            m_disconnectFunc = nullptr;
         }
     }
 
-    bool is_connected() const
+    bool isConnected() const
     {
-        return disconnect_func_ != nullptr;
+        return m_disconnectFunc != nullptr;
     }
 
 private:
-    DisconnectFunc disconnect_func_;
+    DisconnectFunc m_disconnectFunc;
 };
 
 template <typename... Args>
@@ -64,156 +61,297 @@ class Event
 {
 public:
     using Connection = EventConnection<Args...>;
+    using Handler = std::function<void(Args...)>;
 
-    // Connect a lambda or function object to this event and return RAII connection handle
+private:
+    struct HandlerSlot
+    {
+        std::shared_ptr<Handler> handler;
+        std::atomic<bool> active{true};
+        size_t id;
+
+        HandlerSlot(Handler h, size_t slot_id)
+            : handler(std::make_shared<Handler>(std::move(h)))
+            , id(slot_id)
+        {
+        }
+
+        // Disable copy, enable move
+        HandlerSlot(const HandlerSlot&) = delete;
+        HandlerSlot& operator=(const HandlerSlot&) = delete;
+
+        HandlerSlot(HandlerSlot&& other) noexcept
+            : handler(std::move(other.handler))
+            , active(other.active.load())
+            , id(other.id)
+        {
+        }
+
+        HandlerSlot& operator=(HandlerSlot&& other) noexcept
+        {
+            if (this != &other)
+            {
+                handler = std::move(other.handler);
+                active.store(other.active.load());
+                id = other.id;
+            }
+            return *this;
+        }
+    };
+
+    mutable std::mutex m_mutex;
+    std::vector<HandlerSlot> m_handlers;
+    std::atomic<size_t> m_nextId{1};
+
+public:
+    Event() = default;
+
+    // Disable copy, enable move
+    Event(const Event&) = delete;
+    Event& operator=(const Event&) = delete;
+    Event(Event&&) = default;
+    Event& operator=(Event&&) = default;
+
     template <typename Callable>
-    [[nodiscard]] Connection connect(Callable&& callable)
+    _NODISCARD Connection connect(Callable&& callable)
     {
-        signal_.connect(std::forward<Callable>(callable));
+        static_assert(std::is_invocable_v<Callable, Args...>,
+                      "Callable must be invocable with the event's argument types");
 
-        // Use clear() to disconnect all handlers if needed
-        return Connection([this, callable]() mutable
+        std::lock_guard lock(m_mutex);
+
+        size_t id = m_nextId++;
+
+        // Convert callable to std::function
+        Handler handler = std::forward<Callable>(callable);
+        m_handlers.emplace_back(std::move(handler), id);
+
+        // Return connection that can disconnect this specific handler
+        return Connection([this, id]
         {
-            // Limited capability. Store lambda IDs or diff approach for better cleanup
+            disconnectHandler(id);
         });
     }
 
-    // Connect a free function to this event
+    // Connect a free function
     template <auto FuncPtr>
-    [[nodiscard]] Connection connect()
+    _NODISCARD Connection connect()
     {
-        signal_.template connect<FuncPtr>();
-        return Connection([this]()
-        {
-            signal_.template disconnect<FuncPtr>();
-        });
+        return connect(FuncPtr);
     }
 
-    // Connect a member function and return RAII connection handle
+    // Connect a member function
     template <auto MemPtr, typename T>
-    [[nodiscard]] Connection connect(T* instance)
+    _NODISCARD Connection connect(T* instance)
     {
-        signal_.template connect<MemPtr>(instance);
-        return Connection([this, instance]()
+        return connect([instance](Args... args)
         {
-            signal_.template disconnect<MemPtr>(instance);
+            (instance->*MemPtr)(args...);
         });
     }
 
-    // Normal function
-    template <auto FuncPtr>
-    void addListener()
-    {
-        signal_.template connect<FuncPtr>();
-    }
-
-    // Member functions
-    template <typename T, auto MemPtr>
-    void addListener(T* instance)
-    {
-        signal_.template connect<MemPtr>(instance);
-    }
-
-    // Lambda or function object
-    template <typename Callable>
-    void addListener(Callable&& callable)
-    {
-        signal_.connect(std::forward<Callable>(callable));
-    }
-
-    // Normal functions
-    template <auto FuncPtr>
-    void removeListener()
-    {
-        signal_.template disconnect<FuncPtr>();
-    }
-
-    // Member functions
-    template <typename T, auto MemPtr>
-    void removeListener(T* instance)
-    {
-        signal_.template disconnect<MemPtr>(instance);
-    }
+    // template <auto FuncPtr>
+    // void addListener()
+    // {
+    //     this->connect<FuncPtr>();
+    // }
+    //
+    // template <typename T, auto MemPtr>
+    // void addListener(T* instance)
+    // {
+    //     this->template connect<MemPtr>(instance);
+    // }
+    //
+    // template <typename Callable>
+    // void addListener(Callable&& callable)
+    // {
+    //     this->connect(std::forward<Callable>(callable));
+    // }
 
     template <typename... UArgs>
     void operator()(UArgs&&... args)
     {
-        signal_.fire(std::forward<UArgs>(args)...);
+        // Create a copy of active handlers to avoid holding lock during execution
+        std::vector<std::shared_ptr<Handler>> activeHandlers;
+
+        {
+            std::lock_guard lock(m_mutex);
+            activeHandlers.reserve(m_handlers.size());
+
+            for (const auto& slot : m_handlers)
+            {
+                if (slot.active.load())
+                {
+                    activeHandlers.push_back(slot.handler);
+                }
+            }
+        }
+
+        // Execute handlers without holding the lock
+        for (const auto& handler : activeHandlers)
+        {
+            try
+            {
+                (*handler)(std::forward<UArgs>(args)...);
+            }
+            catch (const std::exception& e)
+            {
+                LOG_ERROR("Event handler exception: {}", e.what());
+            }
+            catch (...)
+            {
+                LOG_ERROR("Unknown event handler exception");
+            }
+        }
     }
 
-    // Accumulate results from all event handlers
-    template <typename Accumulator, typename... UArgs>
-    void invoke_accumulate(Accumulator&& accumulator, UArgs&&... args)
+    void clear()
     {
-        signal_.fire_accumulate(std::forward<Accumulator>(accumulator),
-                                std::forward<UArgs>(args)...);
+        std::lock_guard lock(m_mutex);
+        for (auto& slot : m_handlers)
+        {
+            slot.active.store(false);
+        }
+        m_handlers.clear();
     }
 
-    void clear() { signal_.disconnect_all(); }
-    bool empty() const { return signal_.is_empty(); }
+    _NODISCARD bool empty() const
+    {
+        std::lock_guard lock(m_mutex);
+        return m_handlers.empty();
+    }
 
 private:
-    Nano::Signal<void(Args...), Nano::TS_Policy<>> signal_;
+    void disconnectHandler(size_t id)
+    {
+        std::lock_guard lock(m_mutex);
+
+        for (auto it = m_handlers.begin(); it != m_handlers.end(); ++it)
+        {
+            if (it->id == id)
+            {
+                it->active.store(false);
+                m_handlers.erase(it);
+                break;
+            }
+        }
+    }
 };
 
-// For ST_Policy. Use when events are fired from a single thread only
+// For single threaded use/no locking
 template <typename... Args>
 class FastEvent
 {
 public:
     using Connection = EventConnection<Args...>;
+    using Handler = std::function<void(Args...)>;
 
-    template <typename Callable>
-    [[nodiscard]] Connection connect(Callable&& callable)
+private:
+    struct HandlerSlot
     {
-        signal_.connect(std::forward<Callable>(callable));
-        return Connection([]()
+        Handler handler;
+        size_t id;
+
+        HandlerSlot(Handler h, size_t slotId)
+            : handler(std::make_shared<Handler>(std::move(h)))
+            , id(slotId)
         {
-            /* Lambda cleanup limitation. See Event impl */
+        }
+
+        // Disable copy, enable move
+        HandlerSlot(const HandlerSlot&) = delete;
+        HandlerSlot& operator=(const HandlerSlot&) = delete;
+
+        HandlerSlot(HandlerSlot&& other) noexcept
+            : handler(std::move(other.handler))
+            , id(other.id)
+        {
+        }
+
+        HandlerSlot& operator=(HandlerSlot&& other) noexcept
+        {
+            if (this != &other)
+            {
+                handler = std::move(other.handler);
+                id = other.id;
+            }
+            return *this;
+        }
+    };
+
+    std::vector<HandlerSlot> m_handlers;
+    size_t m_nextId{1};
+
+public:
+    template <typename Callable>
+    _NODISCARD Connection connect(Callable&& callable)
+    {
+        static_assert(std::is_invocable_v<Callable, Args...>,
+                      "Callable must be invocable with the event's argument types");
+
+        size_t id = m_nextId++;
+        Handler handler = std::forward<Callable>(callable);
+        m_handlers.emplace_back(std::move(handler), id);
+
+        return Connection([this, id]()
+        {
+            disconnectHandler(id);
         });
     }
 
     template <auto FuncPtr>
-    [[nodiscard]] Connection connect()
+    _NODISCARD Connection connect()
     {
-        signal_.template connect<FuncPtr>();
-        return Connection([this]()
-        {
-            signal_.template disconnect<FuncPtr>();
-        });
+        return connect(FuncPtr);
     }
 
     template <auto MemPtr, typename T>
-    [[nodiscard]] Connection connect(T* instance)
+    _NODISCARD Connection connect(T* instance)
     {
-        signal_.template connect<MemPtr>(instance);
-        return Connection([this, instance]()
+        return connect([instance](Args... args)
         {
-            signal_.template disconnect<MemPtr>(instance);
+            (instance->*MemPtr)(args...);
         });
     }
 
     template <typename... UArgs>
     void operator()(UArgs&&... args)
     {
-        signal_.fire(std::forward<UArgs>(args)...);
+        // Execute handlers directly
+        for (const auto& slot : m_handlers)
+        {
+            try
+            {
+                slot.handler(std::forward<UArgs>(args)...);
+            }
+            catch (const std::exception& e)
+            {
+                LOG_ERROR("Event handler exception: {}", e.what());
+            }
+            catch (...)
+            {
+                LOG_ERROR("Unknown event handler exception");
+            }
+        }
     }
 
-    void clear() { signal_.disconnect_all(); }
-    bool empty() const { return signal_.is_empty(); }
+    void clear()
+    {
+        m_handlers.clear();
+    }
+
+    _NODISCARD bool empty() const
+    {
+        return m_handlers.empty();
+    }
 
 private:
-    Nano::Signal<void(Args...), Nano::ST_Policy> signal_;
+    void disconnectHandler(size_t id)
+    {
+        m_handlers.erase(
+            std::remove_if(m_handlers.begin(), m_handlers.end(),
+                           [id](const HandlerSlot& slot) { return slot.id == id; }),
+            m_handlers.end()
+            );
+    }
 };
-
-template <typename... Args>
-auto make_event()
-{
-    return Event<Args...>{};
-}
-
-template <typename... Args>
-auto make_fast_event()
-{
-    return FastEvent<Args...>{};
-}

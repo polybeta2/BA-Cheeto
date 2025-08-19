@@ -3,10 +3,9 @@
 
 namespace cheat::features
 {
-    // Speeds up battle logic by scaling BattleGameTime::Tick.
+    // TODO: handle reset
     Timescale::Timescale()
         : FeatureBase("Timescale", "Speed up battle by scaling logic time per tick", FeatureSection::Game)
-        , m_scaleField("Game", getName(), "scale", 1.0f)
         , m_scale(m_scaleField.get())
     {
         HookManager::install(BattleGameTime::Tick(), hBattleGameTime_Tick);

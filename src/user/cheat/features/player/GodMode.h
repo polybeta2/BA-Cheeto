@@ -3,7 +3,7 @@
 
 namespace cheat::features
 {
-    class GodMode : public FeatureBase
+    class GodMode : public FeatureBase<GodMode>
     {
         DECL_SINGLETON(GodMode)
 

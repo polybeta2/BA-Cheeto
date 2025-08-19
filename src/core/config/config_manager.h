@@ -1,71 +1,96 @@
 #pragma once
 
-#include <string>
-#include <unordered_map>
-#include <vector>
-#include <filesystem>
-#include <fstream>
-#include <atomic>
-#include <mutex>
-#include <Windows.h>
-#include <nlohmann/json.hpp>
-
-class ConfigManager {
+class ConfigManager
+{
 public:
     static ConfigManager& getInstance();
 
     bool load();
     bool save();
-    bool saveNow() { return save(); }
-
-    // Debounced saving
-    void scheduleSave(int debounceMs = 250);
-
-    // feature path helpers
-    bool getFeatureEnabled(const std::string& section, const std::string& name, bool def = false) const;
-    void setFeatureEnabled(const std::string& section, const std::string& name, bool enabled);
+    void scheduleSave(int debounceMs = 250, bool reload = false);
 
     template <typename T>
-    T getFeatureValue(const std::string& section, const std::string& name, const std::string& key, const T& def) const {
-        const nlohmann::json* node = getFeatureNodeConst(section, name);
-        if (!node) return def;
-        const auto it = node->find(key);
-        if (it == node->end()) return def;
-        try { return it->get<T>(); } catch (...) { return def; }
+    T getFeatureValue(const std::string& section, const std::string& name,
+                      const std::string& key, const T& defaultValue) const
+    {
+        std::lock_guard lock(m_dataMutex);
+
+        try
+        {
+            const auto* node = getFeatureNodeConst(section, name);
+            if (!node) return defaultValue;
+
+            auto it = node->find(key);
+            if (it == node->end()) return defaultValue;
+
+            return it->get<T>();
+        }
+        catch (const std::exception& e)
+        {
+            LOG_WARN("Failed to get feature value {}.{}.{}: {}", section, name, key, e.what());
+            return defaultValue;
+        }
     }
 
     template <typename T>
-    void setFeatureValue(const std::string& section, const std::string& name, const std::string& key, const T& value) {
-        auto& node = getOrCreateFeatureNode(section, name);
-        node[key] = value;
+    void setFeatureValue(const std::string& section, const std::string& name,
+                         const std::string& key, const T& value)
+    {
+        std::lock_guard lock(m_dataMutex);
+
+        try
+        {
+            auto& node = getOrCreateFeatureNode(section, name);
+            node[key] = value;
+            markDirty();
+        }
+        catch (const std::exception& e)
+        {
+            LOG_ERROR("Failed to set feature value {}.{}.{}: {}", section, name, key, e.what());
+        }
     }
 
-    const nlohmann::json& data() const { return m_data; }
-    std::string getConfigFilePath() const { return configPath(); }
+    void setProfile(const std::string& profileName);
 
-    // Profiles
-    void setProfile(const std::string& profileNameOrFile);
-    std::string getProfile() const { return m_profile; }
-    std::vector<std::string> listProfiles() const; // returns normalized names: "default" or custom names
+    std::string getProfile() const
+    {
+        std::lock_guard lock(m_dataMutex);
+        return m_currentProfile;
+    }
+
+    std::vector<std::string> listProfiles() const;
     bool createProfile(const std::string& profileName);
+    bool deleteProfile(const std::string& profileName);
 
-    // Resets
     void resetFeature(const std::string& section, const std::string& name);
     void resetAll();
+
+    std::string getConfigFilePath() const { return getConfigPath(); }
+    bool isDirty() const { return m_isDirty.load(); }
+    const nlohmann::json& data() const { return m_data; }
 
 private:
     ConfigManager() = default;
 
-    std::string configPath() const;
-    std::string profileNameFromFile(const std::string& file) const;
-    nlohmann::json* getFeatureNode(const std::string& section, const std::string& name);
-    const nlohmann::json* getFeatureNodeConst(const std::string& section, const std::string& name) const;
-    nlohmann::json& getOrCreateFeatureNode(const std::string& section, const std::string& name);
-
+    mutable std::recursive_mutex m_dataMutex;
     nlohmann::json m_data;
-    std::string m_profile{"default"};
+    std::string m_currentProfile{"default"};
+    std::atomic<bool> m_isDirty{false};
 
-    // debounce state
-    std::atomic<unsigned long long> m_saveSeq{0};
+    std::atomic<uint64_t> m_saveSequence{0};
     mutable std::mutex m_saveMutex;
+
+    std::string getConfigPath() const;
+    std::filesystem::path getConfigDirectory() const;
+    std::string profileNameFromFile(const std::string& filename) const;
+
+    void markDirty() { m_isDirty.store(true); }
+    void markClean() { m_isDirty.store(false); }
+    bool createBackup() const;
+
+    const nlohmann::json* getFeatureNodeConst(const std::string& section, const std::string& name) const;
+    nlohmann::json* getFeatureNode(const std::string& section, const std::string& name);
+    nlohmann::json& getOrCreateFeatureNode(const std::string& section, const std::string& name);
+    void initializeEmptyConfig();
+    bool validateConfig() const;
 };

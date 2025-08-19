@@ -2,9 +2,7 @@
 #include "gui.h"
 
 #include "user/cheat/feature_manager.h"
-#include "user/main.h"
 #include "core/config/config_manager.h"
-#include "core/hotkey/hotkey_manager.h"
 #include <filesystem>
 #include <shellapi.h>
 
@@ -159,7 +157,7 @@ void GUI::renderMainMenuBar()
             }
 
             if (ImGui::MenuItem("Save now"))
-                configManager.saveNow();
+                configManager.save();
 
             if (ImGui::MenuItem("Open config folder"))
             {
@@ -171,7 +169,23 @@ void GUI::renderMainMenuBar()
             {
                 configManager.resetAll();
                 configManager.save();
-                cheat::FeatureManager::getInstance().reloadConfig();
+            }
+
+            if (ImGui::BeginMenu("Console"))
+            {
+                if (ImGui::MenuItem("Attach"))
+                {
+                    Logger::attach();
+                }
+                if (ImGui::MenuItem("Close"))
+                {
+                    Logger::close();
+                }
+                if (ImGui::MenuItem("Clear"))
+                {
+                    Logger::clear();
+                }
+                ImGui::EndMenu();
             }
 
             ImGui::EndMenu();
@@ -206,7 +220,7 @@ void GUI::renderMainMenuBar()
         ImGui::SameLine();
         ImGui::Separator();
         ImGui::SameLine();
-        ImGui::TextDisabled("CTRL+W: Toggle GUI");
+        ImGui::TextDisabled("CTRL+T: Toggle GUI");
 
         ImGui::SameLine();
         ImGui::Separator();

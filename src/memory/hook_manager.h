@@ -168,7 +168,6 @@ bool HookManager::install(const std::string& moduleName, intptr_t offset, T deto
 template <typename T>
 bool HookManager::createHook(void* target, T detour, T* original)
 {
-
     void* originalPtr = nullptr;
     auto status = MH_CreateHook(target, reinterpret_cast<void*>(detour), &originalPtr);
 

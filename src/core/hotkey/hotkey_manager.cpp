@@ -1,83 +1,124 @@
 #include "pch.h"
 #include "hotkey_manager.h"
-#include "core/config/config_manager.h"
+#include "core/config/fields/hotkey_field.h"
 
 HotkeyManager& HotkeyManager::getInstance()
 {
-    static HotkeyManager inst; return inst;
+    static HotkeyManager inst;
+    return inst;
 }
 
-void HotkeyManager::registerHotkey(const std::string& id, int defaultVk)
+void HotkeyManager::registerField(config::HotkeyField* field)
 {
-    // Always read from current profile's config to keep in sync on profile switches
-    int v = ConfigManager::getInstance().getFeatureValue<int>("Settings", "Hotkeys", id, defaultVk);
-    m_map[id] = v;
-}
-
-void HotkeyManager::setVk(const std::string& id, int vk)
-{
-    m_map[id] = vk;
-    ConfigManager::getInstance().setFeatureValue("Settings", "Hotkeys", id, vk);
-    ConfigManager::getInstance().scheduleSave();
-}
-
-int HotkeyManager::getVk(const std::string& id) const
-{
-    auto it = m_map.find(id);
-    return it == m_map.end() ? 0 : it->second;
-}
-
-void HotkeyManager::load()
-{
-    for (auto& kv : m_map)
+    if (std::ranges::find(m_fields, field) == m_fields.end())
     {
-        int vk = ConfigManager::getInstance().getFeatureValue<int>("Settings", "Hotkeys", kv.first, kv.second);
-        kv.second = vk;
+        m_fields.push_back(field);
+
+        // Add to VK mapping if field has a key assigned
+        int vk = field->get();
+        if (vk != 0)
+        {
+            m_vkToFields[vk].push_back(field);
+        }
     }
 }
 
-void HotkeyManager::save() const
+void HotkeyManager::unregisterField(config::HotkeyField* field)
 {
-    for (const auto& kv : m_map)
+    // Remove from fields list
+    std::erase(m_fields, field);
+
+    // Remove from VK mappings
+    for (auto& [vk, fieldList] : m_vkToFields)
     {
-        ConfigManager::getInstance().setFeatureValue("Settings", "Hotkeys", kv.first, kv.second);
+        std::erase(fieldList, field);
     }
-    ConfigManager::getInstance().save();
+
+    // Clean up empty VK entries
+    for (auto it = m_vkToFields.begin(); it != m_vkToFields.end();)
+    {
+        if (it->second.empty())
+        {
+            it = m_vkToFields.erase(it);
+        }
+        else
+        {
+            ++it;
+        }
+    }
+
+    // Cancel capture if this field was being captured
+    if (m_currentCapture == field)
+    {
+        m_currentCapture = nullptr;
+    }
 }
 
-const std::vector<std::pair<const char*, int>>& HotkeyManager::keyList()
+void HotkeyManager::updateHotkey(config::HotkeyField* field, int oldVk, int newVk)
 {
-    static std::vector<std::pair<const char*, int>> list = {
-        {"None", 0},
-        {"INSERT", VK_INSERT}, {"DELETE", VK_DELETE}, {"HOME", VK_HOME}, {"END", VK_END},
-        {"PAGE UP", VK_PRIOR}, {"PAGE DOWN", VK_NEXT},
-        {"F1", VK_F1}, {"F2", VK_F2}, {"F3", VK_F3}, {"F4", VK_F4}, {"F5", VK_F5},
-        {"F6", VK_F6}, {"F7", VK_F7}, {"F8", VK_F8}, {"F9", VK_F9}, {"F10", VK_F10},
-        {"F11", VK_F11}, {"F12", VK_F12},
-        {"TAB", VK_TAB}, {"CAPS", VK_CAPITAL}, {"SHIFT", VK_SHIFT}, {"CTRL", VK_CONTROL}, {"ALT", VK_MENU},
-        {"SPACE", VK_SPACE}, {"BACKSPACE", VK_BACK},
-        {"1", '1'}, {"2", '2'}, {"3", '3'}, {"4", '4'}, {"5", '5'}, {"6", '6'}, {"7", '7'}, {"8", '8'}, {"9", '9'}, {"0", '0'},
-        {"A", 'A'}, {"B", 'B'}, {"C", 'C'}, {"D", 'D'}, {"E", 'E'}, {"F", 'F'}, {"G", 'G'}, {"H", 'H'},
-        {"I", 'I'}, {"J", 'J'}, {"K", 'K'}, {"L", 'L'}, {"M", 'M'}, {"N", 'N'}, {"O", 'O'}, {"P", 'P'},
-        {"Q", 'Q'}, {"R", 'R'}, {"S", 'S'}, {"T", 'T'}, {"U", 'U'}, {"V", 'V'}, {"W", 'W'}, {"X", 'X'}, {"Y", 'Y'}, {"Z", 'Z'}
-    };
-    return list;
+    // Remove from old VK mapping
+    if (oldVk != 0)
+    {
+        auto it = m_vkToFields.find(oldVk);
+        if (it != m_vkToFields.end())
+        {
+            std::erase(it->second, field);
+            if (it->second.empty())
+            {
+                m_vkToFields.erase(it);
+            }
+        }
+    }
+
+    // Add to new VK mapping
+    if (newVk != 0)
+    {
+        m_vkToFields[newVk].push_back(field);
+    }
 }
 
-const char* HotkeyManager::keyName(int vk)
+void HotkeyManager::setCaptured(int vk)
 {
-    for (const auto& p : keyList()) if (p.second == vk) return p.first;
-    return "?";
+    if (m_currentCapture)
+    {
+        m_currentCapture->endCapture(vk);
+        m_currentCapture = nullptr;
+    }
 }
 
-void HotkeyManager::clear(const std::string& id)
+void HotkeyManager::cancelCapture()
 {
-    setVk(id, 0);
+    if (m_currentCapture)
+    {
+        m_currentCapture->cancelCapture();
+        m_currentCapture = nullptr;
+    }
 }
 
-std::vector<std::string> HotkeyManager::getIdsForVk(int vk) const
+bool HotkeyManager::processKey(int vk)
 {
-    std::vector<std::string> ids;
-    for (const auto& kv : m_map) if (kv.second == vk) ids.push_back(kv.first);
-    return ids;
+    if (isCapturing())
+    {
+        if (vk == VK_ESCAPE || vk == VK_LBUTTON || vk == VK_RBUTTON || vk == VK_MBUTTON)
+        {
+            cancelCapture();
+            return true;
+        }
+
+        setCaptured(vk);
+        return true;
+    }
+
+    auto it = m_vkToFields.find(vk);
+    if (it != m_vkToFields.end() && !it->second.empty())
+    {
+        // Trigger all handlers for this key
+        for (auto* field : it->second)
+        {
+            field->trigger();
+        }
+        return true;
+    }
+
+    return false;
 }

@@ -37,14 +37,14 @@ class Application
 {
     UNITY_CLASS_DECL("UnityEngine.CoreModule.dll", "Application")
 
-    UNITY_METHOD(UTYPE::String*, get_version, )
+    UNITY_METHOD(UTYPE::String*, get_version,)
 };
 
 
 // Obfuscated class
 class CostSkillCardManager
 {
-    UNITY_CLASS_DECL_FROM_FIELD_NAME("BlueArchive.dll", "<MaxCost>k__BackingField", "<CurCost>k__BackingField")
+    UNITY_CLASS_DECL_FROM_FIELDS("BlueArchive.dll", 2, "<MaxCost>k__BackingField", "<CurCost>k__BackingField")
 
     UNITY_FIELD(float, MaxCost, 0x38)
     UNITY_FIELD(float, CurCost, 0x3c)
@@ -145,8 +145,8 @@ struct TimeSpan
 class DateTime
 {
     UNITY_CLASS_DECL("mscorlib.dll", "DateTime")
-    UNITY_METHOD(int64_t, get_Ticks, )
-    UNITY_METHOD(DateTime, get_Now, )
+    UNITY_METHOD(int64_t, get_Ticks,)
+    UNITY_METHOD(DateTime, get_Now,)
 };
 
 class LogicGameTime
@@ -199,7 +199,6 @@ class Battle
     UNITY_METHOD(void, Begin, Battle*)
     UNITY_METHOD(void, set_GameState, Battle*, BattleLogicState_Enum)
     UNITY_METHOD(void, set_GameTime, Battle*, LogicGameTime*)
-    UNITY_METHOD_BETWEEN(void, Finalize, "set_MaxDurationFrame", "OnObstacleStatChanged", Battle*, BattleEndType_Enum)
 };
 
 class CharacterGroup
@@ -383,7 +382,7 @@ class BattleGameTime
     UNITY_FIELD(int32_t, CurrentFrame, 0x1C)
     UNITY_FIELD(int64_t, TicksPerLogicFrame, 0x20)
     UNITY_FIELD(float, LogicSecondPerFrame, 0x28)
-    
+
     UNITY_METHOD(void, Tick, BattleGameTime*)
 };
 
@@ -396,7 +395,7 @@ class BattleSceneHandler : public UTYPE::MonoBehaviour
     UNITY_FIELD(BattleSceneState_Enum, currentState, 0x40)
     UNITY_FIELD(bool, DisableInteraction, 0x44)
     UNITY_FIELD(BattleResultSkipType_Enum, BattleResultSkipType, 0x58)
-    
+
     UNITY_METHOD(void, Update, BattleSceneHandler*)
 };
 
@@ -408,5 +407,3 @@ class EndingSubScene
     UNITY_METHOD(void, Enter, EndingSubScene*)
     UNITY_METHOD(void, Advance, EndingSubScene*)
 };
-
-

@@ -3,7 +3,7 @@
 
 namespace cheat::features
 {
-    class OneHitKill : public FeatureBase
+    class OneHitKill : public FeatureBase<OneHitKill>
     {
         DECL_SINGLETON(OneHitKill)
 

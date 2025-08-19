@@ -2,9 +2,7 @@
 #include "feature_manager.h"
 
 #include "core/events/event_manager.h"
-#include "core/config/config_manager.h"
 #include "core/hotkey/hotkey_manager.h"
-#include "features/player/PlayerStats.h"
 
 namespace cheat
 {
@@ -14,101 +12,57 @@ namespace cheat
         return instance;
     }
 
-    void FeatureManager::registerFeature(std::unique_ptr<FeatureBase> feature)
-    {
-        const std::string& name = feature->getName();
-        m_featureMap[name] = feature.get();
-        m_features.push_back(std::move(feature));
-    }
-
     void FeatureManager::init()
     {
         LOG_INFO("Initializing {} features...", m_features.size());
 
-        // Ensure hotkey IDs exist for all features and load their values
-        auto& hk = HotkeyManager::getInstance();
-        for (const auto& feature : m_features)
-        {
-            hk.registerHotkey(std::string("feature_") + feature->getName(), 0);
-        }
-        hk.load();
+        m_keyConnection = EventManager::onKeyDown.connect<&FeatureManager::onKeyDown>(this);
+        m_reloadConnection = EventManager::onReloadConfig.connect<&FeatureManager::onReloadConfig>(this);
 
-        EventManager::onKeyDown.addListener<FeatureManager, &FeatureManager::onKeyDown>(this);
-
-        for (const auto& feature : m_features)
+        for (auto& wrapper : m_features)
         {
             try
             {
-                feature->setupConfig(getSectionName(feature->getSection()));
-                feature->init();
-                LOG_INFO("Feature '{}' initialized successfully", feature->getName().c_str());
+                wrapper.setupConfig_func(wrapper.feature.get());
+                wrapper.init_func(wrapper.feature.get());
+                LOG_INFO("Feature '{}' initialized successfully", wrapper.name);
             }
             catch (const std::exception& e)
             {
-                LOG_ERROR("Exception during initialization of feature '{}': {}", feature->getName().c_str(), e.what());
+                LOG_ERROR("Exception during initialization of feature '{}': {}",
+                          wrapper.name, e.what());
             }
         }
+
+        LOG_INFO("FeatureManager initialization complete");
     }
 
-    // TODO: Redesign with sidebar
     void FeatureManager::draw()
     {
         if (ImGui::BeginTabBar("FeatureTabs", ImGuiTabBarFlags_None))
         {
-            // (Hotkeys tab removed per request; hotkeys remain per-feature below)
-
             for (auto sectionIdx = 0; sectionIdx < static_cast<int>(FeatureSection::Count); ++sectionIdx)
             {
                 auto section = static_cast<FeatureSection>(sectionIdx);
-                auto sectionFeatures = getFeaturesBySection(section);
-                if (sectionFeatures.empty()) continue;
 
-                bool hasAllowDraw = std::any_of(sectionFeatures.begin(), sectionFeatures.end(),
-                                                [](FeatureBase* feature) { return feature->isAllowDraw(); });
-                if (!hasAllowDraw) continue;
+                std::vector<FeatureWrapper*> sectionFeatures;
+                for (auto& wrapper : m_features)
+                {
+                    if (wrapper.section == section && wrapper.allowDraw)
+                    {
+                        sectionFeatures.push_back(&wrapper);
+                    }
+                }
+
+                if (sectionFeatures.empty()) continue;
 
                 if (ImGui::BeginTabItem(getSectionName(section)))
                 {
                     ImGui::Spacing();
 
-                    for (auto* feature : sectionFeatures)
+                    for (auto* wrapper : sectionFeatures)
                     {
-                        bool enabled = feature->isEnabled();
-                        if (ImGui::Checkbox(feature->getName().c_str(), &enabled))
-                        {
-                            feature->setEnabled(enabled);
-                        }
-
-                        if (!feature->getDescription().empty())
-                        {
-                            ImGui::SameLine();
-                            helpMarker(feature->getDescription().c_str());
-                        }
-
-                        // Per-feature hotkey capture row
-                        auto& hk = HotkeyManager::getInstance();
-                        std::string id = std::string("feature_") + feature->getName();
-                        int current = hk.getVk(id);
-                        ImGui::TextDisabled("Hotkey: [%s]", HotkeyManager::keyName(current));
-                        ImGui::SameLine();
-                        if (!hk.isCapturing())
-                        {
-                            if (ImGui::Button((std::string("Add Hotkey##") + id).c_str())) hk.beginCapture(id);
-                            ImGui::SameLine();
-                            if (current != 0 && ImGui::Button((std::string("Reset##") + id).c_str())) hk.clear(id);
-                        }
-                        else if (hk.captureId() == id)
-                        {
-                            ImGui::TextUnformatted(" Press any key...");
-                            ImGui::SameLine();
-                            if (ImGui::Button("Cancel")) hk.cancelCapture();
-                        }
-
-                        feature->draw();
-
-                        ImGui::Spacing();
-                        ImGui::Separator();
-                        ImGui::Spacing();
+                        drawFeature(*wrapper);
                     }
 
                     ImGui::EndTabItem();
@@ -121,68 +75,102 @@ namespace cheat
 
     void FeatureManager::reloadConfig()
     {
-        // Reload the JSON from disk first
-        ConfigManager::getInstance().load();
+        LOG_INFO("Reloading feature configurations...");
 
-        // Reload hotkeys
-        auto& hk = HotkeyManager::getInstance();
-        for (const auto& feature : m_features)
+        // Reload all feature configs
+        for (auto& wrapper : m_features)
         {
-            hk.registerHotkey(std::string("feature_") + feature->getName(), 0);
-        }
-        hk.load();
-
-        // Reinitialize features to refresh their Config::Field bindings and cached values
-        for (const auto& feature : m_features)
-        {
-            // Reapply enabled flag from config
-            feature->setupConfig(getSectionName(feature->getSection()));
-            feature->init();
-
-            EventManager::onReloadConfig();
-        }
-    }
-
-    void FeatureManager::onKeyDown(int vk, bool& handled) const
-    {
-        auto& hk = HotkeyManager::getInstance();
-        if (hk.isCapturing())
-        {
-            hk.setCaptured(vk);
-            handled = true;
-            return;
-        }
-
-        // Feature toggles: feature_<Name>
-        for (const auto& f : m_features)
-        {
-            std::string id = std::string("feature_") + f->getName();
-            if (hk.getVk(id) == vk && vk != 0)
+            try
             {
-                f->setEnabled(!f->isEnabled());
-                handled = true;
-                return;
+                wrapper.reloadConfig_func(wrapper.feature.get());
+                // LOG_DEBUG("Feature '{}' config reloaded", wrapper.name);
+            }
+            catch (const std::exception& e)
+            {
+                LOG_ERROR("Failed to reload config for feature '{}': {}",
+                          wrapper.name, e.what());
             }
         }
+
+        LOG_INFO("Feature configuration reload complete");
     }
 
-    FeatureBase* FeatureManager::getFeature(const std::string& name)
+    void FeatureManager::onKeyDown(int vk, bool& handled)
     {
-        const auto it = m_featureMap.find(name);
+        // Let the HotkeyManager handle all hotkey processing
+        if (HotkeyManager::getInstance().processKey(vk))
+        {
+            handled = true;
+        }
+    }
+
+    void FeatureManager::onReloadConfig()
+    {
+        // Called when global config reload event is triggered
+        reloadConfig();
+    }
+
+    void FeatureManager::drawFeature(FeatureWrapper& wrapper)
+    {
+        ImGui::PushID(wrapper.name.c_str());
+
+        const float contentWidth = ImGui::GetContentRegionAvail().x;
+        constexpr float hotkeyButtonWidth = 100.0f;
+        const float hotkeyStartPos = contentWidth - hotkeyButtonWidth - 10.0f;
+
+        // Draw feature enabled checkbox
+        bool enabled = wrapper.isEnabled_func(wrapper.feature.get());
+        if (ImGui::Checkbox(wrapper.name.c_str(), &enabled))
+        {
+            wrapper.setEnabled_func(wrapper.feature.get(), enabled);
+        }
+
+        // Draw description help marker
+        if (!wrapper.description.empty())
+        {
+            ImGui::SameLine();
+            helpMarker(wrapper.description.c_str());
+        }
+
+        ImGui::SameLine();
+        float currentPos = ImGui::GetCursorPosX();
+        if (currentPos < hotkeyStartPos)
+        {
+            ImGui::SetCursorPosX(hotkeyStartPos);
+        }
+
+        // Draw the hotkey button
+        wrapper.toggleKey.drawCaptureButton();
+
+        // Draw the content
+        // ImGui::Indent();
+        wrapper.draw_func(wrapper.feature.get());
+        // ImGui::Unindent();
+
+        ImGui::Spacing();
+        ImGui::Separator();
+        ImGui::Spacing();
+
+        ImGui::PopID();
+    }
+
+    void* FeatureManager::getFeature(const std::string& name)
+    {
+        auto it = m_featureMap.find(name);
         return it != m_featureMap.end() ? it->second : nullptr;
     }
 
-    std::vector<FeatureBase*> FeatureManager::getFeaturesBySection(FeatureSection section)
+    std::vector<void*> FeatureManager::getFeaturesBySection(FeatureSection section) const
     {
-        std::vector<FeatureBase*> features;
-        for (const auto& feature : m_features)
+        std::vector<void*> result;
+        for (auto& wrapper : m_features)
         {
-            if (feature->getSection() == section)
+            if (wrapper.section == section)
             {
-                features.push_back(feature.get());
+                result.push_back(wrapper.feature.get());
             }
         }
-        return features;
+        return result;
     }
 
     const char* FeatureManager::getSectionName(FeatureSection section)
@@ -200,12 +188,11 @@ namespace cheat
             case FeatureSection::Debug:
                 return "Debug";
             case FeatureSection::Hooks:
+                return "Hooks";
             case FeatureSection::Count:
             default:
-                break;
+                return "Unknown";
         }
-
-        return "Unknown";
     }
 
     void FeatureManager::helpMarker(const char* desc)

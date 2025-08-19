@@ -11,11 +11,7 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD reason, LPVOID lpReserved)
     {
         case DLL_PROCESS_ATTACH:
             DisableThreadLibraryCalls(hModule);
-            Logger::attach()
-                .showTimeStamp(true)
-                .showFileName(true)
-                .showLineNumber(true)
-                .enableColors(true);
+            Logger::attach();
             if (PipeManager::isUsingPipes())
             {
                 Main::run();

@@ -3,7 +3,7 @@
 
 namespace cheat::features
 {
-    class Timescale : public FeatureBase
+    class Timescale : public FeatureBase<Timescale>
     {
         DECL_SINGLETON(Timescale)
 
@@ -15,7 +15,7 @@ namespace cheat::features
     private:
         static void hBattleGameTime_Tick(BattleGameTime* _this);
 
-        Config::Field<float> m_scaleField;
+        CONFIG_FIELD(float, m_scaleField, 1.0f);
         float m_scale;
     };
 }
