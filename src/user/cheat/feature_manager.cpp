@@ -177,21 +177,21 @@ namespace cheat
     {
         switch (section)
         {
-            case FeatureSection::Player:
-                return "Player";
-            case FeatureSection::Combat:
-                return "Combat";
-            case FeatureSection::Game:
-                return "Game";
-            case FeatureSection::Settings:
-                return "Settings";
-            case FeatureSection::Debug:
-                return "Debug";
-            case FeatureSection::Hooks:
-                return "Hooks";
-            case FeatureSection::Count:
-            default:
-                return "Unknown";
+        case FeatureSection::Player:
+            return "Player";
+        case FeatureSection::Combat:
+            return "Combat";
+        case FeatureSection::Game:
+            return "Game";
+        case FeatureSection::Settings:
+            return "Settings";
+        case FeatureSection::Debug:
+            return "Debug";
+        case FeatureSection::Hooks:
+            return "Hooks";
+        case FeatureSection::Count:
+        default:
+            return "Unknown";
         }
     }
 

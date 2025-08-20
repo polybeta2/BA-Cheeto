@@ -312,16 +312,16 @@ std::string Logger::getLevelString(LogLevel level)
 {
     switch (level)
     {
-        case LogLevel::Debug:
-            return "DEBUG";
-        case LogLevel::Info:
-            return "INFO";
-        case LogLevel::Warning:
-            return "WARN";
-        case LogLevel::Error:
-            return "ERROR";
-        default:
-            return "LOG";
+    case LogLevel::Debug:
+        return "DEBUG";
+    case LogLevel::Info:
+        return "INFO";
+    case LogLevel::Warning:
+        return "WARN";
+    case LogLevel::Error:
+        return "ERROR";
+    default:
+        return "LOG";
     }
 }
 
@@ -351,16 +351,16 @@ WORD Logger::getLevelColor(LogLevel level)
 {
     switch (level)
     {
-        case LogLevel::Debug:
-            return FOREGROUND_BLUE | FOREGROUND_RED | FOREGROUND_INTENSITY; // Magenta
-        case LogLevel::Info:
-            return FOREGROUND_GREEN | FOREGROUND_INTENSITY; // Green
-        case LogLevel::Warning:
-            return FOREGROUND_GREEN | FOREGROUND_RED | FOREGROUND_INTENSITY; // Yellow
-        case LogLevel::Error:
-            return FOREGROUND_RED | FOREGROUND_INTENSITY; // Red
-        default:
-            return FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY; // White
+    case LogLevel::Debug:
+        return FOREGROUND_BLUE | FOREGROUND_RED | FOREGROUND_INTENSITY; // Magenta
+    case LogLevel::Info:
+        return FOREGROUND_GREEN | FOREGROUND_INTENSITY; // Green
+    case LogLevel::Warning:
+        return FOREGROUND_GREEN | FOREGROUND_RED | FOREGROUND_INTENSITY; // Yellow
+    case LogLevel::Error:
+        return FOREGROUND_RED | FOREGROUND_INTENSITY; // Red
+    default:
+        return FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY; // White
     }
 }
 #endif

@@ -96,9 +96,9 @@ LRESULT CALLBACK DX11Backend::hookedWndProc(HWND hWnd, UINT uMsg, WPARAM wParam,
     // Handle specific messages
     switch (uMsg)
     {
-        case WM_SIZE:
-            if (wParam != SIZE_MINIMIZED) s_instance->onResize(LOWORD(lParam), HIWORD(lParam));
-            break;
+    case WM_SIZE:
+        if (wParam != SIZE_MINIMIZED) s_instance->onResize(LOWORD(lParam), HIWORD(lParam));
+        break;
     }
 
     // Call original window procedure
@@ -322,14 +322,14 @@ int DX11Backend::onInput(UINT msg, WPARAM wParam, LPARAM lParam)
     {
         switch (msg)
         {
-            case WM_KEYDOWN:
-            case WM_KEYUP:
-            case WM_CHAR:
-            case WM_SYSKEYDOWN:
-            case WM_SYSKEYUP:
-                return true;
-            default:
-                return false;
+        case WM_KEYDOWN:
+        case WM_KEYUP:
+        case WM_CHAR:
+        case WM_SYSKEYDOWN:
+        case WM_SYSKEYUP:
+            return true;
+        default:
+            return false;
         }
     };
 
@@ -337,26 +337,26 @@ int DX11Backend::onInput(UINT msg, WPARAM wParam, LPARAM lParam)
     {
         switch (msg)
         {
-            case WM_KEYDOWN:
-            case WM_KEYUP:
-            case WM_CHAR:
-            case WM_SYSKEYDOWN:
-            case WM_SYSKEYUP:
+        case WM_KEYDOWN:
+        case WM_KEYUP:
+        case WM_CHAR:
+        case WM_SYSKEYDOWN:
+        case WM_SYSKEYUP:
 
-            case WM_MOUSEMOVE:
-            case WM_LBUTTONDOWN:
-            case WM_LBUTTONUP:
-            case WM_RBUTTONDOWN:
-            case WM_RBUTTONUP:
-            case WM_MBUTTONDOWN:
-            case WM_MBUTTONUP:
-            case WM_MOUSEWHEEL:
-            case WM_XBUTTONDOWN:
-            case WM_XBUTTONUP:
-                return true;
+        case WM_MOUSEMOVE:
+        case WM_LBUTTONDOWN:
+        case WM_LBUTTONUP:
+        case WM_RBUTTONDOWN:
+        case WM_RBUTTONUP:
+        case WM_MBUTTONDOWN:
+        case WM_MBUTTONUP:
+        case WM_MOUSEWHEEL:
+        case WM_XBUTTONDOWN:
+        case WM_XBUTTONUP:
+            return true;
 
-            default:
-                return false;
+        default:
+            return false;
         }
     };
 

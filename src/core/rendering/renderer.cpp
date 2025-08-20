@@ -78,10 +78,10 @@ std::unique_ptr<IRendererBackend> Renderer::createBackend(RenderAPI api)
 {
     switch (api)
     {
-        case RenderAPI::DirectX11:
-            return std::make_unique<DX11Backend>();
-        case RenderAPI::DirectX12:
-        default:
-            return nullptr;
+    case RenderAPI::DirectX11:
+        return std::make_unique<DX11Backend>();
+    case RenderAPI::DirectX12:
+    default:
+        return nullptr;
     }
 }

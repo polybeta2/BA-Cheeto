@@ -9,13 +9,13 @@
 
 #define HOTKEY_FIELD(NAME, DEFAULT) config::HotkeyField NAME{this->getPath(), #NAME, DEFAULT}
 
-#define CONFIG_FIELD_VALIDATED(TYPE, name, defaultValue, validator) \
-    config::Field<TYPE> name{this->getPath(), #name, defaultValue}; \
-    struct name##_init { \
-        name##_init(Config::Field<TYPE>& field) { \
-            field.setValidator(validator); \
+#define CONFIG_FIELD_VALIDATED(TYPE, NAME, DEFAULT, VALIDATOR) \
+    config::Field<TYPE> name{this->getPath(), #NAME, DEFAULT}; \
+    struct NAME##_init { \
+        NAME##_init(Config::Field<TYPE>& field) { \
+            field.setValidator(VALIDATOR); \
         } \
-    } name##_initializer{name}
+    } NAME##_initializer{NAME}
 
 namespace cheat
 {
@@ -145,21 +145,21 @@ namespace cheat
         {
             switch (section)
             {
-                case FeatureSection::Player:
-                    return "Player";
-                case FeatureSection::Combat:
-                    return "Combat";
-                case FeatureSection::Game:
-                    return "Game";
-                case FeatureSection::Settings:
-                    return "Settings";
-                case FeatureSection::Debug:
-                    return "Debug";
-                case FeatureSection::Hooks:
-                    return "Hooks";
-                case FeatureSection::Count:
-                default:
-                    return "Unknown";
+            case FeatureSection::Player:
+                return "Player";
+            case FeatureSection::Combat:
+                return "Combat";
+            case FeatureSection::Game:
+                return "Game";
+            case FeatureSection::Settings:
+                return "Settings";
+            case FeatureSection::Debug:
+                return "Debug";
+            case FeatureSection::Hooks:
+                return "Hooks";
+            case FeatureSection::Count:
+            default:
+                return "Unknown";
             }
         }
     };
