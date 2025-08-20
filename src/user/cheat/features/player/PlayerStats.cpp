@@ -7,7 +7,6 @@ namespace cheat::features
 {
     PlayerStats::PlayerStats()
         : FeatureBase("Player Stats", "Modify your character's stats", FeatureSection::Player)
-        , m_searchFilter("")
     {
         // Alternatively, you can find a better function to hook as long as it gets called every update
         HookManager::install(NewNormalAttackAction::Update(), hNewNormalAttackAction_Update);
@@ -52,7 +51,7 @@ namespace cheat::features
 
                         if (auto it = m_statFields.find(stat); it != m_statFields.end())
                         {
-                            it->second->set(currentValue);
+                            it->second.field->set(currentValue);
                         }
                     }
                 }
@@ -71,13 +70,14 @@ namespace cheat::features
         {
             const std::string key = std::string("stat_") + std::string(magic_enum::enum_name(stat));
 
-            auto field = std::make_unique<config::Field<int>>(this->getPath(), key, 0);
-            // TODO: its okay for now, but fix later
-            config::Field<int>::Connection fieldConnection = field->onChanged(
+            StatField statField;
+            statField.field = std::make_unique<config::Field<int>>(this->getPath(), key, 0);
+
+            statField.connection = statField.field->onChanged(
                 [this, stat](const int& oldVal, const int& newVal)
                 {
-                    LOG_DEBUG("Stat {} changed from {} to {}",
-                              magic_enum::enum_name(stat), oldVal, newVal);
+                    // LOG_DEBUG("Stat {} changed from {} to {}",
+                    //           magic_enum::enum_name(stat), oldVal, newVal);
 
                     // Update local cache
                     if (newVal != 0)
@@ -89,8 +89,9 @@ namespace cheat::features
                         m_statValues.erase(stat);
                     }
                 });
-
-            m_statFields[stat] = std::move(field);
+            
+            // LOG_DEBUG("Field val {}", field.get()->get());
+            m_statFields[stat] = std::move(statField);
         }
     }
 
@@ -100,7 +101,7 @@ namespace cheat::features
 
         for (const auto& [stat, field] : m_statFields)
         {
-            int value = field->get();
+            int value = field.field->get();
             if (value != 0)
             {
                 // LOG_DEBUG("Loading {} stat with value {}", magic_enum::enum_name(stat), value);
@@ -118,7 +119,7 @@ namespace cheat::features
 
         for (const auto& [stat, field] : m_statFields)
         {
-            field->set(0);
+            field.field->set(0);
         }
 
         m_statValues.clear();
@@ -180,9 +181,10 @@ namespace cheat::features
     {
         if (s_instance->isEnabled())
         {
-            if (_this->Executer()->TacticEntityType() == TacticEntityType_Enum::Student)
+            auto executer = _this->Executer();
+            if (executer->TacticEntityType() == TacticEntityType_Enum::Student)
             {
-                if (const auto entityStat = _this->Executer()->get_CurrentStat()(_this->Executer());
+                if (const auto entityStat = executer->get_CurrentStat()(_this->Executer());
                     entityStat != nullptr)
                 {
                     s_instance->applyStats(entityStat, _this->Executer());

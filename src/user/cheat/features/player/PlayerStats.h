@@ -14,8 +14,35 @@ namespace cheat::features
         void draw() override;
 
     private:
+        struct StatField
+        {
+            std::unique_ptr<config::Field<int>> field;
+            config::Field<int>::Connection connection;
+
+            StatField() = default;
+
+            StatField(StatField&& other) noexcept
+                : field(std::move(other.field))
+                , connection(std::move(other.connection))
+            {
+            }
+
+            StatField& operator=(StatField&& other) noexcept
+            {
+                if (this != &other)
+                {
+                    field = std::move(other.field);
+                    connection = std::move(other.connection);
+                }
+                return *this;
+            }
+
+            StatField(const StatField&) = delete;
+            StatField& operator=(const StatField&) = delete;
+        };
+
         std::unordered_map<StatType_Enum, int> m_statValues;
-        std::unordered_map<StatType_Enum, std::unique_ptr<config::Field<int>>> m_statFields;
+        std::unordered_map<StatType_Enum, StatField> m_statFields;
 
         std::string m_searchFilter;
 
