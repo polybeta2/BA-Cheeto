@@ -7,7 +7,7 @@
 ## 📝 Usage 
 1. Launch the game
 2. Use your preferred injector and inject the DLL
-3. Press F2 to toggle the in-game GUI
+3. Press CTRL+T to toggle the in-game GUI
 
 ## ✨ Features
 - No Skill Cost
@@ -17,16 +17,12 @@
 - Instant Win
 - Skip Battle Summary
 - Player Stats Editor
+- Timescale (In-battle speed)
 
 ### Quality of life
-- Profiles: Tools → Profiles
-    - Create, switch, rename, and delete profiles (default cannot be deleted).
-    - All settings (including hotkeys and player stats) are scoped to the active profile and saved to `%APPDATA%\Cunny\config.<profile>.json`.
-- Hotkeys per feature
-    - Each cheat row shows “Add Hotkey” and “Reset”. Click Add Hotkey, press any key to bind; Reset removes it for that cheat.
-    - Hotkeys are profile-specific and persist automatically.
-- Timescale
-    - Type an exact value into the input box next to the slider (clamped 0.10–10.00).
+- Config
+- Profiles
+- Hotkeys
 
 ## 📚 Resources
 - IDA 9.0 db (script applied)
@@ -34,5 +30,4 @@
     - [v361357 (md5: 1b1da9641a7ebea81c15114c19269a53)](https://mega.nz/file/mh5mhCxR#64ldmxVrxFdgSGJwEXJbKfeocMt_vuQF2rRFugwjHDU)
 
 ## 🙏 Special Thanks
-- [Il2CppInspectorRedux](https://github.com/LukeFZ/Il2CppInspectorRedux)
 - [UnityResolve.hpp](https://github.com/issuimo/UnityResolve.hpp)
