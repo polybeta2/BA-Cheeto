@@ -14,44 +14,58 @@
 
 #include "features/game/InstantWin.h"
 #include "features/game/SkipBattleSummary.h"
+#include "features/game/SkipDialog.h"
 #include "features/game/Timescale.h"
 
 #include "features/hooks/BattleEntityHook.h"
 
-void cheat::init()
+namespace cheat
 {
-    ConfigManager::getInstance().load();
+    // TODO: Replace this with creating a game object and setting that obj to DontDestroyOnLoad
+    static void GameMain_Update_Hook(GameMain* _this)
+    {
+        CALL_ORIGINAL(GameMain_Update_Hook, _this);
+        SAFE_EXECUTE(EventManager::onUpdate();)
+    }
 
-    auto& manager = FeatureManager::getInstance();
+    void init()
+    {
+        ConfigManager::getInstance().load();
 
-    manager.registerFeatures<
-        // features::Debug,
+        auto& manager = FeatureManager::getInstance();
 
-        // Cheat features
-        features::NoCost,
-        features::GodMode,
-        features::PlayerStats,
-        features::DumbEnemies,
-        features::OneHitKill,
-        features::InstantWin,
-        features::SkipBattleSummary,
-        features::Timescale,
+        manager.registerFeatures<
+            // features::Debug,
 
-        // Hooks
-        features::BattleEntityHook
-    >();
+            // Cheat features
+            features::NoCost,
+            features::GodMode,
+            features::PlayerStats,
+            features::DumbEnemies,
+            features::OneHitKill,
+            features::InstantWin,
+            features::SkipBattleSummary,
+            features::SkipDialog,
+            features::Timescale,
 
-    const auto fullVersion = Application::get_version()()->ToString();
-    const size_t dotPos = fullVersion.rfind('.');
-    const auto version = fullVersion.substr(dotPos + 1);
-    LOG_INFO("Blue Archive version: {}", version.c_str());
+            // Hooks
+            features::BattleEntityHook
+        >();
 
-    manager.init();
-}
+        const auto fullVersion = Application::get_version()()->ToString();
+        const size_t dotPos = fullVersion.rfind('.');
+        const auto version = fullVersion.substr(dotPos + 1);
+        LOG_INFO("Blue Archive version: {}", version.c_str());
 
-void cheat::shutdown()
-{
-    auto& hookManager = HookManager::getInstance();
-    hookManager.shutdown();
-    LOG_INFO("Hooks shutdown successfully");
+        manager.init();
+
+        HookManager::install(GameMain::Update(), GameMain_Update_Hook);
+    }
+
+    void shutdown()
+    {
+        auto& hookManager = HookManager::getInstance();
+        hookManager.shutdown();
+        LOG_INFO("Hooks shutdown successfully");
+    }
 }

@@ -65,6 +65,10 @@ namespace cheat
         {
         }
 
+        virtual void update()
+        {
+        }
+
         virtual void draw()
         {
         }

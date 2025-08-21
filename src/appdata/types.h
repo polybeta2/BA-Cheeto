@@ -10,11 +10,16 @@ using UTYPE = UnityResolve::UnityType;
 /// All Forward Declarations
 ///////////////////////////////
 
+class Application;
+class GameMain;
+class CostSkillCardManager;
 class PlayerSkillCardManager;
 class BattleEntityStat;
 class BattleEntityStatProcessor;
 class BattleEntity;
 class BattleSummary;
+struct TimeSpan;
+class DateTime;
 class LogicGameTime;
 class LogicEffect;
 class LogicEffectProcessor;
@@ -28,6 +33,11 @@ class DamageResult;
 class HeroAction;
 class NewSkillAction;
 class NewNormalAttackAction;
+class BattleGameTime;
+class BattleSceneHandler;
+class EndingSubScene;
+class ScenarioTask;
+class UIScenarioNew;
 
 ///////////////////////////////
 /// Class Definitions
@@ -40,6 +50,12 @@ class Application
     UNITY_METHOD(UTYPE::String*, get_version,)
 };
 
+class GameMain
+{
+    UNITY_CLASS_DECL("BlueArchive.dll", "GameMain")
+
+    UNITY_METHOD(void, Update, GameMain*)
+};
 
 // Obfuscated class
 class CostSkillCardManager
@@ -406,4 +422,22 @@ class EndingSubScene
 
     UNITY_METHOD(void, Enter, EndingSubScene*)
     UNITY_METHOD(void, Advance, EndingSubScene*)
+};
+
+class ScenarioTask
+{
+    UNITY_CLASS_DECL("BlueArchive.dll", "ScenarioTask")
+
+    UNITY_METHOD(void, Initialize, ScenarioTask*)
+    UNITY_METHOD(void, AdvanceScenario, ScenarioTask*)
+    UNITY_METHOD(void, FinishScenario, ScenarioTask*)
+};
+
+class UIScenarioNew
+{
+    UNITY_CLASS_DECL("BlueArchive.dll", "UIScenarioNew")
+
+    UNITY_METHOD(void, OnEnable, UIScenarioNew*)
+    UNITY_METHOD(void, OnDisable, UIScenarioNew*)
+    UNITY_METHOD(ScenarioTask*, get_Task, UIScenarioNew*)
 };

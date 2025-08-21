@@ -253,7 +253,7 @@ private:
         size_t id;
 
         HandlerSlot(Handler h, size_t slotId)
-            : handler(std::make_shared<Handler>(std::move(h)))
+            : handler(std::move(h))
             , id(slotId)
         {
         }

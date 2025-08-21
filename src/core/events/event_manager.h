@@ -9,7 +9,7 @@ public:
     static Event<> onReloadConfig;
     static Event<int, bool&> onKeyDown;
 
-    static Event<> onUpdate;
+    static FastEvent<> onUpdate;
     static Event<> onBattleFinalize;
 
     static void shutdown();

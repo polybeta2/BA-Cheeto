@@ -41,6 +41,7 @@
     <ClInclude Include="src\user\cheat\features\debug\Debug.h" />
     <ClInclude Include="src\user\cheat\features\game\InstantWin.h" />
     <ClInclude Include="src\user\cheat\features\game\SkipBattleSummary.h" />
+    <ClInclude Include="src\user\cheat\features\game\SkipDialog.h" />
     <ClInclude Include="src\user\cheat\features\game\Timescale.h" />
     <ClInclude Include="src\user\cheat\features\hooks\BattleEntityHook.h" />
     <ClInclude Include="src\user\cheat\features\player\GodMode.h" />
@@ -50,6 +51,7 @@
     <ClInclude Include="src\user\cheat\feature_manager.h" />
     <ClInclude Include="src\user\main.h" />
     <ClInclude Include="src\utils\dx_utils.h" />
+    <ClInclude Include="src\utils\error.h" />
     <ClInclude Include="src\utils\logger.h" />
     <ClInclude Include="src\utils\singleton.h" />
     <ClInclude Include="vendor\imgui\backends\imgui_impl_dx11.h" />
@@ -97,6 +99,7 @@
     <ClCompile Include="src\user\cheat\features\debug\Debug.cpp" />
     <ClCompile Include="src\user\cheat\features\game\InstantWin.cpp" />
     <ClCompile Include="src\user\cheat\features\game\SkipBattleSummary.cpp" />
+    <ClCompile Include="src\user\cheat\features\game\SkipDialog.cpp" />
     <ClCompile Include="src\user\cheat\features\game\Timescale.cpp" />
     <ClCompile Include="src\user\cheat\features\hooks\BattleEntityHook.cpp" />
     <ClCompile Include="src\user\cheat\features\player\GodMode.cpp" />

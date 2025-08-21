@@ -10,6 +10,7 @@
 3. Press CTRL+T to toggle the in-game GUI
 
 ## ✨ Features
+#### Cheats
 - No Skill Cost
 - God Mode
 - Dumb Enemies (enemies ignore you)
@@ -17,12 +18,16 @@
 - Instant Win
 - Skip Battle Summary
 - Player Stats Editor
-- Timescale (In-battle speed)
+- Timescale (in-battle speed)
+- Skip Dialog
 
-### Quality of life
+#### Quality of life
 - Config
 - Profiles
 - Hotkeys
+
+## 🎬 Demo
+![SkipDialogDemo](assets/skip-dialog-demo.gif)
 
 ## 📚 Resources
 - IDA 9.0 db (script applied)
