@@ -11,6 +11,6 @@ namespace cheat::features
         SkipBattleSummary();
 
     private:
-        static void hBattleSceneHandler_Update(BattleSceneHandler* _this);
+        static void BattleSceneHandler_Update_Hook(BattleSceneHandler* _this);
     };
 }

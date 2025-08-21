@@ -8,9 +8,9 @@ namespace cheat::features
                       FeatureSection::Debug)
         , m_test0(false)
     {
-        // HookManager::install(BattleEntity::ApplyStat(), hBattleEntity_ApplyStat);
-        // HookManager::install(BattleEntityStatProcessor::Apply(), hBattleEntityStatProcessor_Apply);
-        // HookManager::install(Character::ApplyDamage(), hCharacter_ApplyDamage);
+        // HookManager::install(BattleEntity::ApplyStat(), BattleEntity_ApplyStat_Hook);
+        // HookManager::install(BattleEntityStatProcessor::Apply(), BattleEntityStatProcessor_Apply_Hook);
+        // HookManager::install(Character::ApplyDamage(), Character_ApplyDamage_Hook);
     }
 
     void Debug::draw()
@@ -18,32 +18,32 @@ namespace cheat::features
         ImGui::Checkbox("Test 0", &m_test0);
     }
 
-    void Debug::hBattleEntity_ApplyStat(BattleEntity* _this, StatType_Enum statType)
+    void Debug::BattleEntity_ApplyStat_Hook(BattleEntity* _this, StatType_Enum statType)
     {
         if (s_instance->isEnabled())
         {
-            LOG_DEBUG("hBattleEntity_ApplyStat: name=%s, entityType=%s, %s",
+            LOG_DEBUG("BattleEntity_ApplyStat_Hook: name=%s, entityType=%s, %s",
                       _this->Name()->ToString().c_str(),
                       magic_enum::enum_name(_this->TacticEntityType()).data(),
                       magic_enum::enum_name(statType).data());
         }
 
-        CALL_ORIGINAL(hBattleEntity_ApplyStat, _this, statType);
+        CALL_ORIGINAL(BattleEntity_ApplyStat_Hook, _this, statType);
     }
 
-    void Debug::hBattleEntityStatProcessor_Apply(BattleEntityStatProcessor* _this, StatType_Enum statType)
+    void Debug::BattleEntityStatProcessor_Apply_Hook(BattleEntityStatProcessor* _this, StatType_Enum statType)
     {
         if (s_instance->isEnabled())
         {
-            // LOG_DEBUG("hBattleEntityStatProcessor_Apply: entity=%s, statType=%s battlePower=%d",
+            // LOG_DEBUG("BattleEntityStatProcessor_Apply_Hook: entity=%s, statType=%s battlePower=%d",
             //           _this->owner()->Name()->ToString().c_str(),
             //           magic_enum::enum_name(statType).data(),
             //           _this->owner());
         }
-        CALL_ORIGINAL(hBattleEntityStatProcessor_Apply, _this, statType);
+        CALL_ORIGINAL(BattleEntityStatProcessor_Apply_Hook, _this, statType);
     }
 
-    void* Debug::hCharacter_ApplyDamage(Character* _this, BattleEntity* attacker, DamageResult damageResult)
+    void* Debug::Character_ApplyDamage_Hook(Character* _this, BattleEntity* attacker, DamageResult damageResult)
     {
         if (s_instance->isEnabled())
         {
@@ -57,6 +57,6 @@ namespace cheat::features
             //     magic_enum::enum_name(damageResult.HitResultType()).data());
         }
 
-        return CALL_ORIGINAL(hCharacter_ApplyDamage, _this, attacker, damageResult);
+        return CALL_ORIGINAL(Character_ApplyDamage_Hook, _this, attacker, damageResult);
     }
 }

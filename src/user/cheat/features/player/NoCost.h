@@ -11,6 +11,6 @@ namespace cheat::features
         NoCost();
 
     private:
-        static void hPlayerSkillCardManager_ProcessSkillCard(PlayerSkillCardManager* _this);
+        static void PlayerSkillCardManager_ProcessSkillCard_Hook(PlayerSkillCardManager* _this);
     };
 }

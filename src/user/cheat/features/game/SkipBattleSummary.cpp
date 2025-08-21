@@ -7,10 +7,10 @@ namespace cheat::features
         : FeatureBase("Skip Battle Summary", "Skips the end battle summary screen",
                       FeatureSection::Game)
     {
-        HookManager::install(BattleSceneHandler::Update(), hBattleSceneHandler_Update);
+        HookManager::install(BattleSceneHandler::Update(), BattleSceneHandler_Update_Hook);
     }
 
-    void SkipBattleSummary::hBattleSceneHandler_Update(BattleSceneHandler* _this)
+    void SkipBattleSummary::BattleSceneHandler_Update_Hook(BattleSceneHandler* _this)
     {
         if (s_instance->isEnabled())
         {
@@ -21,6 +21,6 @@ namespace cheat::features
             }
         }
 
-        CALL_ORIGINAL(hBattleSceneHandler_Update, _this);
+        CALL_ORIGINAL(BattleSceneHandler_Update_Hook, _this);
     }
 }

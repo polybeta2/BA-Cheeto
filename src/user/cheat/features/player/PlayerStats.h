@@ -54,7 +54,7 @@ namespace cheat::features
         std::vector<StatType_Enum> getFilteredStats() const;
         void applyStats(BattleEntityStat* entityStat, BattleEntity* battleEntity) const;
 
-        static void hNewNormalAttackAction_Update(NewNormalAttackAction* _this, Battle* battle);
+        static void NewNormalAttackAction_Update_Hook(NewNormalAttackAction* _this, Battle* battle);
 
         void onReloadConfig();
     };

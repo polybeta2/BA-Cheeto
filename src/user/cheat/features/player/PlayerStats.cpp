@@ -9,7 +9,7 @@ namespace cheat::features
         : FeatureBase("Player Stats", "Modify your character's stats", FeatureSection::Player)
     {
         // Alternatively, you can find a better function to hook as long as it gets called every update
-        HookManager::install(NewNormalAttackAction::Update(), hNewNormalAttackAction_Update);
+        HookManager::install(NewNormalAttackAction::Update(), NewNormalAttackAction_Update_Hook);
         m_reloadConnection = EventManager::onReloadConfig.connect<&PlayerStats::onReloadConfig>(this);
     }
 
@@ -177,7 +177,7 @@ namespace cheat::features
         }
     }
 
-    void PlayerStats::hNewNormalAttackAction_Update(NewNormalAttackAction* _this, Battle* battle)
+    void PlayerStats::NewNormalAttackAction_Update_Hook(NewNormalAttackAction* _this, Battle* battle)
     {
         if (s_instance->isEnabled())
         {
@@ -192,7 +192,7 @@ namespace cheat::features
             }
         }
 
-        CALL_ORIGINAL(hNewNormalAttackAction_Update, _this, battle);
+        CALL_ORIGINAL(NewNormalAttackAction_Update_Hook, _this, battle);
     }
 
     void PlayerStats::onReloadConfig()

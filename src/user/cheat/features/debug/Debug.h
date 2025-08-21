@@ -15,8 +15,8 @@ namespace cheat::features
     private:
         bool m_test0;
 
-        static void hBattleEntity_ApplyStat(BattleEntity* _this, StatType_Enum statType);
-        static void hBattleEntityStatProcessor_Apply(BattleEntityStatProcessor* _this, StatType_Enum statType);
-        static void* hCharacter_ApplyDamage(Character* _this, BattleEntity* attacker, DamageResult damageResult);
+        static void BattleEntity_ApplyStat_Hook(BattleEntity* _this, StatType_Enum statType);
+        static void BattleEntityStatProcessor_Apply_Hook(BattleEntityStatProcessor* _this, StatType_Enum statType);
+        static void* Character_ApplyDamage_Hook(Character* _this, BattleEntity* attacker, DamageResult damageResult);
     };
 }

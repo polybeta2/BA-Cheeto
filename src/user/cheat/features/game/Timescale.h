@@ -13,7 +13,7 @@ namespace cheat::features
         void draw() override;
 
     private:
-        static void hBattleGameTime_Tick(BattleGameTime* _this);
+        static void BattleGameTime_Tick_Hook(BattleGameTime* _this);
 
         CONFIG_FIELD(float, m_scaleField, 1.0f);
         float m_scale;

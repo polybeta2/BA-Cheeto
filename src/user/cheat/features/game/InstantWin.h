@@ -11,6 +11,6 @@ namespace cheat::features
         InstantWin();
 
     private:
-        static void hBattle_Update(Battle* _this);
+        static void Battle_Update_Hook(Battle* _this);
     };
 }

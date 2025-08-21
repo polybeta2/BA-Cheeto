@@ -8,7 +8,7 @@ namespace cheat::features
         : FeatureBase("Timescale", "Speed up battle by scaling logic time per tick", FeatureSection::Game)
         , m_scale(m_scaleField.get())
     {
-        HookManager::install(BattleGameTime::Tick(), hBattleGameTime_Tick);
+        HookManager::install(BattleGameTime::Tick(), BattleGameTime_Tick_Hook);
     }
 
     void Timescale::draw()
@@ -31,11 +31,11 @@ namespace cheat::features
         }
     }
 
-    void Timescale::hBattleGameTime_Tick(BattleGameTime* _this)
+    void Timescale::BattleGameTime_Tick_Hook(BattleGameTime* _this)
     {
         if (!s_instance->isEnabled())
         {
-            CALL_ORIGINAL(hBattleGameTime_Tick, _this);
+            CALL_ORIGINAL(BattleGameTime_Tick_Hook, _this);
             return;
         }
 
@@ -46,7 +46,7 @@ namespace cheat::features
 
         _this->LogicSecondPerFrame(oldLogicSecPerFrame / scale);
 
-        CALL_ORIGINAL(hBattleGameTime_Tick, _this);
+        CALL_ORIGINAL(BattleGameTime_Tick_Hook, _this);
 
         _this->LogicSecondPerFrame(oldLogicSecPerFrame);
 

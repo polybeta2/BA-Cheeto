@@ -15,7 +15,7 @@ namespace cheat::features
     private:
         bool m_dumbPlayer = false; // For testing
 
-        static bool hBattleEntity_get_HasMainTarget(BattleEntity* _this);
-        // static bool hBattleEntity_CanBeTargeted(BattleEntity* _this, BattleEntity* attacker, SkillSlot_Enum skillSlot);
+        static bool BattleEntity_get_HasMainTarget_Hook(BattleEntity* _this);
+        // static bool BattleEntity_CanBeTargeted_Hook(BattleEntity* _this, BattleEntity* attacker, SkillSlot_Enum skillSlot);
     };
 }

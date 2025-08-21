@@ -10,10 +10,10 @@ namespace cheat::features
         : FeatureBase("Battle Entity", "Hooks for BattleEntity features",
                       FeatureSection::Hooks)
     {
-        HookManager::install(BattleEntity::AddHitPoint(), hBattleEntity_AddHitPoint);
+        HookManager::install(BattleEntity::AddHitPoint(), BattleEntity_AddHitPoint_Hook);
     }
 
-    int64_t BattleEntityHook::hBattleEntity_AddHitPoint(BattleEntity* _this, int64_t value)
+    int64_t BattleEntityHook::BattleEntity_AddHitPoint_Hook(BattleEntity* _this, int64_t value)
     {
         auto ohk = OneHitKill::getInstance();
         auto gm = GodMode::getInstance();
@@ -37,6 +37,6 @@ namespace cheat::features
             }
         }
 
-        return CALL_ORIGINAL(hBattleEntity_AddHitPoint, _this, value);
+        return CALL_ORIGINAL(BattleEntity_AddHitPoint_Hook, _this, value);
     }
 }

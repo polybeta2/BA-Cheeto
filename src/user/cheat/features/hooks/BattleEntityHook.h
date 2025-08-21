@@ -9,6 +9,6 @@ namespace cheat::features
         BattleEntityHook();
 
     private:
-        static int64_t hBattleEntity_AddHitPoint(BattleEntity* _this, int64_t value);
+        static int64_t BattleEntity_AddHitPoint_Hook(BattleEntity* _this, int64_t value);
     };
 }
