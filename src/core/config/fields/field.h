@@ -14,7 +14,7 @@ namespace config
         class Ref
         {
         public:
-            Ref(TRef& value, std::function<void()> onChange)
+            Ref(TRef& value, std::function<void(const TRef&)> onChange)
                 : m_value(value)
                 , m_originalValue(value)
                 , m_onChange(std::move(onChange))
@@ -23,9 +23,9 @@ namespace config
 
             ~Ref()
             {
-                if (m_value != m_originalValue)
+                if (m_value != m_originalValue && m_onChange)
                 {
-                    m_onChange();
+                    m_onChange(m_originalValue);
                 }
             }
 
@@ -36,7 +36,7 @@ namespace config
         private:
             std::reference_wrapper<TRef> m_value;
             TRef m_originalValue;
-            std::function<void()> m_onChange;
+            std::function<void(const TRef&)> m_onChange;
         };
 
         using ValueType = T;
@@ -67,9 +67,9 @@ namespace config
         // Get reference with automatic change detection
         auto ref()
         {
-            return Ref<T>(m_value, [this]
+            return Ref<T>(m_value, [this](const T& originalValue)
             {
-                validateAndNotify();
+                validateAndNotify(originalValue);
             });
         }
 
@@ -210,21 +210,19 @@ namespace config
 
         Event<const T&, const T&> m_onChanged;
 
-        void validateAndNotify()
+        void validateAndNotify(const T& originalValue)
         {
-            T oldValue = m_value;
-
             if (m_validator && !m_validator(m_value))
             {
                 LOG_WARN("Validation failed for field '{}', reverting", m_key);
-                m_value = oldValue;
+                m_value = originalValue;
                 return;
             }
 
-            if (oldValue != m_value)
+            if (originalValue != m_value)
             {
                 m_dirty = true;
-                m_onChanged(oldValue, m_value);
+                m_onChanged(originalValue, m_value);
                 saveToConfig();
             }
         }

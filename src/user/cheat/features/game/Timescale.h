@@ -16,6 +16,5 @@ namespace cheat::features
         static void BattleGameTime_Tick_Hook(BattleGameTime* _this);
 
         CONFIG_FIELD(float, m_scaleField, 1.0f);
-        float m_scale;
     };
 }
