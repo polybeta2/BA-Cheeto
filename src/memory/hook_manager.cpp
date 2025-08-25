@@ -38,12 +38,13 @@ void HookManager::shutdown()
 
     MH_Uninitialize();
     m_hooks.clear();
+    m_detourToOriginal.clear();
     m_initialized = false;
 }
 
 bool HookManager::enableHook(void* target)
 {
-    if (!m_initialized) return false;
+    if (!initialize() && !m_initialized) return false;
 
     HookInfo* hook = findHook(target);
     if (!hook) return false;
@@ -62,7 +63,7 @@ bool HookManager::enableHook(void* target)
 
 bool HookManager::disableHook(void* target)
 {
-    if (!m_initialized) return false;
+    if (!initialize() && !m_initialized) return false;
 
     HookInfo* hook = findHook(target);
     if (!hook) return false;
@@ -79,42 +80,15 @@ bool HookManager::disableHook(void* target)
     return false;
 }
 
-bool HookManager::enableAllHooks()
-{
-    if (!m_initialized) return false;
-
-    auto status = MH_EnableHook(nullptr);
-    if (status != MH_OK) return false;
-
-    for (auto& hook : m_hooks)
-    {
-        hook->enabled = true;
-    }
-
-    return true;
-}
-
-bool HookManager::disableAllHooks()
-{
-    if (!m_initialized) return false;
-
-    auto status = MH_DisableHook(nullptr);
-    if (status != MH_OK) return false;
-
-    for (auto& hook : m_hooks)
-    {
-        hook->enabled = false;
-    }
-
-    return true;
-}
-
 HookManager::HookInfo* HookManager::findHook(void* target)
 {
-    auto it = std::find_if(m_hooks.begin(), m_hooks.end(),
-                           [target](const std::unique_ptr<HookInfo>& hook) { return hook->target == target; });
+    auto it = std::ranges::find_if(m_hooks,
+                                   [target](const std::unique_ptr<HookInfo>& hook)
+                                   {
+                                       return hook->target == target;
+                                   });
 
-    return (it != m_hooks.end()) ? it->get() : nullptr;
+    return it != m_hooks.end() ? it->get() : nullptr;
 }
 
 void* HookManager::resolveModuleFunction(const std::string& moduleName, intptr_t offset)
@@ -127,8 +101,8 @@ void* HookManager::resolveModuleFunction(const std::string& moduleName, intptr_t
         if (!hModule)
         {
 #ifdef _DEBUG
-			std::string debugMsg = "HookManager: Failed to load module " + moduleName + "\n";
-			OutputDebugStringA(debugMsg.c_str());
+            std::string debugMsg = "HookManager: Failed to load module " + moduleName + "\n";
+            OutputDebugStringA(debugMsg.c_str());
 #endif
             return nullptr;
         }
@@ -137,9 +111,9 @@ void* HookManager::resolveModuleFunction(const std::string& moduleName, intptr_t
     auto targetFunction = reinterpret_cast<void*>(reinterpret_cast<intptr_t>(hModule) + offset);
 
 #ifdef _DEBUG
-	std::string debugMsg = "HookManager: Resolved " + moduleName + " + 0x" + 
-						  std::to_string(offset) + " to " + std::to_string(reinterpret_cast<intptr_t>(targetFunction)) + "\n";
-	OutputDebugStringA(debugMsg.c_str());
+    std::string debugMsg = "HookManager: Resolved " + moduleName + " + 0x" +
+        std::to_string(offset) + " to " + std::to_string(reinterpret_cast<intptr_t>(targetFunction)) + "\n";
+    OutputDebugStringA(debugMsg.c_str());
 #endif
 
     return targetFunction;

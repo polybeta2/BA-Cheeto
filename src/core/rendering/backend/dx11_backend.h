@@ -34,9 +34,6 @@ private:
     using Present_t = HRESULT(WINAPI*)(IDXGISwapChain*, UINT, UINT);
     using ResizeBuffers_t = HRESULT(WINAPI*)(IDXGISwapChain*, UINT, UINT, UINT, DXGI_FORMAT, UINT);
 
-    static Present_t m_originalPresent;
-    static ResizeBuffers_t m_originalResizeBuffers;
-
     // Instance management
     static DX11Backend* s_instance;
 

@@ -10,8 +10,6 @@
 #include "utils/dx_utils.h"
 
 DX11Backend* DX11Backend::s_instance = nullptr;
-DX11Backend::Present_t DX11Backend::m_originalPresent = nullptr;
-DX11Backend::ResizeBuffers_t DX11Backend::m_originalResizeBuffers = nullptr;
 WNDPROC DX11Backend::m_originalWndProc = nullptr;
 
 DX11Backend::DX11Backend()
@@ -36,8 +34,6 @@ DX11Backend::~DX11Backend()
 bool DX11Backend::initialize()
 {
     if (m_initialized) return true;
-
-    if (!HookManager::getInstance().initialize()) return false;
 
     if (!setupHooks()) return false;
 
@@ -121,8 +117,8 @@ bool DX11Backend::setupHooks()
     }
 
     // Get vtable function addresses
-    void* presentAddr = getVTableFunction(tempSwapChain, 8);
-    void* resizeBuffersAddr = getVTableFunction(tempSwapChain, 13);
+    auto presentAddr = reinterpret_cast<Present_t>(getVTableFunction(tempSwapChain, 8));
+    auto resizeBuffersAddr = reinterpret_cast<ResizeBuffers_t>(getVTableFunction(tempSwapChain, 13));
 
     // Clean up
     tempSwapChain->Release();
@@ -134,8 +130,8 @@ bool DX11Backend::setupHooks()
     auto& hookManager = HookManager::getInstance();
 
     bool success = true;
-    success &= hookManager.createHook(presentAddr, hookedPresent, &m_originalPresent);
-    success &= hookManager.createHook(resizeBuffersAddr, hookedResizeBuffers, &m_originalResizeBuffers);
+    success &= HookManager::install(presentAddr, hookedPresent);
+    success &= HookManager::install(resizeBuffersAddr, hookedResizeBuffers);
 
     return success;
 }
@@ -184,7 +180,7 @@ HRESULT WINAPI DX11Backend::hookedPresent(IDXGISwapChain* swapChain, UINT syncIn
         s_instance->endFrame();
     }
 
-    return m_originalPresent(swapChain, syncInterval, flags);
+    return CALL_ORIGINAL(hookedPresent, swapChain, syncInterval, flags);
 }
 
 HRESULT WINAPI DX11Backend::hookedResizeBuffers(IDXGISwapChain* swapChain, UINT bufferCount,
@@ -192,7 +188,7 @@ HRESULT WINAPI DX11Backend::hookedResizeBuffers(IDXGISwapChain* swapChain, UINT 
 {
     if (s_instance && s_instance->m_imguiInitialized) s_instance->cleanupRenderTarget();
 
-    HRESULT result = m_originalResizeBuffers(swapChain, bufferCount, width, height, newFormat, swapChainFlags);
+    auto result = CALL_ORIGINAL(hookedResizeBuffers, swapChain, bufferCount, width, height, newFormat, swapChainFlags);
 
     if (s_instance && SUCCEEDED(result) && s_instance->m_imguiInitialized) s_instance->createRenderTarget();
 
