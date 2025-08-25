@@ -47,7 +47,7 @@ class Application
 {
     UNITY_CLASS_DECL("UnityEngine.CoreModule.dll", "Application")
 
-    UNITY_METHOD(UTYPE::String*, get_version,)
+    UNITY_METHOD(UTYPE::String*, get_version)
 };
 
 class GameMain
@@ -440,4 +440,18 @@ class UIScenarioNew
     UNITY_METHOD(void, OnEnable, UIScenarioNew*)
     UNITY_METHOD(void, OnDisable, UIScenarioNew*)
     UNITY_METHOD(ScenarioTask*, get_Task, UIScenarioNew*)
+};
+
+class UIAttendance
+{
+    UNITY_CLASS_DECL("BlueArchive.dll", "UIAttendance")
+
+    UNITY_FIELD(Action, onClickEvent, 0xf0)
+
+    UNITY_METHOD(void, OnOpened, UIAttendance*, bool)
+    UNITY_METHOD(void, ClearSlots, UIAttendance*)
+    UNITY_METHOD(void, OnClick, UIAttendance*)
+    UNITY_METHOD(void, SendNexonEventForLoginDays, UIAttendance*, int64_t)
+    UNITY_METHOD(void, set_Complete, UIAttendance*, bool)
+    UNITY_METHOD(void, set_IsShow, UIAttendance*, bool)
 };

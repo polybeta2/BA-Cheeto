@@ -141,6 +141,7 @@
   <ItemGroup>
     <Content Include="src\appdata\helpers.h" />
     <Content Include="src\core\config\fields\hotkey_field.h" />
+    <Content Include="src\memory\function_hook.h" />
     <Content Include="src\user\cheat\feature_base.h" />
   </ItemGroup>
   <ItemGroup>

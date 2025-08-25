@@ -48,6 +48,8 @@ public:
     template <typename T>
     static bool install(const std::string& moduleName, intptr_t offset, T detour);
 
+    static bool uninstall(void* target);
+
     // Hook management
     bool enableHook(void* target);
     bool disableHook(void* target);

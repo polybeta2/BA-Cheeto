@@ -10,7 +10,7 @@ namespace cheat::features
         : FeatureBase("Battle Entity", "Hooks for BattleEntity features",
                       FeatureSection::Hooks)
     {
-        HookManager::install(BattleEntity::AddHitPoint(), BattleEntity_AddHitPoint_Hook);
+        BattleEntity::AddHitPoint_Hook().set(BattleEntity_AddHitPoint_Hook);
     }
 
     int64_t BattleEntityHook::BattleEntity_AddHitPoint_Hook(BattleEntity* _this, int64_t value)
@@ -37,6 +37,6 @@ namespace cheat::features
             }
         }
 
-        return CALL_ORIGINAL(BattleEntity_AddHitPoint_Hook, _this, value);
+        return BattleEntity::AddHitPoint_Hook().call(_this, value);
     }
 }

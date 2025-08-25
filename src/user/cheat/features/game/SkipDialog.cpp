@@ -7,8 +7,8 @@ namespace cheat::features
         : FeatureBase("Skip Dialog", "Instantly skips dialogs - scenarios, chapters, episodes",
                       FeatureSection::Game)
     {
-        HookManager::install(UIScenarioNew::OnEnable(), UIScenarioNew_OnEnable_Hook);
-        HookManager::install(UIScenarioNew::OnDisable(), UIScenarioNew_OnDisable_Hook);
+        UIScenarioNew::OnEnable_Hook().set(UIScenarioNew_OnEnable_Hook);
+        UIScenarioNew::OnDisable_Hook().set(UIScenarioNew_OnDisable_Hook);
         m_updateConnection = EventManager::onUpdate.connect<&SkipDialog::update>(this);
     }
 
@@ -24,14 +24,14 @@ namespace cheat::features
 
     void SkipDialog::UIScenarioNew_OnEnable_Hook(UIScenarioNew* _this)
     {
-        CALL_ORIGINAL(UIScenarioNew_OnEnable_Hook, _this);
+        UIScenarioNew::OnEnable_Hook().call(_this);
         s_instance->m_scenarioTask = UIScenarioNew::get_Task()(_this);
         s_instance->m_inScenario = true;
     }
 
     void SkipDialog::UIScenarioNew_OnDisable_Hook(UIScenarioNew* _this)
     {
-        CALL_ORIGINAL(UIScenarioNew_OnDisable_Hook, _this);
+        UIScenarioNew::OnDisable_Hook().call(_this);
         s_instance->m_inScenario = false;
         s_instance->m_scenarioTask = nullptr;
     }

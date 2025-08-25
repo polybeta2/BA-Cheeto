@@ -22,7 +22,7 @@
 #include "utils/dx_utils.h"
 #include "utils/logger.h"
 #include "utils/error.h"
-#include "memory/hook_manager.h"
+#include "memory/function_hook.h"
 #include "core/pipe/pipe_manager.h"
 #include "core/events/event.h"
 #include "ui/gui.h"

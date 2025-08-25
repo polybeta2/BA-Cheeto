@@ -42,6 +42,44 @@ void HookManager::shutdown()
     m_initialized = false;
 }
 
+bool HookManager::uninstall(void* target)
+{
+    auto& instance = getInstance();
+    if (!instance.m_initialized) return false;
+
+    auto it = std::ranges::find_if(instance.m_hooks,
+                                   [target](const std::unique_ptr<HookInfo>& hook)
+                                   {
+                                       return hook->target == target;
+                                   });
+
+    if (it == instance.m_hooks.end()) return false;
+
+    auto& hook = *it;
+
+    if (hook->enabled)
+    {
+        auto status = MH_DisableHook(hook->target);
+        if (status != MH_OK)
+        {
+            LOG_ERROR("Failed to disable hook: {}", magic_enum::enum_name(status));
+            return false;
+        }
+    }
+
+    auto status = MH_RemoveHook(hook->target);
+    if (status != MH_OK)
+    {
+        LOG_ERROR("Failed to remove hook: {}", magic_enum::enum_name(status));
+        return false;
+    }
+
+    instance.m_detourToOriginal.erase(hook->detour);
+    instance.m_hooks.erase(it);
+
+    return true;
+}
+
 bool HookManager::enableHook(void* target)
 {
     if (!initialize() && !m_initialized) return false;

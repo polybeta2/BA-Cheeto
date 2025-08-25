@@ -16,8 +16,8 @@ namespace cheat::features
         : FeatureBase("Dumb Enemies", "Enemies ignore targeting you",
                       FeatureSection::Combat)
     {
-        HookManager::install(BattleEntity::get_HasMainTarget(), BattleEntity_get_HasMainTarget_Hook);
-        // HookManager::install(BattleEntity::CanBeTargeted(), BattleEntity_CanBeTargeted_Hook);
+        BattleEntity::get_HasMainTarget_Hook().set(BattleEntity_get_HasMainTarget_Hook);
+        // BattleEntity::CanBeTargeted_Hook().set(BattleEntity_CanBeTargeted_Hook);
     }
 
     void DumbEnemies::draw()
@@ -38,7 +38,7 @@ namespace cheat::features
     //     //     if (attacker->TacticEntityType() == TacticEntityType_Enum::Student) return false;
     //     // }
     //
-    //     return CALL_ORIGINAL(BattleEntity_CanBeTargeted_Hook, _this, attacker, skillSlot);
+    //     return BattleEntity::CanBeTargeted_Hook().call(_this, attacker, skillSlot);
     // }
 
     bool DumbEnemies::BattleEntity_get_HasMainTarget_Hook(BattleEntity* _this)
@@ -47,6 +47,6 @@ namespace cheat::features
             std::ranges::find(blockedTypes, _this->TacticEntityType()) != blockedTypes.end())
             BattleEntity::ClearTarget()(_this);
 
-        return CALL_ORIGINAL(BattleEntity_get_HasMainTarget_Hook, _this);
+        return BattleEntity::get_HasMainTarget_Hook().call(_this);
     }
 }

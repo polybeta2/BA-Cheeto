@@ -24,7 +24,7 @@ namespace cheat
     // TODO: Replace this with creating a game object and setting that obj to DontDestroyOnLoad
     static void GameMain_Update_Hook(GameMain* _this)
     {
-        CALL_ORIGINAL(GameMain_Update_Hook, _this);
+        GameMain::Update_Hook().call(_this);
         SAFE_EXECUTE(EventManager::onUpdate();)
     }
 
@@ -59,7 +59,7 @@ namespace cheat
 
         manager.init();
 
-        HookManager::install(GameMain::Update(), GameMain_Update_Hook);
+        GameMain::Update_Hook().set(GameMain_Update_Hook);
     }
 
     void shutdown()

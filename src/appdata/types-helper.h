@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+#pragma region Class Helpers
+
 // Used to directly declare a class that can be resolved from its module and class name
 #define UNITY_CLASS_DECL(MODULE, CLASS_NAME) \
 private:\
@@ -48,79 +50,160 @@ public: \
 		return cachedClass; \
 	}
 
+#pragma endregion
+
+#pragma region Method Helpers
+
 // Used to initialize a method pointer for a class that's declared with UNITY_CLASS_DECL
 #define UNITY_METHOD(RETURN_TYPE, METHOD_NAME, ...) \
 private: \
-    inline static UnityResolve::MethodPointer<RETURN_TYPE, __VA_ARGS__> METHOD_NAME##_ptr{}; \
+    inline static UnityResolve::Method* METHOD_NAME##_method_ptr = nullptr; \
+    inline static UnityResolve::MethodPointer<RETURN_TYPE, __VA_ARGS__> METHOD_NAME##_func_ptr{}; \
     inline static bool METHOD_NAME##_initialized = false; \
-public: \
-    inline static UnityResolve::MethodPointer<RETURN_TYPE, __VA_ARGS__> METHOD_NAME() { \
+    static void METHOD_NAME##_private_init() \
+    { \
         if (!METHOD_NAME##_initialized) { \
-            auto method = app::getMethod(getClass(), #METHOD_NAME); \
-            if (method) { \
-                METHOD_NAME##_ptr = method->Cast<RETURN_TYPE, __VA_ARGS__>(); \
-            } \
+            METHOD_NAME##_method_ptr = app::getMethod(getClass(), #METHOD_NAME); \
+            if (METHOD_NAME##_method_ptr) METHOD_NAME##_func_ptr = METHOD_NAME##_method_ptr->Cast<RETURN_TYPE, __VA_ARGS__>(); \
             METHOD_NAME##_initialized = true; \
         } \
-        return METHOD_NAME##_ptr; \
+    } \
+public: \
+    static UnityResolve::MethodPointer<RETURN_TYPE, __VA_ARGS__> METHOD_NAME() { \
+        METHOD_NAME##_private_init(); \
+        return METHOD_NAME##_func_ptr; \
+    } \
+    static FunctionHook<RETURN_TYPE(__VA_ARGS__)>& METHOD_NAME##_Hook() { \
+        static FunctionHook<RETURN_TYPE(__VA_ARGS__)> hook = []() { \
+            METHOD_NAME##_private_init(); \
+            if (METHOD_NAME##_method_ptr) { \
+                void* raw = *static_cast<void**>(METHOD_NAME##_method_ptr->address); \
+                auto funcRaw = reinterpret_cast<RETURN_TYPE(*)(__VA_ARGS__)>(raw); \
+                return FunctionHook<RETURN_TYPE(__VA_ARGS__)>(funcRaw); \
+            } \
+            return FunctionHook<RETURN_TYPE(__VA_ARGS__)>(); \
+        }(); \
+        return hook; \
     }
 
 // Resolves a method that comes AFTER a known method in the same class
 #define UNITY_METHOD_AFTER(RETURN_TYPE, METHOD_NAME, AFTER_NAME, ...) \
 private: \
-    inline static UnityResolve::MethodPointer<RETURN_TYPE, __VA_ARGS__> METHOD_NAME##_ptr{}; \
+    inline static UnityResolve::Method* METHOD_NAME##_method_ptr = nullptr; \
+    inline static UnityResolve::MethodPointer<RETURN_TYPE, __VA_ARGS__> METHOD_NAME##_func_ptr{}; \
     inline static bool METHOD_NAME##_initialized = false; \
-public: \
-    inline static UnityResolve::MethodPointer<RETURN_TYPE, __VA_ARGS__> METHOD_NAME() { \
+    static void METHOD_NAME##_private_init() \
+    { \
         if (!METHOD_NAME##_initialized) { \
-            auto cls = getClass(); \
-            auto method = app::findMethodAfter(cls, AFTER_NAME); \
-            if (method) { \
-                METHOD_NAME##_ptr = method->Cast<RETURN_TYPE, __VA_ARGS__>(); \
-            } \
+            METHOD_NAME##_method_ptr = app::getMethod(getClass(), #METHOD_NAME); \
+            if (METHOD_NAME##_method_ptr) METHOD_NAME##_func_ptr = METHOD_NAME##_method_ptr->Cast<RETURN_TYPE, __VA_ARGS__>(); \
             METHOD_NAME##_initialized = true; \
         } \
-        return METHOD_NAME##_ptr; \
+    } \
+public: \
+    static UnityResolve::MethodPointer<RETURN_TYPE, __VA_ARGS__> METHOD_NAME() { \
+        METHOD_NAME##_private_init(); \
+        return METHOD_NAME##_func_ptr; \
+    } \
+    static FunctionHook<RETURN_TYPE(__VA_ARGS__)>& METHOD_NAME##_Hook() { \
+        static FunctionHook<RETURN_TYPE(__VA_ARGS__)> hook = []() { \
+            METHOD_NAME##_private_init(); \
+            if (METHOD_NAME##_method_ptr) { \
+                void* raw = *static_cast<void**>(METHOD_NAME##_method_ptr->address); \
+                auto funcRaw = reinterpret_cast<RETURN_TYPE(*)(__VA_ARGS__)>(raw); \
+                return FunctionHook<RETURN_TYPE(__VA_ARGS__)>(funcRaw); \
+            } \
+            return FunctionHook<RETURN_TYPE(__VA_ARGS__)>(); \
+        }(); \
+        return hook; \
     }
+    // static FunctionHook& METHOD_NAME##_Hook() \
+    // { \
+    //     static std::unique_ptr<FunctionHook> hook; \
+    //     static bool initialized = false; \
+    //     if (!initialized) { \
+    //         METHOD_NAME##_private_init(); \
+    //         if (METHOD_NAME##_method_ptr) { \
+    //             hook = std::make_unique<FunctionHook>(); \
+    //             void* raw = *static_cast<void**>(METHOD_NAME##_method_ptr->address); \
+    //             const auto funcRaw = reinterpret_cast<RETURN_TYPE(*)(__VA_ARGS__)>(raw); \
+    //             hook->target(funcRaw); \
+    //         } \
+    //         initialized = true; \
+    //     } \
+    //     return *hook; \
+    // }
 
 // Resolves a method that comes BEFORE a known method in the same class
 #define UNITY_METHOD_BEFORE(RETURN_TYPE, METHOD_NAME, BEFORE_NAME, ...) \
 private: \
-    inline static UnityResolve::MethodPointer<RETURN_TYPE, __VA_ARGS__> METHOD_NAME##_ptr{}; \
+    inline static UnityResolve::Method* METHOD_NAME##_method_ptr = nullptr; \
+    inline static UnityResolve::MethodPointer<RETURN_TYPE, __VA_ARGS__> METHOD_NAME##_func_ptr{}; \
     inline static bool METHOD_NAME##_initialized = false; \
-public: \
-    inline static UnityResolve::MethodPointer<RETURN_TYPE, __VA_ARGS__> METHOD_NAME() { \
+    static void METHOD_NAME##_private_init() \
+    { \
         if (!METHOD_NAME##_initialized) { \
-            auto cls = getClass(); \
-            auto method = app::findMethodBefore(cls, BEFORE_NAME); \
-            if (method) { \
-                METHOD_NAME##_ptr = method->Cast<RETURN_TYPE, __VA_ARGS__>(); \
-            } \
+            METHOD_NAME##_method_ptr = app::getMethod(getClass(), #METHOD_NAME); \
+            if (METHOD_NAME##_method_ptr) METHOD_NAME##_func_ptr = METHOD_NAME##_method_ptr->Cast<RETURN_TYPE, __VA_ARGS__>(); \
             METHOD_NAME##_initialized = true; \
         } \
-        return METHOD_NAME##_ptr; \
+    } \
+public: \
+    static UnityResolve::MethodPointer<RETURN_TYPE, __VA_ARGS__> METHOD_NAME() { \
+        METHOD_NAME##_private_init(); \
+        return METHOD_NAME##_func_ptr; \
+    } \
+    static FunctionHook<RETURN_TYPE(__VA_ARGS__)>& METHOD_NAME##_Hook() { \
+        static FunctionHook<RETURN_TYPE(__VA_ARGS__)> hook = []() { \
+            METHOD_NAME##_private_init(); \
+            if (METHOD_NAME##_method_ptr) { \
+                void* raw = *static_cast<void**>(METHOD_NAME##_method_ptr->address); \
+                auto funcRaw = reinterpret_cast<RETURN_TYPE(*)(__VA_ARGS__)>(raw); \
+                return FunctionHook<RETURN_TYPE(__VA_ARGS__)>(funcRaw); \
+            } \
+            return FunctionHook<RETURN_TYPE(__VA_ARGS__)>(); \
+        }(); \
+        return hook; \
     }
 
 // Resolves a method BETWEEN two known method names in the same class
 #define UNITY_METHOD_BETWEEN(RETURN_TYPE, METHOD_NAME, AFTER_NAME, BEFORE_NAME, ...) \
 private: \
-    inline static UnityResolve::MethodPointer<RETURN_TYPE, __VA_ARGS__> METHOD_NAME##_ptr{}; \
+    inline static UnityResolve::Method* METHOD_NAME##_method_ptr = nullptr; \
+    inline static UnityResolve::MethodPointer<RETURN_TYPE, __VA_ARGS__> METHOD_NAME##_func_ptr{}; \
     inline static bool METHOD_NAME##_initialized = false; \
-public: \
-    inline static UnityResolve::MethodPointer<RETURN_TYPE, __VA_ARGS__> METHOD_NAME() { \
+    static void METHOD_NAME##_private_init() \
+    { \
         if (!METHOD_NAME##_initialized) { \
-            auto cls = getClass(); \
-            auto method = app::findMethodBetween(cls, AFTER_NAME, BEFORE_NAME); \
-            if (method) { \
-                METHOD_NAME##_ptr = method->Cast<RETURN_TYPE, __VA_ARGS__>(); \
-            } \
+            METHOD_NAME##_method_ptr = app::getMethod(getClass(), #METHOD_NAME); \
+            if (METHOD_NAME##_method_ptr) METHOD_NAME##_func_ptr = METHOD_NAME##_method_ptr->Cast<RETURN_TYPE, __VA_ARGS__>(); \
             METHOD_NAME##_initialized = true; \
         } \
-        return METHOD_NAME##_ptr; \
+    } \
+public: \
+    static UnityResolve::MethodPointer<RETURN_TYPE, __VA_ARGS__> METHOD_NAME() { \
+        METHOD_NAME##_private_init(); \
+        return METHOD_NAME##_func_ptr; \
+    } \
+    static FunctionHook<RETURN_TYPE(__VA_ARGS__)>& METHOD_NAME##_Hook() { \
+        static FunctionHook<RETURN_TYPE(__VA_ARGS__)> hook = []() { \
+            METHOD_NAME##_private_init(); \
+            if (METHOD_NAME##_method_ptr) { \
+                void* raw = *static_cast<void**>(METHOD_NAME##_method_ptr->address); \
+                auto funcRaw = reinterpret_cast<RETURN_TYPE(*)(__VA_ARGS__)>(raw); \
+                return FunctionHook<RETURN_TYPE(__VA_ARGS__)>(funcRaw); \
+            } \
+            return FunctionHook<RETURN_TYPE(__VA_ARGS__)>(); \
+        }(); \
+        return hook; \
     }
 
 // Alternatively, you can call METHOD()(arguments) directly, but it doesn't look as nice
 #define UNITY_CALL(METHOD_ACCESSOR, ...) METHOD_ACCESSOR()(__VA_ARGS__);
+
+#pragma endregion
+
+#pragma region Field Helpers
 
 // Used to declare a field in a Unity class with its field offset
 #define UNITY_FIELD(FIELD_TYPE, FIELD_NAME, FIELD_OFFSET) \
@@ -163,3 +246,5 @@ public: \
         } \
         *reinterpret_cast<FIELD_TYPE*>(reinterpret_cast<uintptr_t>(this) + offset) = value; \
     }
+
+#pragma endregion

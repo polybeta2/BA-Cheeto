@@ -7,7 +7,7 @@ namespace cheat::features
         : FeatureBase("No Cost", "Removes skill costs and enables instant regeneration",
                       FeatureSection::Player)
     {
-        HookManager::install(PlayerSkillCardManager::ProcessSkillCard(), PlayerSkillCardManager_ProcessSkillCard_Hook);
+        PlayerSkillCardManager::ProcessSkillCard_Hook().set(PlayerSkillCardManager_ProcessSkillCard_Hook);
     }
 
     void NoCost::PlayerSkillCardManager_ProcessSkillCard_Hook(PlayerSkillCardManager* _this)
@@ -18,6 +18,6 @@ namespace cheat::features
             _this->RegenStartDelayFrame(0);
         }
 
-        CALL_ORIGINAL(PlayerSkillCardManager_ProcessSkillCard_Hook, _this);
+        PlayerSkillCardManager::ProcessSkillCard_Hook().call(_this);
     }
 }

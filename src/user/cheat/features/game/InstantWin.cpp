@@ -8,7 +8,7 @@ namespace cheat::features
                       FeatureSection::Game)
     {
         // Alternatively, hook Begin(). But the user can just enable the feature anytime during the battle.
-        HookManager::install(Battle::Update(), Battle_Update_Hook);
+        Battle::Update_Hook().set(Battle_Update_Hook);
     }
 
     void InstantWin::Battle_Update_Hook(Battle* _this)
@@ -30,6 +30,6 @@ namespace cheat::features
             UNITY_CALL(Battle::set_GameState, _this, BattleLogicState_Enum::Finished)
         }
 
-        CALL_ORIGINAL(Battle_Update_Hook, _this);
+        Battle::Update_Hook().call(_this);
     }
 }
