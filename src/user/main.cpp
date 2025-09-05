@@ -7,7 +7,10 @@
 void Main::run()
 {
     LOG_INFO("Starting initialization...");
-    Sleep(1000);
+    while (!FindWindowA("UnityWndClass", nullptr))
+    {
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+    }
 
     if (!initializeUnity())
         LOG_ERROR("Unable to initialize Unity! Maybe assemblies are not found?");
@@ -19,7 +22,11 @@ void Main::run()
                  : "Failed to initialize renderer!");
     }
 
+    const auto [unityModule, unityVersionMajor] = getUnityVersionMajor();
+    if (unityModule == 0 || unityVersionMajor == -1) return;
+
     cheat::init();
+    cheat::hookMonoBehaviour(unityModule, unityVersionMajor);
 }
 
 void Main::shutdown()
@@ -33,30 +40,15 @@ void Main::shutdown()
 }
 
 
-Main::UnityModuleBackendInfo Main::getUnityBackend()
+std::pair<void*, UnityResolve::Mode> Main::getUnityBackend()
 {
     LOG_INFO("Finding Unity backend...");
 
-    UnityModuleBackendInfo info;
-    info.module = nullptr;
-    info.mode = UnityResolve::Mode::Mono;
-
-    // Check if Unity is loaded
-    if (const auto unityModule = GetModuleHandleA("UnityPlayer.dll"); unityModule == nullptr)
+    if (auto assembly = GetModuleHandleA("GameAssembly.dll"))
     {
-        LOG_ERROR("UnityPlayer.dll not found! Is this a Unity game?");
-        return info;
-    }
-
-    auto assembly = GetModuleHandleA("GameAssembly.dll");
-    if (assembly)
-    {
-        info.module = assembly;
-        info.mode = UnityResolve::Mode::Il2Cpp;
         LOG_INFO("Found Il2Cpp backend!");
-        return info;
+        return {assembly, UnityResolve::Mode::Il2Cpp};
     }
-    LOG_WARN("GameAssembly.dll not found, trying fallback to Mono...");
 
     std::vector<std::string> monoModules = {
         "mono-2.0-bdwgc.dll",
@@ -67,15 +59,13 @@ Main::UnityModuleBackendInfo Main::getUnityBackend()
     {
         if (const auto monoHandle = GetModuleHandleA(monoModule.c_str()); monoHandle)
         {
-            info.module = monoHandle;
-            info.mode = UnityResolve::Mode::Mono;
             LOG_INFO("Found Mono backend: %s", monoModule.c_str());
-            return info;
+            return {monoHandle, UnityResolve::Mode::Mono};
         }
     }
 
-    LOG_ERROR("Unable to find Unity backend! Neither GameAssembly.dll nor mono.dll found.");
-    return info;
+    LOG_ERROR("Unable to identify Unity backend!");
+    return {nullptr, UnityResolve::Mode::Mono};
 }
 
 bool Main::initializeUnity()
@@ -90,4 +80,32 @@ bool Main::initializeUnity()
     UnityResolve::Init(module, mode);
 
     return true;
+}
+
+std::pair<uintptr_t, int> Main::getUnityVersionMajor()
+{
+    const auto unityModule = GetModuleHandleA("UnityPlayer.dll");
+    if (unityModule == nullptr)
+    {
+        LOG_ERROR("UnityPlayer.dll not found!");
+        return {0, -1};
+    }
+
+    char path[MAX_PATH];
+    GetModuleFileNameA(unityModule, path, MAX_PATH);
+
+    DWORD ver;
+    DWORD verSize = GetFileVersionInfoSizeA(path, &ver);
+    if (verSize == 0) return {0, -1};
+
+    void* verData = malloc(verSize);
+    GetFileVersionInfoA(path, 0, verSize, verData);
+    VS_FIXEDFILEINFO* fileInfo;
+    UINT size;
+    VerQueryValueA(verData, "\\", reinterpret_cast<LPVOID*>(&fileInfo), &size);
+
+    int major = HIWORD(fileInfo->dwFileVersionMS);
+    LOG_INFO("Unity Major version: {}", major);
+    free(verData);
+    return {reinterpret_cast<uintptr_t>(unityModule), major};
 }

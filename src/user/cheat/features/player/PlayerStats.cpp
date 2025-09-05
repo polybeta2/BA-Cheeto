@@ -89,7 +89,7 @@ namespace cheat::features
                         m_statValues.erase(stat);
                     }
                 });
-            
+
             // LOG_DEBUG("Field val {}", field.get()->get());
             m_statFields[stat] = std::move(statField);
         }

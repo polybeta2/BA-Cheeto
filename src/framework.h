@@ -28,3 +28,5 @@
 #include "ui/gui.h"
 #include "appdata/helpers.h"
 #include "appdata/types.h"
+
+#pragma comment(lib, "version.lib")

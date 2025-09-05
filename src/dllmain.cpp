@@ -1,9 +1,7 @@
 #include "pch.h"
 #include "user/main.h"
-#include "core/config/config_manager.h"
 #include <filesystem>
 #include <thread>
-
 
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD reason, LPVOID lpReserved)
 {

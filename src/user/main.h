@@ -7,12 +7,7 @@ public:
     static void shutdown();
 
 private:
-    struct UnityModuleBackendInfo
-    {
-        void* module;
-        UnityResolve::Mode mode;
-    };
-
-    static UnityModuleBackendInfo getUnityBackend();
+    static std::pair<void*, UnityResolve::Mode> getUnityBackend();
     static bool initializeUnity();
+    static std::pair<uintptr_t, int> getUnityVersionMajor();
 };
